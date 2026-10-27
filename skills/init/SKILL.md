@@ -84,14 +84,14 @@ repo-specific from it into caddis.md and ask before removing it.
 ## 7. Migrate existing plans
 
 If `.claude/projects/active` and `completed` (or similar) exist, offer to move them:
-`active/*` to `.caddis/active/`, `completed/*` to `.caddis/completed/`, other buckets
+`active/*` to `.caddis/projects/active/`, `completed/*` to `.caddis/projects/completed/`, other buckets
 (cancelled, parked) to `completed/` with their Status line saying so. Use `git mv` so
 history follows. Rename files that don't start `project-` or `task-` only if the owner
 agrees.
 
 ## 8. Wire it up
 
-- **Folders:** `.caddis/active/.gitkeep` and `.caddis/completed/.gitkeep`.
+- **Folders:** `.caddis/projects/active/.gitkeep` and `.caddis/projects/completed/.gitkeep`.
 - **CLAUDE.md:** add `templates/claude-md-block.md` between its markers near the top,
   or replace the existing block on re-init. Create CLAUDE.md if missing. Don't move other
   content without asking; if CLAUDE.md holds commands or rules that now live in caddis.md,

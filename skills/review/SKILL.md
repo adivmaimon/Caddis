@@ -3,7 +3,7 @@ name: review
 description: Review the active plans before a build - check them against caddis.md, the architecture doc, the code and each other, fix what can be fixed, ask the owner every open question in one batch, and mark each plan Reviewed so /caddis:build can run without stopping.
 ---
 
-Review every plan in `.caddis/active/`, or the ones named in my message. The goal is a set
+Review every plan in `.caddis/projects/active/`, or the ones named in my message. The goal is a set
 of plans `/caddis:build` can run start to finish without asking anything.
 
 ## Steps

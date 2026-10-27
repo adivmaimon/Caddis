@@ -1,6 +1,6 @@
 ---
 name: task
-description: Handle a small, low-risk change end to end - write a short task file in .caddis/active/, make the change, verify, move it to completed and commit. Escalates to /caddis:project if the work turns out bigger or riskier.
+description: Handle a small, low-risk change end to end - write a short task file in .caddis/projects/active/, make the change, verify, move it to completed and commit. Escalates to /caddis:project if the work turns out bigger or riskier.
 ---
 
 A task is a project with less ceremony: a short record, then the work, in one go.
@@ -21,7 +21,7 @@ project: rename to `project-<name>.md`, fill the missing sections, leave it in `
 
 ## 2. Write the task
 
-`.caddis/active/task-<kebab-name>.md`, 15 to 30 lines:
+`.caddis/projects/active/task-<kebab-name>.md`, 15 to 30 lines:
 
 ```markdown
 # <Title>
@@ -55,7 +55,7 @@ what changes. If the user only wants it logged, stop here with `**Status:** Pend
 ## 4. Close
 
 - Append `## Outcome`: one or two lines on what was done, and anything unexpected.
-- Set `**Status:** Complete` and move the file to `.caddis/completed/`.
+- Set `**Status:** Complete` and move the file to `.caddis/projects/completed/`.
 - Commit the change and the task file together with the `commit` skill, `Task: <path>` in
   the body.
 - Report in two lines: what changed, the commit hash.

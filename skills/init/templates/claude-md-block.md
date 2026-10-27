@@ -4,7 +4,7 @@
 - **Read first:** `.caddis/caddis.md` (commands, invariants, risk, hard stops) and
   `.caddis/map/STRUCTURE.md` (what lives where). Run `/caddis:learn` at the start of a
   session.
-- **Work lives in** `.caddis/active/` and moves to `.caddis/completed/` when done:
+- **Work lives in** `.caddis/projects/active/` and moves to `.caddis/projects/completed/` when done:
   `project-*.md` for planned work, `task-*.md` for small changes.
 
 | When | Use |

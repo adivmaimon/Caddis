@@ -9,12 +9,12 @@ Build context before doing anything else. Keep it quick: skim, don't read everyt
 `git log --oneline -20` and `git status`. Note uncommitted work that isn't yours.
 
 ## 2. Active work
-List `.caddis/active/`. For each file note its Type (project, master plan, task), Status
+List `.caddis/projects/active/`. For each file note its Type (project, master plan, task), Status
 line, Reviewed line and which phases are marked DONE. Read the ones relevant to what the
 user is likely to work on.
 
 ## 3. Recently shipped
-Read the three most recently modified files in `.caddis/completed/` to see what shipped
+Read the three most recently modified files in `.caddis/projects/completed/` to see what shipped
 and what carries forward. Skip if empty.
 
 ## 4. Map

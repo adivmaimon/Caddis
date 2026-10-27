@@ -5,6 +5,8 @@
   "author": {
     "name": "Adiv Maimon"
   },
+  "homepage": "https://github.com/adivmaimon/caddis",
+  "repository": "https://github.com/adivmaimon/caddis",
   "license": "MIT",
   "keywords": ["workflow", "planning", "skills", "codebase-map", "autonomous", "project-management"]
 }

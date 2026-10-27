@@ -3,7 +3,7 @@ name: build
 description: Build every reviewed plan end to end without stopping - run the experiment, execute phase by phase in build order, decide and record instead of asking, commit at every gate, and stop only for the hard stops in caddis.md.
 ---
 
-Build the reviewed plans in `.caddis/active/`, in build order, or the ones named in my
+Build the reviewed plans in `.caddis/projects/active/`, in build order, or the ones named in my
 message. **Do not stop to ask for permission or confirmation.** The plans were reviewed so
 this can run unattended.
 

@@ -7,7 +7,7 @@ Execute the plan named in my message, or the most recently discussed active plan
 
 ## 1. Load
 
-1. Find the file in `.caddis/active/` and read all of it before writing code.
+1. Find the file in `.caddis/projects/active/` and read all of it before writing code.
 2. Read `.caddis/caddis.md`. Its Invariants, Commands and Machine limits apply throughout.
 3. If it is a master plan (`Type: Master plan`), don't implement it directly: each phase
    becomes its own plan via the `project` skill, unless the phase says it is a spike or a

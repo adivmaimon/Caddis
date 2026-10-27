@@ -1,6 +1,6 @@
 ---
 name: project
-description: Write a plan for a piece of work into .caddis/active/ as project-<name>.md, without implementing it. Use for anything bigger or riskier than a task. Triages small low-risk work to /caddis:task instead.
+description: Write a plan for a piece of work into .caddis/projects/active/ as project-<name>.md, without implementing it. Use for anything bigger or riskier than a task. Triages small low-risk work to /caddis:task instead.
 ---
 
 Write a plan for the work described in my message. Do not implement it.
@@ -18,7 +18,7 @@ it is a project.
   `python3 .caddis/bin/map.py status` says it is stale for the areas involved,
   refresh it first with the `map` skill.
 - Read the docs listed under Docs in `caddis.md`, and at least one existing plan in
-  `.caddis/active/` or `.caddis/completed/` to match tone and shape.
+  `.caddis/projects/active/` or `.caddis/projects/completed/` to match tone and shape.
 - Read the code the plan will touch. Use `python3 .caddis/bin/map.py uses <file>` to find
   what depends on it.
   Name nothing the code has not confirmed.
@@ -26,7 +26,7 @@ it is a project.
 
 ## 2. Write
 
-File: `.caddis/active/project-<kebab-name>.md`. About 100 lines for one phase; each phase
+File: `.caddis/projects/active/project-<kebab-name>.md`. About 100 lines for one phase; each phase
 of a longer plan fits on one screen. Concrete and technical, not corporate.
 
 If the plan changes a decision recorded in the Architecture doc or `caddis.md`, say so

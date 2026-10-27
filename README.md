@@ -20,7 +20,7 @@ What you get:
   (no guessed edges), and Claude writes a short human map on top: what lives where, entry
   points, hubs, the main flows, where new things go. A session-start hook says when the
   map has gone stale.
-- **History you can read.** Every plan and task stays in `.caddis/completed/` with what was
+- **History you can read.** Every plan and task stays in `.caddis/projects/completed/` with what was
   built, the decisions taken and what was learned.
 
 ## Install
@@ -28,9 +28,17 @@ What you get:
 In Claude Code:
 
 ```
-/plugin marketplace add OWNER/caddis
+/plugin marketplace add adivmaimon/caddis
 /plugin install caddis@caddis
 ```
+
+Or from your shell, in one step:
+
+```
+claude plugin install caddis --marketplace adivmaimon/caddis
+```
+
+In the VS Code extension, use `/plugins` (or the shell command above).
 
 Then, in your repo:
 
@@ -51,7 +59,7 @@ packages needed).
 | Start of a session | `/caddis:learn` loads recent commits, active plans, map freshness and health |
 | Is this a good idea? | `/caddis:evaluate` gives a verdict, impact per layer, risk, alternatives |
 | Small, low-risk change | `/caddis:task` records it, does it, verifies it, commits it |
-| Anything bigger | `/caddis:project` writes a plan to `.caddis/active/` |
+| Anything bigger | `/caddis:project` writes a plan to `.caddis/projects/active/` |
 | Before building | `/caddis:review` checks every plan, asks you everything at once, marks them Reviewed |
 | Build | `/caddis:build` runs every reviewed plan end to end, unattended |
 | Build one plan | `/caddis:execute` |
@@ -80,25 +88,25 @@ becomes a project.
 
 ```
 .caddis/
-  caddis.md          everything specific to this repo: commands, stack, layers,
-                     invariants, risk, docs, commit style, tests, hard stops
-  active/            plans and tasks in progress
-  completed/         finished plans and tasks, with outcome records
-  map/STRUCTURE.md   the human map (committed)
-  map/graph.json     the import graph (cache, gitignored, rebuilt on demand)
-  bin/map.py         the map script, so the repo works without the plugin
-CLAUDE.md            a short Caddis block pointing at the above
-.claude/settings.json  permissions merged in: Caddis skills and your commands allowed,
-                       git push and sudo denied
-.claude/skills/      repo-specific skills, only where your repo needs one (release,
-                     migrations, bench, logs)
+  caddis.md              everything specific to this repo: commands, stack, layers,
+                         invariants, risk, docs, commit style, tests, hard stops
+  projects/active/       plans and tasks in progress
+  projects/completed/    finished plans and tasks, with outcome records
+  map/STRUCTURE.md       the human map (committed)
+  map/graph.json         the import graph (cache, gitignored, rebuilt on demand)
+  bin/map.py             the map script, so the repo works without the plugin
+CLAUDE.md                a short Caddis block pointing at the above
+.claude/settings.json    permissions merged in: Caddis skills and your commands
+                         allowed, git push and sudo denied
+.claude/skills/          repo-specific skills, only where your repo needs one
+                         (release, migrations, bench, logs)
 ```
 
 **Why the config file?** The skills stay generic so you can upgrade Caddis without merge
 conflicts. Everything about your repo lives in one file you can read and edit.
 
 **Already have `.claude/projects/active` and `completed`?** Init offers to move them into
-`.caddis/` with `git mv`.
+`.caddis/projects/` with `git mv`.
 
 ## The map
 
@@ -133,7 +141,7 @@ Plans are plain markdown with a few lines tools can read:
 ### Phase 2 - The UI
 ```
 
-[Monty](https://github.com/OWNER/monty) reads these to show plan progress in VS Code and
+[Monty](https://github.com/adivmaimon/monty) reads these to show plan progress in VS Code and
 the Mac menu bar.
 
 ## Customising

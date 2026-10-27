@@ -1,14 +1,14 @@
 ---
 name: complete
-description: Mark a plan or task done - append an outcome record, set its status, move it from .caddis/active/ to .caddis/completed/ and update the progress log.
+description: Mark a plan or task done - append an outcome record, set its status, move it from .caddis/projects/active/ to .caddis/projects/completed/ and update the progress log.
 ---
 
-Mark the plan named in my message complete by moving it from `.caddis/active/` to
-`.caddis/completed/`.
+Mark the plan named in my message complete by moving it from `.caddis/projects/active/` to
+`.caddis/projects/completed/`.
 
 ## Steps
 
-1. Find the matching file in `.caddis/active/`.
+1. Find the matching file in `.caddis/projects/active/`.
 2. Check it has a plain-language `## Summary` a non-developer can read, and that its
    Verification was actually worked through. Rewrite the Summary if it is missing or too
    technical: bullets, one change each.
