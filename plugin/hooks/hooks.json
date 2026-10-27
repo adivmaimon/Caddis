@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" 2>/dev/null && [ -f .caddis/bin/map.py ] && python3 .caddis/bin/map.py status --hook 2>/dev/null; exit 0",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/session-start.sh\"",
             "timeout": 15
           }
         ]
@@ -18,7 +18,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/announce.py\"",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/announce.sh\"",
             "timeout": 5
           }
         ]
@@ -29,7 +29,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/announce.py\"",
+            "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/announce.sh\"",
             "timeout": 5
           }
         ]
