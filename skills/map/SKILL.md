@@ -61,7 +61,7 @@ Keep it under about 200 lines. For a large repo, keep this as the index and put 
 
 | Area | What it is | Key files |
 | --- | --- | --- |
-| `src/api` | HTTP handlers, one file per resource | `router.ts`, `auth.ts` |
+| `src/api` | API handlers, one file per resource | `router.ts`, `auth.ts` |
 
 ## Entry points
 Where execution starts: app boot, server, CLI, workers, scripts. One line each.

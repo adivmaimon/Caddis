@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Caddis codebase map: a deterministic file-level import graph.
 
 Reads source files, extracts imports with per-language rules, resolves them to files
@@ -33,7 +32,7 @@ import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
-VERSION = "0.1.2"
+VERSION = "0.1.3"
 
 # Directories never mapped, even when tracked by git.
 ALWAYS_SKIP = {

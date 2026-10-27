@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Show a one-line Caddis badge when a Caddis skill starts.
 
 Two ways a skill starts, two hook events:
