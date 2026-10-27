@@ -1,6 +1,6 @@
 {
   "name": "caddis",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A plan-first workflow for Claude Code that fits itself to your codebase: evaluate, plan, review, build unattended, with a generated codebase map and a light path for small tasks.",
   "author": {
     "name": "Adiv Maimon"
@@ -8,5 +8,12 @@
   "homepage": "https://github.com/adivmaimon/caddis",
   "repository": "https://github.com/adivmaimon/caddis",
   "license": "MIT",
-  "keywords": ["workflow", "planning", "skills", "codebase-map", "autonomous", "project-management"]
+  "keywords": [
+    "workflow",
+    "planning",
+    "skills",
+    "codebase-map",
+    "autonomous",
+    "project-management"
+  ]
 }

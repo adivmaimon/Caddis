@@ -1,6 +1,8 @@
-# Caddis
+<p align="center"><img src="docs/caddis-logo.svg" alt="Caddis" width="420"></p>
 
-A plan-first workflow for Claude Code that fits itself to your codebase.
+<p align="center">A plan-first workflow for Claude Code that fits itself to your codebase.</p>
+
+![A Caddis task: a small change recorded, made, checked and committed in one go](docs/demo.gif)
 
 Caddisfly larvae build their case from whatever is around them: sand, twigs, shell. Caddis
 does the same with your repo. One `/caddis:init` reads your codebase and writes down how it

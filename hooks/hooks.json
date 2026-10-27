@@ -1,5 +1,5 @@
 {
-  "description": "At session start, tell Claude if the Caddis codebase map is stale. Silent when fresh or when the repo doesn't use Caddis.",
+  "description": "Caddis hooks: report a stale codebase map at session start, and show a one-line badge when a Caddis skill runs (set CADDIS_QUIET=1 to hide it). Both are silent otherwise and never block.",
   "hooks": {
     "SessionStart": [
       {
@@ -8,6 +8,29 @@
             "type": "command",
             "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" 2>/dev/null && [ -f .caddis/bin/map.py ] && python3 .caddis/bin/map.py status --hook 2>/dev/null; exit 0",
             "timeout": 15
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/announce.py\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "UserPromptExpansion": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/announce.py\"",
+            "timeout": 5
           }
         ]
       }
