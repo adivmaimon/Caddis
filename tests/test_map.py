@@ -10,7 +10,7 @@ import sys
 import tempfile
 import unittest
 
-MAP = os.path.join(os.path.dirname(__file__), "..", "skills", "map", "scripts", "map.py")
+MAP = os.path.join(os.path.dirname(__file__), "..", "plugin", "skills", "map", "scripts", "map.py")
 
 
 def sh(cwd, *args):

@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "caddis",
-      "source": "./",
+      "source": "./plugin",
       "description": "Plans, tasks and a codebase map for Claude Code, set up from your own repo."
     }
   ]

@@ -5,13 +5,16 @@ is for developing Caddis, not for repos that use it.
 
 ## Layout
 
-- `.claude-plugin/` - plugin and marketplace manifests. Bump `version` in `plugin.json` on
-  every release.
-- `skills/<name>/SKILL.md` - one skill each, invoked as `/caddis:<name>`.
-- `skills/init/templates/` - `caddis.md` (the per-repo config) and the CLAUDE.md block.
-- `skills/map/scripts/map.py` - the map script. Init copies it to `.caddis/bin/map.py` in
+- `.claude-plugin/marketplace.json` - the marketplace, pointing at `plugin/`.
+- `plugin/` - everything that gets installed, and nothing else: the plugin directory
+  scans every file in it. Docs, images and tests stay outside.
+- `plugin/.claude-plugin/` - `plugin.json` and the listing icon. Bump `version` in
+  `plugin.json` on every release.
+- `plugin/skills/<name>/SKILL.md` - one skill each, invoked as `/caddis:<name>`.
+- `plugin/skills/init/templates/` - `caddis.md` (the per-repo config) and the CLAUDE.md block.
+- `plugin/skills/map/scripts/map.py` - the map script. Init copies it to `.caddis/bin/map.py` in
   each repo; bump `VERSION` in it on every change so repos pick up the new copy.
-- `hooks/hooks.json` - SessionStart: report a stale map. Must stay silent and exit 0 when
+- `plugin/hooks/hooks.json` - SessionStart: report a stale map. Must stay silent and exit 0 when
   there's nothing to say.
 - `tests/` - map.py tests, stdlib unittest.
 
@@ -35,4 +38,4 @@ is for developing Caddis, not for repos that use it.
 | Purpose | Command |
 | --- | --- |
 | Tests | `python3 -m unittest discover tests` |
-| Map a repo without touching it | `python3 skills/map/scripts/map.py --root <repo> --out /tmp/map build` |
+| Map a repo without touching it | `python3 plugin/skills/map/scripts/map.py --root <repo> --out /tmp/map build` |
