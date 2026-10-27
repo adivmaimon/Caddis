@@ -1,9 +1,10 @@
 {
   "name": "caddis",
   "version": "0.2.1",
-  "description": "A plan-first workflow for Claude Code that fits itself to your codebase: evaluate, plan, review, build unattended, with a generated codebase map and a light path for small tasks.",
+  "description": "Plans, tasks and a codebase map for Claude Code, set up from your own repo.",
   "author": {
-    "name": "Adiv Maimon"
+    "name": "Adiv Maimon",
+    "url": "https://adivmaimon.com"
   },
   "homepage": "https://github.com/adivmaimon/caddis",
   "repository": "https://github.com/adivmaimon/caddis",

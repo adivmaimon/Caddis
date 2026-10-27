@@ -1,46 +1,34 @@
 <p align="center"><img src="docs/caddis-logo.svg" alt="Caddis" width="420"></p>
 
-<p align="center">A plan-first workflow for Claude Code that fits itself to your codebase.</p>
+<p align="center">Plans, tasks and a codebase map for Claude Code, set up from your own repo.</p>
 
-![A Caddis task: a small change recorded, made, checked and committed in one go](docs/demo.gif)
+![A Caddis task: the request, the task file, the edit, the checks and the commit](docs/demo.gif)
 
-Caddisfly larvae build their case from whatever is around them: sand, twigs, shell. Caddis
-does the same with your repo. One `/caddis:init` reads your codebase and writes down how it
-actually works (the commands, the rules, the risky parts, where things live), and every
-skill works from that.
+A caddisfly larva builds its case from whatever is nearby: sand, twigs, bits of shell.
+`/caddis:init` does the same with a repo. It reads the code, CI, docs and git history and
+writes `.caddis/caddis.md`: the commands, the rules that must never break, what counts as
+risky, the commit style. Every Caddis skill reads that file, so the skills stay generic and
+the repo-specific facts live in one place you can edit.
 
-What you get:
+- **Projects.** Evaluate an idea, write a plan, review all open plans in one pass, then build
+  them unattended. The build records its decisions instead of asking, and stops only for
+  publishing, spending money, secrets, or deleting outside the repo.
+- **Tasks.** Small changes skip the plan. `/caddis:task` writes a short task file, makes the
+  change, runs the checks and commits. If the work turns out risky, it becomes a project.
+- **The map.** A script builds the import graph from the imports in your code. Claude writes
+  `STRUCTURE.md` on top of it: areas, entry points, the most-imported files, the main flows,
+  where new code goes. A hook at session start says when it is out of date.
 
-- **Plans before code.** Evaluate an idea, write a plan, review every plan in one sitting,
-  then let the build run unattended. It decides and records instead of asking, and only
-  stops for things you'd want to approve: publishing, spending money, secrets, deleting
-  outside the repo.
-- **A light path for small work.** A one-line fix doesn't need a 100-line plan. `/caddis:task`
-  writes a short record, makes the change, verifies it and commits, in one go. It escalates
-  to a full plan if the work turns out risky.
-- **A codebase map Claude can trust.** A script builds the import graph from real imports
-  (no guessed edges), and Claude writes a short human map on top: what lives where, entry
-  points, hubs, the main flows, where new things go. A session-start hook says when the
-  map has gone stale.
-- **History you can read.** Every plan and task stays in `.caddis/projects/completed/` with what was
-  built, the decisions taken and what was learned.
+Finished plans and tasks stay in `.caddis/projects/completed/` with what was built and why.
 
 ## Install
-
-In Claude Code:
-
-```
-/plugin marketplace add adivmaimon/caddis
-/plugin install caddis@caddis
-```
-
-Or from your shell, in one step:
 
 ```
 claude plugin install caddis --marketplace adivmaimon/caddis
 ```
 
-In the VS Code extension, use `/plugins` (or the shell command above).
+Or inside Claude Code: `/plugin marketplace add adivmaimon/caddis`, then
+`/plugin install caddis@caddis`. In the VS Code extension the command is `/plugins`.
 
 Then, in your repo:
 
@@ -48,89 +36,78 @@ Then, in your repo:
 /caddis:init
 ```
 
-Init scans the repo, builds the map, writes `.caddis/caddis.md`, asks you a handful of
-questions in one batch (your invariants, anything it had to guess), and commits the setup.
+Init builds the map, writes `.caddis/caddis.md`, asks its questions in one batch (your
+rules, anything it had to guess) and commits.
 
-Requirements: Claude Code with plugin support, git, Python 3.8+ (for the map script, no
-packages needed).
+Needs Claude Code with plugin support, git, and Python 3.8+ for the map script.
 
-## The workflow
+## Skills
 
 | When | Skill |
 | --- | --- |
-| Start of a session | `/caddis:learn` loads recent commits, active plans, map freshness and health |
-| Is this a good idea? | `/caddis:evaluate` gives a verdict, impact per layer, risk, alternatives |
-| Small, low-risk change | `/caddis:task` records it, does it, verifies it, commits it |
-| Anything bigger | `/caddis:project` writes a plan to `.caddis/projects/active/` |
-| Before building | `/caddis:review` checks every plan, asks you everything at once, marks them Reviewed |
-| Build | `/caddis:build` runs every reviewed plan end to end, unattended |
+| Start of a session | `/caddis:learn`: recent commits, open plans, map and log health |
+| Is this worth doing? | `/caddis:evaluate`: verdict, impact per layer, risk, alternatives |
+| A small change | `/caddis:task` |
+| Anything bigger | `/caddis:project`: a plan in `.caddis/projects/active/` |
+| Before building | `/caddis:review`: checks every plan, asks you everything at once |
+| Build | `/caddis:build`: runs every reviewed plan, unattended |
 | Build one plan | `/caddis:execute` |
 | Tests | `/caddis:tests` |
-| Commit a chunk | `/caddis:commit` stages only that chunk, conventional message |
-| Done | `/caddis:complete` adds the outcome record and moves it to `completed/` |
-| Map | `/caddis:map` builds or refreshes the codebase map |
-| Monthly | `/caddis:maintenance` runs the full audit, with a running log |
+| Commit | `/caddis:commit`: stages only this chunk of work |
+| Done | `/caddis:complete`: adds the outcome and moves it to `completed/` |
+| Map | `/caddis:map` |
+| Monthly | `/caddis:maintenance`: full audit, with a log carried between runs |
 
-The usual loop: **evaluate, project, review, build.** Small things: **task.**
+You can also ask in plain words ("create a task to...", "write a plan for..."). Naming the
+skill is more reliable.
 
-### Task or project?
-
-A task must meet all of these, or it's a project:
+A change is a task only if all of these hold, otherwise it is a project:
 - about 3 files or fewer, in one layer
-- nothing on the Risk list (migrations, auth, payments, secrets, data deletion, public API
-  changes, new dependencies, plus whatever your repo adds)
-- no invariant touched
-- no experiment needed
+- nothing on the Risk list in `caddis.md`
+- no rule from `caddis.md` touched
+- no experiment needed to pick the approach
 - one commit can revert it
-
-`/caddis:project` sends qualifying work to the task path, and a task that turns out risky
-becomes a project.
 
 ## What init creates
 
 ```
 .caddis/
-  caddis.md              everything specific to this repo: commands, stack, layers,
-                         invariants, risk, docs, commit style, tests, hard stops
+  caddis.md              commands, stack, layers, rules, risk, docs, commits, tests,
+                         hard stops
   projects/active/       plans and tasks in progress
-  projects/completed/    finished plans and tasks, with outcome records
-  map/STRUCTURE.md       the human map (committed)
-  map/graph.json         the import graph (cache, gitignored, rebuilt on demand)
+  projects/completed/    finished plans and tasks
+  map/STRUCTURE.md       the map Claude reads (committed)
+  map/graph.json         the import graph (gitignored, rebuilt when needed)
   bin/map.py             the map script, so the repo works without the plugin
-CLAUDE.md                a short Caddis block pointing at the above
-.claude/settings.json    permissions merged in: Caddis skills and your commands
-                         allowed, git push and sudo denied
-.claude/skills/          repo-specific skills, only where your repo needs one
-                         (release, migrations, bench, logs)
+CLAUDE.md                a short block pointing at the above
+.claude/settings.json    Caddis skills and your commands allowed; git push and sudo denied
+.claude/skills/          repo-specific skills where the repo needs one (release,
+                         migrations, bench, logs)
 ```
 
-**Why the config file?** The skills stay generic so you can upgrade Caddis without merge
-conflicts. Everything about your repo lives in one file you can read and edit.
+Plans already in `.claude/projects/active` and `completed` are moved into
+`.caddis/projects/` with `git mv`, if you agree.
 
-**Already have `.claude/projects/active` and `completed`?** Init offers to move them into
-`.caddis/projects/` with `git mv`.
+Running init again merges with what is there and shows you the changes first.
 
 ## The map
 
 ```
-python3 .caddis/bin/map.py build            # graph.json + summary.md
-python3 .caddis/bin/map.py status           # is STRUCTURE.md stale? which areas changed?
-python3 .caddis/bin/map.py uses <file>      # what depends on this (--depth 2 for transitive)
+python3 .caddis/bin/map.py build            # write graph.json and summary.md
+python3 .caddis/bin/map.py status           # is STRUCTURE.md out of date, and where
+python3 .caddis/bin/map.py uses <file>      # what imports this (--depth 2 for indirect)
 python3 .caddis/bin/map.py deps <file>      # what this imports
-python3 .caddis/bin/map.py area <dir>       # files in an area with in and out degree
-python3 .caddis/bin/map.py orphans          # files nothing imports: entry points or dead code
+python3 .caddis/bin/map.py area <dir>       # files in an area, imported by and importing
+python3 .caddis/bin/map.py orphans          # files nothing imports
 ```
 
-Resolves imports for TypeScript and JavaScript (tsconfig paths, `@/` aliases, React Native
-platform files, Vue, Svelte), Python, Go, Rust, PHP (PSR-4), Ruby, Java and Kotlin, C and
-Objective-C, Dart, and CSS, SCSS and Less. Swift and C# appear as files without edges.
-Imports it can't resolve are counted, not guessed, and listed in `summary.md`.
-
-Tested on ten real codebases from 30 to 1,300 source files: under two seconds each.
+Resolves imports in TypeScript and JavaScript (tsconfig paths, `@/` aliases, React Native
+platform files, Vue, Svelte), Python, Go, Rust, PHP (PSR-4), Ruby, Java, Kotlin, C,
+Objective-C, Dart, CSS, SCSS and Less. Swift and C# files appear without edges. An import it
+can't resolve is counted in `summary.md`, never guessed. Nine real repos of 30 to 1,300
+source files each mapped in under two seconds.
 
 ## Plan format
-
-Plans are plain markdown with a few lines tools can read:
 
 ```markdown
 # Title
@@ -143,21 +120,32 @@ Plans are plain markdown with a few lines tools can read:
 ### Phase 2 - The UI
 ```
 
-[Monty](https://github.com/adivmaimon/monty) reads these to show plan progress in VS Code and
-the Mac menu bar.
+[Monty](https://github.com/adivmaimon/monty) reads these lines to show plan progress in VS Code
+and the Mac menu bar.
 
-## Customising
+## Settings
 
-- Edit `.caddis/caddis.md` directly. Re-run `/caddis:init` any time: it merges, and shows
-  you a diff before changing what you wrote.
-- Add your own skills in `.claude/skills/` and list them under Local skills in caddis.md so
+- `CADDIS_QUIET=1` hides the `caddis · <skill>` line shown when a skill starts. The line
+  appears in the terminal; the VS Code panel doesn't show hook messages.
+- Your own skills go in `.claude/skills/`. List them under Local skills in `caddis.md` so
   Caddis skills know when to call them.
+
+## Principles
+
+- **The repo's facts live in one file.** Skills say when to do something; `caddis.md` says
+  how, for this repo. Upgrading Caddis never touches your config.
+- **Nothing invented.** Init only records rules the repo already states. The map only draws
+  edges it can resolve.
+- **Ask once.** Questions are batched at init and review. The build decides and writes down
+  why.
+- **Stop for what can't be undone.** Publishing, money, secrets and deletions outside the
+  repo wait for you.
 
 ## Contributing
 
-Run the map tests with `python3 -m unittest discover tests`. Skills must stay generic:
-anything about a specific repo belongs in that repo's `caddis.md`.
+Tests: `python3 -m unittest discover tests`. Keep skills generic; anything about one repo
+belongs in that repo's `caddis.md`.
 
 ## License
 
-MIT
+[MIT](LICENSE). Made by [Adiv Maimon](https://adivmaimon.com).

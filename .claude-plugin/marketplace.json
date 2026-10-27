@@ -1,13 +1,14 @@
 {
   "name": "caddis",
   "owner": {
-    "name": "Adiv Maimon"
+    "name": "Adiv Maimon",
+    "url": "https://adivmaimon.com"
   },
   "plugins": [
     {
       "name": "caddis",
       "source": "./",
-      "description": "A plan-first workflow for Claude Code that fits itself to your codebase."
+      "description": "Plans, tasks and a codebase map for Claude Code, set up from your own repo."
     }
   ]
 }
