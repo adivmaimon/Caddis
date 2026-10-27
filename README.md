@@ -143,7 +143,7 @@ and the Mac menu bar.
 
 ## Contributing
 
-Tests: `python3 -m unittest discover tests`. Keep skills generic; anything about one repo
+See [CONTRIBUTING.md](CONTRIBUTING.md). Tests: `python3 -m unittest discover tests`. Keep skills generic; anything about one repo
 belongs in that repo's `caddis.md`.
 
 ## License

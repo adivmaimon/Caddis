@@ -1,4 +1,4 @@
-# Caddis - working on Caddis itself
+# Contributing to Caddis
 
 Caddis is a Claude Code plugin: generic workflow skills plus a codebase map script. This file
 is for developing Caddis, not for repos that use it.

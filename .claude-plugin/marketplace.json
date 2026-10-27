@@ -4,6 +4,9 @@
     "name": "Adiv Maimon",
     "url": "https://adivmaimon.com"
   },
+  "metadata": {
+    "description": "Caddis: plans, tasks and a codebase map for Claude Code, set up from your own repo."
+  },
   "plugins": [
     {
       "name": "caddis",
