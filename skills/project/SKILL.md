@@ -1,6 +1,6 @@
 ---
 name: project
-description: Write a plan for a piece of work into .caddis/projects/active/ as project-<name>.md, without implementing it. Use for anything bigger or riskier than a task. Triages small low-risk work to /caddis:task instead.
+description: Write a plan for a piece of work into .caddis/projects/active/ as project-<name>.md, without implementing it. Use when the user asks to create a project, write a plan or plan out a feature. Triages small low-risk work to /caddis:task instead.
 ---
 
 Write a plan for the work described in my message. Do not implement it.

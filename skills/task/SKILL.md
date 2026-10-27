@@ -1,6 +1,6 @@
 ---
 name: task
-description: Handle a small, low-risk change end to end - write a short task file in .caddis/projects/active/, make the change, verify, move it to completed and commit. Escalates to /caddis:project if the work turns out bigger or riskier.
+description: Handle a small, low-risk change end to end - write a short task file in .caddis/projects/active/, make the change, verify, move it to completed and commit. Use when the user asks to create a task, make a quick fix or a small change. Escalates to /caddis:project if the work turns out bigger or riskier.
 ---
 
 A task is a project with less ceremony: a short record, then the work, in one go.
