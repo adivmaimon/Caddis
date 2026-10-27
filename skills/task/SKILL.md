@@ -42,6 +42,10 @@ One sentence.
 One or two plain-language bullets for a non-developer.
 ```
 
+If caddis.md's Plans section is set, its Tasks line decides the ending: `sections` means the
+Required sections in their format instead of `## Summary`; `silent` means no Summary and the
+Silent marker where it says.
+
 Use `.caddis/map/STRUCTURE.md` and `python3 .caddis/bin/map.py uses <file>` to confirm nothing else depends on
 what changes. If the user only wants it logged, stop here with `**Status:** Pending`.
 
@@ -54,7 +58,8 @@ what changes. If the user only wants it logged, stop here with `**Status:** Pend
 
 ## 4. Close
 
-- Append `## Outcome`: one or two lines on what was done, and anything unexpected.
+- Append `## Outcome`: one or two lines on what was done, and anything unexpected. Check the
+  ending from step 2 still matches what was done.
 - Set `**Status:** Complete` and move the file to `.caddis/projects/completed/`.
 - Commit the change and the task file together with the `commit` skill, `Task: <path>` in
   the body.

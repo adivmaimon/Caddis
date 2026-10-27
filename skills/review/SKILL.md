@@ -22,6 +22,8 @@ of plans `/caddis:build` can run start to finish without asking anything.
      phase first with variants, a baseline, real measures and a rule for the winner.
    - Dependencies between plans are explicit and the order respects them.
    - Any user-facing copy follows the Brand doc, if there is one.
+   - It carries the sections caddis.md's Plans section requires, in the stated format, or
+     the Silent marker. With no Plans config, a plain-language `## Summary`.
 3. **Fix what you can** directly: stale paths, missing gates, wrong order, vague steps.
 4. **Collect every question that needs the owner** across all plans, including each plan's
    Open Questions. Ask them **once, together**, each with a recommended answer. Ask only

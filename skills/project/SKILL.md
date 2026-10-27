@@ -98,10 +98,15 @@ to ask.
 Plain-language bullets for a non-developer: what changes and why it matters.
 ```
 
+If caddis.md's Plans section lists Required sections, write those in their stated format in
+place of `## Summary` (or as well, if it says Keep Summary), and follow its Other rules. A
+plan with nothing for those readers gets the Silent marker instead, if one is defined.
+
 ## 3. Check
 
 Re-read the plan against the code: every file named exists or is created by the plan,
-every risk and side effect is covered, nothing is assumed. Fix it, then confirm the filename
+every risk and side effect is covered, nothing is assumed, the Plans sections are present and
+well formed. Fix it, then confirm the filename
 and scope in two lines.
 
 ## Rules

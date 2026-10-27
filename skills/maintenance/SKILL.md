@@ -1,6 +1,6 @@
 ---
 name: maintenance
-description: Run the periodic (monthly) maintenance pass over the whole codebase - benchmark health, invariant audit, reuse sweep, comments, performance, tests, lint and build, dependencies, security, docs and map accuracy - logging results and carry-over in .caddis/maintenance-log.md.
+description: Run the periodic (monthly) maintenance pass over the whole codebase - the repo's own maintenance skills, benchmark health, invariant audit, reuse sweep, comments, performance, tests, lint and build, dependencies, security, docs and map accuracy - logging results and carry-over in .caddis/maintenance-log.md.
 ---
 
 Run across the whole codebase, not just recent changes. Report and fix small things in
@@ -9,6 +9,13 @@ the pass; anything bigger becomes a plan via the `project` skill.
 **Before starting:** read `.caddis/maintenance-log.md` (create it from the template below if
 missing). It holds carry-over from the last pass. Don't re-report what it has settled.
 Skip any step whose subject doesn't exist yet and say so.
+
+## 0. Local skills
+Run every skill marked `Maintenance:` under Local skills in caddis.md, honouring its ordering
+note: start long-running or background ones first and carry on with the steps below while
+they run, respecting Machine limits. Where a local skill covers a step (performance, UI,
+docs), take its findings for that step instead of repeating the work. Wait for every one to
+finish before the log, and record each one's result, or why it didn't run.
 
 ## 1. Benchmark
 If caddis.md has Experiments: run the benchmark (report only), compare to the last
@@ -54,7 +61,7 @@ paths, commands, names, decisions. Run the `map` skill in full mode and compare.
 ## After all steps
 
 Add a row to the table in the log, rewrite its **Last Run** section with carry-over, and
-add a `### Notes - YYYY-MM-DD` block with detail.
+add a `### Notes - YYYY-MM-DD` block with detail, including a line per local skill run.
 
 ### Log template
 

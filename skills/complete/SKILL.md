@@ -9,9 +9,12 @@ Mark the plan named in my message complete by moving it from `.caddis/projects/a
 ## Steps
 
 1. Find the matching file in `.caddis/projects/active/`.
-2. Check it has a plain-language `## Summary` a non-developer can read, and that its
-   Verification was actually worked through. Rewrite the Summary if it is missing or too
-   technical: bullets, one change each.
+2. Check its Verification was actually worked through, and that it ends right:
+   - No Plans config: a plain-language `## Summary` a non-developer can read. Rewrite it if
+     missing or too technical: bullets, one change each.
+   - Plans config: every Required section, in its exact format and heading level, unless
+     the file carries the Silent marker. Tasks follow the Tasks line. Write or repair what
+     is missing or malformed, and apply the Other rules.
 3. Append an outcome record. Never strip the original plan.
    - **`## What Was Built`** - factual and concrete, no marketing language.
    - **`## Key Files`** - paths from the repo root.
@@ -32,7 +35,8 @@ Mark the plan named in my message complete by moving it from `.caddis/projects/a
 - Partial, deferred, on hold or blocked: leave it in `active/` and update the Status line,
   e.g. `**Status:** Blocked - needs a signing key`.
 - Abandoned: ask the owner whether to delete it or keep it in `completed/` with
-  `**Status:** Cancelled` and a line on why. Don't invent new folders.
+  `**Status:** Cancelled` and a line on why, plus the Silent marker if one is defined.
+  Don't invent new folders.
 - Master plans move only when every phase is done. Until then keep the Status line current.
 
 `completed/` is plain-text history. Write it for the next person who reads it.

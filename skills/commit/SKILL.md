@@ -16,8 +16,8 @@ Commit this chunk's changes with a clear message, following the Commits section 
    If unrelated edits share a file, write only your hunks to a patch and
    `git apply --cached <patch>`; mention the rest in the report.
 4. **Write the message:** `<type>(<scope>): <subject>`, a blank line, then the body.
-   - Types and scopes from caddis.md. Subject 72 characters or fewer, imperative, no full
-     stop.
+   - Types and scopes from caddis.md. Subject within caddis.md's Subject length (72
+     characters if unset), imperative, no full stop.
    - Body: why, not what. Add `Project: <path>` or `Task: <path>` when it belongs to one.
    - Trailers only as caddis.md allows.
 5. `git commit -m "<subject>" -m "<body>"`. Don't push.

@@ -36,7 +36,8 @@ Gather evidence. Prefer what the repo does over what its docs say.
 - **Commits:** `git log --format='%s%n%b' -100`. Infer the style, the types and scopes in
   use, and the trailer policy.
 - **Risk surface:** migrations folders, auth, payments, secrets handling, public APIs,
-  deploy scripts, anything that sends data off the machine.
+  deploy scripts, anything that sends data off the machine. Note any script that reads plan
+  files and which headings or marker lines it looks for.
 - **Docs:** an architecture or decisions doc, a progress log or changelog, brand or copy
   rules.
 - **Logs and benchmarks:** where runtime logs go; any benchmark or eval harness.
@@ -55,6 +56,12 @@ item came from when it isn't obvious. Rules:
 - **Risk:** keep the defaults, add what this repo makes risky.
 - **Hard stops:** keep the defaults, add repo-specific ones (e.g. a deploy script).
 - **Experiments:** fill only if a benchmark or eval harness exists.
+- **Plans:** fill only if something reads plan files: a deploy, notify or changelog script
+  that parses plan headings or skips files on a marker line, or required sections stated in
+  CLAUDE.md or an older plan skill. Copy the headings, formats and marker exactly.
+- **Commits:** set Subject length only if the history or a hook enforces another limit.
+- **Local skills:** mark `Maintenance:` the ones an older maintenance or audit skill
+  called, with any ordering or duration it gave.
 - Mark anything uncertain `(guess - confirm)`.
 - Delete sections that clearly don't apply. Keep it under about 200 lines.
 

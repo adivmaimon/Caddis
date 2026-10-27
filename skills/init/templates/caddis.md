@@ -65,11 +65,26 @@ Medium or higher, whatever the size:
 | Brand and copy rules | |
 | Codebase map | `.caddis/map/STRUCTURE.md` |
 
+## Plans
+
+<!-- Leave empty to keep the default: every plan and task ends in `## Summary`. Fill it when
+something reads plan files (a deploy script, a changelog tool) and needs set headings. -->
+
+- Required sections: <!-- each heading and its format, e.g. "`## Release notes`: bullets
+  `- <b>Headline</b>. Description.`". These replace `## Summary` unless the next line says
+  otherwise. -->
+- Keep Summary: <!-- "yes" to write `## Summary` as well; default no -->
+- Silent marker: <!-- a line that tells the tool to skip a file, and where it goes, e.g.
+  "`**Silent:** true` above the Status line". Silent files carry no required sections. -->
+- Tasks: <!-- "sections" (same as plans) or "silent" (the marker instead); default sections -->
+- Other rules: <!-- line limits, what a cancelled plan needs, anything else -->
+
 ## Commits
 
 - Style: conventional, `<type>(<scope>): <subject>`
 - Types: feat, fix, refactor, perf, test, docs, chore, ci
 - Scopes: <!-- from the map's areas -->
+- Subject length: <!-- default 72 characters -->
 - Trailers: <!-- e.g. "none", or "Co-Authored-By allowed" -->
 
 ## Tests
@@ -111,4 +126,7 @@ variants against a baseline before building. -->
 ## Local skills
 
 <!-- Repo-specific skills in .claude/skills/ that init created or that already existed,
-one line each: name and when Caddis skills should call it. -->
+one line each: name and when Caddis skills should call it. To run one in /caddis:maintenance,
+end its line with `Maintenance:` and any ordering note, e.g. "`ui-audit`: screenshot audit.
+Maintenance: start first, background, ~50 min." Maintenance runs them and skips its own steps
+they cover. -->
