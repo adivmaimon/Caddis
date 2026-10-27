@@ -1,0 +1,16 @@
+{
+  "description": "At session start, tell Claude if the Caddis codebase map is stale. Silent when fresh or when the repo doesn't use Caddis.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"${CLAUDE_PROJECT_DIR:-.}\" 2>/dev/null && [ -f .caddis/bin/map.py ] && python3 .caddis/bin/map.py status --hook 2>/dev/null; exit 0",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

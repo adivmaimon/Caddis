@@ -1,0 +1,13 @@
+{
+  "name": "caddis",
+  "owner": {
+    "name": "Adiv Maimon"
+  },
+  "plugins": [
+    {
+      "name": "caddis",
+      "source": "./",
+      "description": "A plan-first workflow for Claude Code that fits itself to your codebase."
+    }
+  ]
+}
