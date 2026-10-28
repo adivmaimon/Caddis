@@ -70,13 +70,17 @@ A change is a task only if all of these hold, otherwise it is a project:
 
 ## Agents
 
-Two read-only agents check work without the context of whoever did it:
+Three read-only agents. Two check work without the context of whoever did it, and one keeps
+wide sweeps out of the main session:
 - `plan-reviewer`: `/caddis:review` hands it each plan. It checks paths, gates, rules and
   risks against the code and reports only problems.
 - `gate-verifier`: at every phase gate, `/caddis:execute` and `/caddis:build` hand it the
   plan and phase number, nothing more. It compares the diff with the plan, checks the rules,
   reruns the gate's checks and answers PASS, FAIL or INCOMPLETE. It never runs heavy jobs or
   anything on the hard stops list.
+- `auditor`: `/caddis:maintenance` hands it one focus at a time (invariants, reuse,
+  comments, performance, tests, security, docs, AI cost) and keeps only its findings, each
+  with file, line and whether it is a quick fix or needs a plan.
 
 ## What init creates
 

@@ -26,6 +26,10 @@ Investigate what my message describes and write a structured evaluation. Do not 
 6. If a Reference repo already solved this, read how and say whether it fits.
 7. For a library or service choice, check it is maintained and what it costs.
 
+When the idea touches a wide area (several map areas, or a cross-cutting concern such as
+performance or security), hand the sweep to the `auditor` agent with that focus and scope
+instead of reading it all yourself, and build the report on its findings.
+
 ## Report
 
 ### Verdict
