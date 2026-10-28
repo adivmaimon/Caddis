@@ -61,6 +61,7 @@ what changes. If the user only wants it logged, stop here with `**Status:** Pend
 - Append `## Outcome`: one or two lines on what was done, and anything unexpected. Check the
   ending from step 2 still matches what was done.
 - Set `**Status:** Complete` and move the file to `.caddis/projects/completed/`.
+- Use `git mv` when `.caddis/` is tracked, plain `mv` when it is gitignored.
 - Commit the change and the task file together with the `commit` skill, `Task: <path>` in
   the body.
 - Report in two lines: what changed, the commit hash.

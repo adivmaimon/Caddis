@@ -26,7 +26,8 @@ Mark the plan named in my message complete by moving it from `.caddis/projects/a
    - **`## Lessons Learned`** - optional, encouraged.
 4. Set the status line to `**Status:** Complete` (or `**Status:** Not adopted` when an
    experiment found no winner).
-5. Move the file. The folder is the source of truth for completion.
+5. Move the file: `git mv` when `.caddis/` is tracked, plain `mv` when it is gitignored.
+   The folder is the source of truth for completion.
 6. If caddis.md lists a Progress log, add a one-paragraph entry at its top.
 7. Confirm the new path in one or two sentences. Next is usually the `commit` skill.
 

@@ -112,5 +112,6 @@ and scope in two lines.
 ## Rules
 
 - Master plans (`Type: Master plan`) list phases that each become their own plan later.
-- The plan lands as its own `docs:` commit via the `commit` skill.
+- The plan lands as its own `docs:` commit via the `commit` skill, unless `.caddis/` is
+  gitignored (then there is nothing to commit).
 - Phase headings must be `### Phase N - <name>` so progress tools can read them.

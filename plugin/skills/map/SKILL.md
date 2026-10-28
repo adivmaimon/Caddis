@@ -92,7 +92,8 @@ Generated code, circular imports, legacy areas, unresolved aliases, anything tha
 - The stamp line must be the first line, from `map.py stamp`. Staleness checks read it.
 - After writing, if the Commits section of `.caddis/caddis.md` lists scopes, check they
   still match the areas.
-- Commit STRUCTURE.md as its own `docs:` commit with the `commit` skill, unless this ran as
+- Skip committing when `.caddis/` is gitignored. Otherwise commit STRUCTURE.md as its own
+  `docs:` commit with the `commit` skill, unless this ran as
   part of a plan, in which case it goes in that plan's commit.
 
 ## Using the map from other skills

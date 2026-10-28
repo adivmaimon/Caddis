@@ -65,12 +65,19 @@ item came from when it isn't obvious. Rules:
 - Mark anything uncertain `(guess - confirm)`.
 - Delete sections that clearly don't apply. Keep it under about 200 lines.
 
+### Private or shared
+
+Decide whether `.caddis/` goes in git. Shared (the default) keeps plans and the map with the
+code for everyone. Private suits a public repo whose owner keeps plans to themselves: if
+`.claude/` or `CLAUDE.md` is already gitignored, recommend private. For private, add
+`/.caddis/` to `.gitignore` and record `.caddis/ in git: no` under Commits.
+
 ## 5. Ask once
 
 Collect everything that needs the owner and ask in **one batch**, each with your
 recommended answer: the Invariants, anything marked `(guess - confirm)`, extra hard stops,
 whether to turn on Experiments, the commit trailer policy, and any migration choices from
-step 7. Use the question tool if there is one. If nobody answers, take the recommendations,
+step 7, and private or shared. Use the question tool if there is one. If nobody answers, take the recommendations,
 mark them `(default, YYYY-MM-DD)`, and carry on.
 
 ## 6. Repo-specific skills

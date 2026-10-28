@@ -31,7 +31,8 @@ of plans `/caddis:build` can run start to finish without asking anything.
 5. **Write the answers in** as decisions `(owner, YYYY-MM-DD)`. Give every remaining open
    question a default the build will use.
 6. **Mark each plan** with `**Reviewed:** YYYY-MM-DD` under its Status line.
-7. **Commit** the reviewed plans as one `docs:` commit with the `commit` skill.
+7. **Commit** the reviewed plans as one `docs:` commit with the `commit` skill, unless
+   `.caddis/` is gitignored.
 
 ## Output
 

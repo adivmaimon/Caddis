@@ -86,6 +86,8 @@ something reads plan files (a deploy script, a changelog tool) and needs set hea
 - Scopes: <!-- from the map's areas -->
 - Subject length: <!-- default 72 characters -->
 - Trailers: <!-- e.g. "none", or "Co-Authored-By allowed" -->
+- `.caddis/` in git: yes <!-- "no" when .caddis/ is gitignored to keep plans private: plan
+  files are then moved with mv, never staged or force-added, and never named in commits -->
 
 ## Tests
 
