@@ -1,6 +1,6 @@
 {
   "name": "caddis",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "Plans, tasks and a codebase map for Claude Code, set up from your own repo.",
   "author": {
     "name": "Adiv Maimon",

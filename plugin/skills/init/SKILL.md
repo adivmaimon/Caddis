@@ -91,7 +91,13 @@ skills in caddis.md. Only with clear evidence. Typical cases:
 - **logs** - the app writes logs worth reading after a run
 
 Each is under about 60 lines, uses the exact commands and paths, and says when Caddis
-skills should call it. If the repo already has skills, keep them. Where an existing skill
+skills should call it.
+
+A repo skill that keeps a Caddis skill's name (`build`, `tests`, `commit`, `review` and the
+rest) but does a different job, such as a site build or a manual check routine with no test
+suite, makes "use the tests skill" ambiguous. Rename it after what it does (`verify`,
+`release`, `deploy`) and update every reference to it: CLAUDE.md, caddis.md, other skills,
+and `Skill(...)` entries in `.claude/settings.json`. If the repo already has skills, keep them. Where an existing skill
 duplicates a Caddis one (an older `commit`, `project`, `execute`...), move anything
 repo-specific from it into caddis.md and ask before removing it.
 
