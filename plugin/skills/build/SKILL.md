@@ -33,7 +33,8 @@ when the reviewed plans are done, name the next one worth writing and stop.
 ## When something comes up
 
 - **A decision the plan didn't make:** pick the option that best fits caddis.md, the
-  Architecture doc and the plan. Record it under `## Decisions During Build` with a one-line
+  docs it lists (the Architecture doc and any doc on how the project works or what it
+  values) and the plan. Record it under `## Decisions During Build` with a one-line
   reason. Continue.
 - **The plan is wrong:** fix the plan, record what changed and why, continue.
 - **A failing gate:** fix the root cause. Try at least three different approaches before
