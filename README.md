@@ -68,6 +68,16 @@ A change is a task only if all of these hold, otherwise it is a project:
 - no experiment needed to pick the approach
 - one commit can revert it
 
+## Agents
+
+Two read-only agents check work without the context of whoever did it:
+- `plan-reviewer`: `/caddis:review` hands it each plan. It checks paths, gates, rules and
+  risks against the code and reports only problems.
+- `gate-verifier`: at every phase gate, `/caddis:execute` and `/caddis:build` hand it the
+  plan and phase number, nothing more. It compares the diff with the plan, checks the rules,
+  reruns the gate's checks and answers PASS, FAIL or INCOMPLETE. It never runs heavy jobs or
+  anything on the hard stops list.
+
 ## What init creates
 
 ```

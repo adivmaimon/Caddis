@@ -41,9 +41,14 @@ Work through Changes one file at a time, phase by phase.
    passed, failed or skipped with the reason. Fix root causes.
 2. If the plan has Tests, write them with the `tests` skill. Run the full suite. If a
    pre-existing test fails, decide on purpose whether the test or the change is wrong.
-3. Mark the phase heading done: `### Phase 2 - <name> - DONE (YYYY-MM-DD)`. Progress tools
+3. Hand the phase to the `gate-verifier` agent: the plan path and phase number, nothing
+   about what you did. On **FAIL**, fix the root cause and verify again. If it still fails
+   after two rounds, record the finding under `## Decisions During Build` and treat the
+   gate as failed. On **INCOMPLETE** for a heavy check, run that check yourself. Skip the
+   agent for a phase that only changes docs.
+4. Mark the phase heading done: `### Phase 2 - <name> - DONE (YYYY-MM-DD)`. Progress tools
    read this marker.
-4. Commit the phase with the `commit` skill. Never commit a failing gate. Don't push.
+5. Commit the phase with the `commit` skill. Never commit a failing gate. Don't push.
 
 ## 5. Complete
 
