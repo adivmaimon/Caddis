@@ -32,7 +32,7 @@ import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 
 # Directories never mapped, even when tracked by git.
 ALWAYS_SKIP = {
@@ -836,12 +836,28 @@ def cmd_orphans(root, out_dir):
         print(f"  {f}  {tag}")
 
 
+def baseline(root, out_dir, stamp):
+    """The commit STRUCTURE.md is current as of. Its stamp names the commit it was written
+    against, but the map is usually committed together with the work it describes (a plan's
+    last commit, init's own setup commit). So when a later commit touched STRUCTURE.md, that
+    commit is the baseline: whoever committed it saw those changes."""
+    if not is_git(root):
+        return stamp
+    rel = os.path.relpath(os.path.join(out_dir, "STRUCTURE.md"), root)
+    last = run(["git", "log", "-1", "--format=%h", "--", rel], root).strip()
+    if last and subprocess.run(["git", "merge-base", "--is-ancestor", stamp, last], cwd=root,
+                               capture_output=True).returncode == 0:
+        return last
+    return stamp
+
+
 def cmd_status(root, out_dir, hook):
     commit = structure_commit(out_dir)
     if not commit:
         if not hook:
             print("No STRUCTURE.md yet (or it has no caddis-map commit stamp). Run the map skill.")
         return
+    commit = baseline(root, out_dir, commit)
     changed, behind = changed_since(root, commit)
     if not changed:
         if not hook:

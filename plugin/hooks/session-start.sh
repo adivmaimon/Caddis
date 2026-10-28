@@ -17,6 +17,11 @@ done < "$map"
 [ -n "$stamp" ] || exit 0
 git cat-file -e "$stamp^{commit}" 2>/dev/null || exit 0
 
+# The map is usually committed together with the work it describes, so a later commit that
+# touched STRUCTURE.md is the real baseline: whoever committed it saw those changes.
+last=$(git log -1 --format=%h -- "$map" 2>/dev/null)
+if [ -n "$last" ] && git merge-base --is-ancestor "$stamp" "$last" 2>/dev/null; then stamp="$last"; fi
+
 src='\.(js|jsx|mjs|cjs|ts|tsx|mts|cts|vue|svelte|astro|py|go|rs|php|rb|java|kt|kts|scala|swift|cs|dart|c|h|cc|cpp|cxx|hpp|hh|m|mm|css|scss|sass|less)$'
 changed=$( { git diff --name-only "$stamp" -- 2>/dev/null; git ls-files --others --exclude-standard 2>/dev/null; } \
   | grep -E "$src" | grep -v -E '(^|/)(\.caddis|node_modules|vendor)/' | sort -u | grep -c . )

@@ -143,6 +143,16 @@ class StatusTests(unittest.TestCase):
         self.assertIn("+ src/c.ts", out)
         self.assertIn("caddis map skill", r.map("status", "--hook"))
 
+    def test_map_committed_with_the_work_it_describes_is_fresh(self):
+        r = Repo({"src/a.ts": ""})
+        r.write(".caddis/map/STRUCTURE.md", r.map("stamp") + "# Structure\n")
+        r.write("src/b.ts", "import a from './a'\n")
+        r.commit("work and map together")
+        self.assertIn("fresh", r.map("status"))
+        r.write("src/c.ts", "")
+        r.commit("later work")
+        self.assertIn("1 commit(s) behind", r.map("status"))
+
     def test_queries_rebuild_when_tree_moves(self):
         r = Repo({"a.ts": "", "b.ts": "import a from './a'\n"})
         self.assertIn("used by 1", r.map("uses", "a.ts"))
