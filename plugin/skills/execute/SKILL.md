@@ -5,6 +5,10 @@ description: Execute one active plan end to end - read it, confirm the code matc
 
 Execute the plan named in my message, or the most recently discussed active plan.
 
+If I invoked this directly in the main session, hand the plan off as in "Run it in the
+background" in the `build` skill, with this skill as the agent's job. A background builder
+just carries on.
+
 ## 1. Load
 
 1. Find the file in `.caddis/projects/active/` and read all of it before writing code.

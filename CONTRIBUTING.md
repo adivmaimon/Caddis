@@ -14,13 +14,15 @@ is for developing Caddis, not for repos that use it.
 - `plugin/skills/init/templates/` - `caddis.md` (the per-repo config) and the CLAUDE.md block.
 - `plugin/skills/map/scripts/map.py` - the map script. Init copies it to `.caddis/bin/map.py` in
   each repo; bump `VERSION` in it on every change so repos pick up the new copy.
+- `plugin/skills/build/scripts/progress.sh` - the build status reporter, run under Monitor.
+  It reads plan files and git only, so builders need do nothing to be reported on.
 - `plugin/agents/` - read-only reviewers the skills hand work to. They get a path, not the
   author's context, and must never edit, run heavy jobs or touch a hard stop.
 - `plugin/hooks/` - plain bash scripts, run by literal `${CLAUDE_PLUGIN_ROOT}` paths (the
   directory refuses computed paths). `session-start.sh` reports a stale map, `announce.sh`
   shows the skill badge. Both must stay silent and exit 0 when
   there's nothing to say.
-- `tests/` - map.py tests, stdlib unittest.
+- `tests/` - map.py and progress.sh tests, stdlib unittest.
 
 ## Rules
 

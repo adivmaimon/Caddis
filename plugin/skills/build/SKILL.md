@@ -7,6 +7,29 @@ Build the reviewed plans in `.caddis/projects/active/`, in build order, or the o
 message. **Do not stop to ask for permission or confirmation.** The plans were reviewed so
 this can run unattended.
 
+## Run it in the background
+
+If you are the background builder, skip this section. Otherwise, in the main session:
+
+1. List the plans in scope and estimate the build in minutes from their phases and Changes.
+   Tell me the estimate in one line.
+2. Note the start time with `date +%s`. Start one background `general-purpose` agent: "You
+   are the background builder. Run the `caddis:build` skill on these plans: <paths>."
+   Include anything else from my message.
+3. Start the Monitor tool with `bash <this skill's scripts folder>/progress.sh <start>
+   <estimate> <plan paths>` and a `timeout_ms` of 1800000. The script stays silent on short
+   builds and sets its own report interval as the estimate changes.
+4. Pass each status line to me as it arrives, in one line. On `Possibly stuck`, say so and
+   leave the agent running: a long check can look the same. If the monitor expires while the
+   agent is running, start it again with the same arguments.
+5. When the agent finishes, stop the monitor with TaskStop and give me its report. If it is
+   waiting on a hard stop, ask me, then pass my answer on with SendMessage.
+
+If the Agent or Monitor tool isn't available, build in this session instead.
+
+The builder can't ask me anything. It sends blockers and hard stops to `main` with
+SendMessage, along with any decision I'd want to hear about before the end.
+
 ## Before starting
 
 - Read `.caddis/caddis.md`, in particular Hard stops and Machine limits.

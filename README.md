@@ -68,6 +68,22 @@ A change is a task only if all of these hold, otherwise it is a project:
 - no experiment needed to pick the approach
 - one commit can revert it
 
+## Build progress
+
+`/caddis:build` and `/caddis:execute` run in a background agent, so the session stays free,
+and report status based on the estimated build length:
+
+| Estimate | Reports |
+| --- | --- |
+| Under 5 minutes | None until done |
+| 5 to 30 minutes | Every 5 minutes |
+| 30 to 60 minutes | Every 10 minutes |
+| 1 to 2 hours | Every 15 minutes |
+| Over 2 hours | Every 30 minutes |
+
+The estimate is replaced by the measured pace once a phase finishes. A build with no commits
+or file changes for 20 minutes is flagged as possibly stuck.
+
 ## Agents
 
 Three read-only agents. Two check work without the context of whoever did it, and one keeps
