@@ -27,14 +27,27 @@ of plans `/caddis:build` can run start to finish without asking anything.
    Then hand each plan to the `plan-reviewer` agent (just the plan's path) for a fresh read
    without your context. Run them one at a time if caddis.md's Machine limits rule out
    parallel agents. Treat its blocking findings as yours to fix; judge its minor ones.
-3. **Fix what you can** directly: stale paths, missing gates, wrong order, vague steps.
-4. **Collect every question that needs the owner** across all plans, including each plan's
+3. **Measure reach.** For each plan, run `python3 .caddis/bin/map.py reach <files>` on the
+   existing files its Changes list (skip ones it creates). Write the result into its Risk
+   section as a `**Reach:**` paragraph, one or two sentences on what the change touches,
+   then a table:
+
+   | Area | Files reached | Through a hub |
+   | --- | --- | --- |
+   | `src/api` | 12 | 9 |
+
+   Name any hubs it touches in the paragraph. With no reach, one line saying so, no table. If the reach and the stated Risk level
+   disagree (a wide reach rated low, or a hub change with no Risk note), that is an owner
+   question for step 5, with your recommended level. Add each direct importer no test
+   reaches to the plan's Tests section as a suggested entry.
+4. **Fix what you can** directly: stale paths, missing gates, wrong order, vague steps.
+5. **Collect every question that needs the owner** across all plans, including each plan's
    Open Questions. Ask them **once, together**, each with a recommended answer. Ask only
    what changes what gets built; decide the rest and record it.
-5. **Write the answers in** as decisions `(owner, YYYY-MM-DD)`. Give every remaining open
+6. **Write the answers in** as decisions `(owner, YYYY-MM-DD)`. Give every remaining open
    question a default the build will use.
-6. **Mark each plan** with `**Reviewed:** YYYY-MM-DD` under its Status line.
-7. **Commit** the reviewed plans as one `docs:` commit with the `commit` skill, unless
+7. **Mark each plan** with `**Reviewed:** YYYY-MM-DD` under its Status line.
+8. **Commit** the reviewed plans as one `docs:` commit with the `commit` skill, unless
    `.caddis/` is gitignored.
 
 ## Output
