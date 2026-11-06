@@ -55,7 +55,7 @@ Keep it under about 200 lines. For a large repo, keep this as the index and put 
 # <Repo> - Structure
 
 > Generated with the Caddis map skill. The graph behind it: `python3 .caddis/bin/map.py`
-> `uses <file>`, `deps <file>`, `area <dir>`, `orphans`.
+> `uses <file>`, `deps <file>`, `reach <file>...`, `area <dir>`, `orphans`.
 
 ## Areas
 
@@ -101,6 +101,8 @@ Generated code, circular imports, legacy areas, unresolved aliases, anything tha
 - Before planning or changing code: read STRUCTURE.md, then `map.py status`. If stale for
   the areas you are working in, refresh first.
 - Before changing a shared file: `map.py uses <file> --depth 2` for the blast radius.
+- For a whole change: `map.py reach <file>...` gives direct importers, hubs touched, reach
+  by area and the direct importers no test reaches. `--json` for the full lists.
 - To place new code: the "Where new things go" table.
 - Queries rebuild the graph automatically when the tree has moved on, so they are always
   current even when STRUCTURE.md is not.
