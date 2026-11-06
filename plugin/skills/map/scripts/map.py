@@ -13,6 +13,7 @@ Commands:
   status [--hook]    is the map stale? which areas changed since it was built
   uses <path>        what imports this file (add --depth N for transitive)
   deps <path>        what this file imports
+  reach <path>...    blast radius of a change: importers, hubs, reach by area, untested
   area <dir>         files in an area with their in and out degree
   orphans            source files nothing imports (entry points or dead code)
   stamp              the commit stamp line to put at the top of STRUCTURE.md
@@ -32,7 +33,7 @@ import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
-VERSION = "0.1.4"
+VERSION = "0.1.5"
 
 # Directories never mapped, even when tracked by git.
 ALWAYS_SKIP = {
@@ -775,14 +776,22 @@ def structure_commit(out_dir):
         return None
 
 
-def find(g, path):
+def match(g, path):
+    """(file, None) for a path that names one file in the graph, else (None, why not)."""
     path = norm(path)
     if path in g:
-        return path
+        return path, None
     hits = [f for f in g if f.endswith("/" + path)] or [f for f in g if f.endswith(path)]
     if len(hits) == 1:
-        return hits[0]
-    sys.exit(f"'{path}' {'matches ' + str(len(hits)) + ' files: ' + ', '.join(hits[:8]) if hits else 'is not in the map'}")
+        return hits[0], None
+    return None, f"'{path}' {'matches ' + str(len(hits)) + ' files: ' + ', '.join(hits[:8]) if hits else 'is not in the map'}"
+
+
+def find(g, path):
+    f, why = match(g, path)
+    if why:
+        sys.exit(why)
+    return f
 
 
 def cmd_uses(root, out_dir, path, depth):
@@ -812,6 +821,94 @@ def cmd_deps(root, out_dir, path):
         print(f"  {i}  [{g[i]['area']}]")
     if g[f]["packages"]:
         print("  packages: " + ", ".join(g[f]["packages"]))
+
+
+def closure(start, edges):
+    """Every node reachable from start along edges (a dict of sets), start excluded."""
+    seen, stack = set(), list(start)
+    while stack:
+        for y in edges.get(stack.pop(), ()):
+            if y not in seen:
+                seen.add(y)
+                stack.append(y)
+    return seen - set(start)
+
+
+def reach(g, paths):
+    """Blast radius of changing paths, from graph edges only."""
+    rev = reverse(g)
+    targets, unknown = [], []
+    for p in paths:
+        f, why = match(g, p)
+        if why:
+            unknown.append(why)
+        elif f not in targets:
+            targets.append(f)
+    tset = set(targets)
+    direct = sorted({y for t in targets for y in rev.get(t, ())} - tset)
+    radius = closure(targets, rev)
+    # Same rule as summary.md's Hubs: the top 20 most imported files, here with a floor of 3.
+    top = [f for f in sorted(rev, key=lambda f: (-len(rev[f]), f))[:20] if len(rev[f]) >= 3]
+    hubs = [f for f in top if f in radius or f in tset]
+    # A reach file goes through a hub when it imports one that is not a target, directly or not.
+    # Every such hub reaches a target, so the chain continues there. Target hubs are left out:
+    # counted, they would put nearly all of the reach "through a hub" and say nothing.
+    via = closure([h for h in hubs if h not in tset], rev) & radius
+    tests = [f for f in g if TEST_PATH.search(f)]
+    tested = closure(tests, {f: set(n["imports"]) for f, n in g.items()}) | set(tests)
+    areas = Counter(g[f]["area"] for f in radius)
+    via_areas = Counter(g[f]["area"] for f in via)
+    return {
+        "targets": sorted(targets),
+        "unknown": unknown,
+        "direct": direct,
+        "hubs": [{"file": f, "importers": len(rev[f]), "target": f in tset} for f in hubs],
+        "reach": sorted(radius),
+        "by_area": [{"area": a, "files": c, "via_hubs": via_areas.get(a, 0)}
+                    for a, c in sorted(areas.items(), key=lambda x: (-x[1], x[0]))],
+        "via_hubs": len(via),
+        "untested": [f for f in direct if f not in tested],
+    }
+
+
+LIST_MAX = 30
+
+
+def more(items):
+    if len(items) > LIST_MAX:
+        print(f"  ...and {len(items) - LIST_MAX} more (--json lists all)")
+
+
+def cmd_reach(root, out_dir, paths, as_json):
+    g = load(root, out_dir)["files"]
+    r = reach(g, paths)
+    if as_json:
+        print(json.dumps(r, indent=2, sort_keys=True))
+        return
+    for why in r["unknown"]:
+        print(f"Skipped: {why}")
+    if not r["targets"]:
+        sys.stdout.flush()
+        sys.exit("None of the given files are in the map.")
+    print(f"Reach of {len(r['targets'])} file(s): " + ", ".join(r["targets"]))
+    print(f"\nDirect importers: {len(r['direct'])}")
+    for f in r["direct"][:LIST_MAX]:
+        print(f"  {f}  [{g[f]['area']}]")
+    more(r["direct"])
+    print(f"\nHubs touched: {len(r['hubs'])}")
+    for h in r["hubs"]:
+        print(f"  {h['file']}  imported by {h['importers']}{'  (target)' if h['target'] else ''}")
+    print(f"\nReach: {len(r['reach'])} file(s) import the targets, directly or not; "
+          f"{r['via_hubs']} of them through a hub that is not a target")
+    if r["by_area"]:
+        w = max(4, *(len(a["area"]) for a in r["by_area"]))
+        print(f"  {'area':<{w}}  files  via hub")
+        for a in r["by_area"]:
+            print(f"  {a['area']:<{w}}  {a['files']:>5}  {a['via_hubs']:>7}")
+    print(f"\nDirect importers no test reaches: {len(r['untested'])}")
+    for f in r["untested"][:LIST_MAX]:
+        print(f"  {f}  [{g[f]['area']}]")
+    more(r["untested"])
 
 
 def cmd_area(root, out_dir, area):
@@ -893,6 +990,9 @@ def main():
     u.add_argument("--depth", type=int, default=1)
     d = sub.add_parser("deps")
     d.add_argument("path")
+    r = sub.add_parser("reach", help="blast radius of changing these files")
+    r.add_argument("paths", nargs="+")
+    r.add_argument("--json", action="store_true", help="print the result as JSON")
     a = sub.add_parser("area")
     a.add_argument("dir")
     sub.add_parser("orphans")
@@ -914,6 +1014,8 @@ def main():
         cmd_uses(root, out_dir, args.path, args.depth)
     elif args.cmd == "deps":
         cmd_deps(root, out_dir, args.path)
+    elif args.cmd == "reach":
+        cmd_reach(root, out_dir, args.paths, args.json)
     elif args.cmd == "area":
         cmd_area(root, out_dir, args.dir)
     elif args.cmd == "orphans":

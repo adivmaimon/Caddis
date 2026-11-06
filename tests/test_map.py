@@ -167,5 +167,53 @@ class StatusTests(unittest.TestCase):
             self.assertIn("graph.json", fh.read())
 
 
+class ReachTests(unittest.TestCase):
+    # src/core.ts is a hub (4 importers) on the way to the target; src/d.ts imports the target
+    # directly and no test reaches it.
+    FILES = {
+        "src/t.ts": "export const t = 1\n",
+        "src/core.ts": "import { t } from './t'\n",
+        "src/d.ts": "import { t } from './t'\n",
+        "src/a.ts": "import c from './core'\n",
+        "src/b.ts": "import c from './core'\n",
+        "lib/c.ts": "import c from '../src/core'\n",
+        "app/main.ts": "import a from '../src/a'\n",
+        "tests/core.test.ts": "import c from '../src/core'\n",
+    }
+
+    def reach(self, *paths):
+        return json.loads(Repo(self.FILES).map("reach", *paths, "--json"))
+
+    def test_direct_hubs_areas_and_untested(self):
+        r = self.reach("src/t.ts")
+        self.assertEqual(r["targets"], ["src/t.ts"])
+        self.assertEqual(r["direct"], ["src/core.ts", "src/d.ts"])
+        self.assertEqual(r["hubs"], [{"file": "src/core.ts", "importers": 4, "target": False}])
+        self.assertEqual(len(r["reach"]), 7)
+        self.assertEqual(r["via_hubs"], 5)
+        areas = {a["area"]: (a["files"], a["via_hubs"]) for a in r["by_area"]}
+        self.assertEqual(areas, {"src": (4, 2), "lib": (1, 1), "app": (1, 1), "tests": (1, 1)})
+        self.assertEqual(r["untested"], ["src/d.ts"])
+
+    def test_target_hub_is_listed_but_not_counted_as_via(self):
+        r = self.reach("src/core.ts")
+        self.assertEqual(r["hubs"], [{"file": "src/core.ts", "importers": 4, "target": True}])
+        self.assertEqual(r["via_hubs"], 0)
+        self.assertEqual(sorted(r["reach"]), ["app/main.ts", "lib/c.ts", "src/a.ts", "src/b.ts", "tests/core.test.ts"])
+
+    def test_json_shape(self):
+        r = self.reach("src/t.ts")
+        self.assertEqual(sorted(r), ["by_area", "direct", "hubs", "reach", "targets", "unknown", "untested", "via_hubs"])
+
+    def test_unknown_path_is_reported_not_fatal(self):
+        r = Repo(self.FILES)
+        out = r.map("reach", "src/t.ts", "nope.ts")
+        self.assertIn("Skipped: 'nope.ts' is not in the map", out)
+        self.assertIn("Direct importers: 2", out)
+        self.assertIn("Direct importers no test reaches: 1", out)
+        bad = subprocess.run([sys.executable, MAP, "reach", "nope.ts"], cwd=r.dir, capture_output=True, text=True)
+        self.assertNotEqual(bad.returncode, 0)
+
+
 if __name__ == "__main__":
     unittest.main()
