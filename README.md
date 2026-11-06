@@ -153,6 +153,22 @@ source files each mapped in under two seconds.
 [Monty](https://github.com/adivmaimon/monty) reads these lines to show plan progress in VS Code
 and the Mac menu bar.
 
+Every commit made for a plan or task ends with a trailer naming it, so git can answer "which
+plan changed this?":
+
+```
+feat(search): rank exact matches first
+
+Caddis-Plan: project-search-index
+```
+
+```bash
+git log --grep "Caddis-Plan: project-search-index"                          # that plan's commits
+git log --format='%h %(trailers:key=Caddis-Plan,valueonly,separator=%x2C )'  # plan per commit
+```
+
+Repos that keep `.caddis/` gitignored get no trailer, so private plans stay out of history.
+
 ## Settings
 
 - `CADDIS_QUIET=1` hides the `caddis · <skill>` line shown when a skill starts. The line

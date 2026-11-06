@@ -85,7 +85,9 @@ something reads plan files (a deploy script, a changelog tool) and needs set hea
 - Types: feat, fix, refactor, perf, test, docs, chore, ci
 - Scopes: <!-- from the map's areas -->
 - Subject length: <!-- default 72 characters -->
-- Trailers: <!-- e.g. "none", or "Co-Authored-By allowed" -->
+- Trailers: <!-- e.g. "none", or "Co-Authored-By allowed". Caddis always adds its own
+  `Caddis-Plan:` or `Caddis-Task:` trailer to commits for a plan or task, unless
+  .caddis/ is gitignored -->
 - `.caddis/` in git: yes <!-- "no" when .caddis/ is gitignored to keep plans private: plan
   files are then moved with mv, never staged or force-added, and never named in commits -->
 
