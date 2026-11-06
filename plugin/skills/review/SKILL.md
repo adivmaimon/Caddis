@@ -22,6 +22,10 @@ of plans `/caddis:build` can run start to finish without asking anything.
      phase first with variants, a baseline, real measures and a rule for the winner.
    - Dependencies between plans are explicit and the order respects them.
    - Any user-facing copy follows the Brand doc, if there is one.
+   - Every `chart` and `flow` block is valid YAML with the keys and values the `project`
+     skill gives: a chart has `title`, `better` (`lower` or `higher`) and `rows` of
+     `[label, number]` plus an optional `winner` or `rejected` tag; a flow has `title` and
+     `steps`, and every `branch` `from` and `to` names a step. Fix a broken block in place.
    - It carries the sections caddis.md's Plans section requires, in the stated format, or
      the Silent marker. With no Plans config, a plain-language `## Summary`.
    Then hand each plan to the `plan-reviewer` agent (just the plan's path) for a fresh read
