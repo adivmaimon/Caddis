@@ -102,6 +102,40 @@ If caddis.md's Plans section lists Required sections, write those in their state
 place of `## Summary` (or as well, if it says Keep Summary), and follow its Other rules. A
 plan with nothing for those readers gets the Silent marker instead, if one is defined.
 
+### Charts and flows
+
+Optional. Prose and tables are always fine. Each block is YAML in a fenced block, readable
+as text; viewers that know the block draw it. Use Mermaid for any other diagram.
+
+A `chart` for Experiment results. `better` is `lower` or `higher`; a row's third item, if
+any, is `winner` or `rejected`; `threshold` and `note` are optional.
+
+```chart
+title: p95 search latency (ms)
+better: lower
+threshold: 120
+rows:
+  - [baseline, 180]
+  - [trigram index, 95, winner]
+  - [full scan cache, 140, rejected]
+note: 10k queries, same fixture set
+```
+
+A `flow` for a lifecycle or state change the plan introduces. `steps` maps name to detail,
+in order. `branch` is optional; `from` and `to` name steps, `tone` is `good`, `bad` or
+`neutral`.
+
+```flow
+title: Upload lifecycle
+steps:
+  queued: file accepted, job created
+  scanning: virus scan
+  ready: visible to the user
+  rejected: user told why
+branch:
+  - {from: scanning, if: scan fails, to: rejected, tone: bad}
+```
+
 ## 3. Check
 
 Re-read the plan against the code: every file named exists or is created by the plan,
