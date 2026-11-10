@@ -46,6 +46,57 @@ rules, anything it had to guess) and commits.
 
 Needs Claude Code with plugin support, git, and Python 3.8+ for the map script.
 
+## Workflow
+
+Every change takes one of three paths, by size and risk:
+
+```mermaid
+flowchart LR
+  R[Request] --> S{Size and risk}
+  S -->|typo, bump, docs| Q[Edit, check, commit]
+  S -->|small, low risk| T["/caddis:task"]
+  S -->|anything else| P["/caddis:project"]
+  R -.->|worth doing?| E["/caddis:evaluate"] -.-> P
+  T -->|turns risky| P
+  P --> V["/caddis:review"]
+  V --> B["/caddis:build"]
+  B --> C["/caddis:complete"]
+```
+
+Review is the last time anyone is asked a question. The build decides, records why, and
+stops only for the hard stops in `caddis.md`.
+
+### Who's involved
+
+| | Solo | Engineering team | Team with product owners |
+| --- | --- | --- | --- |
+| `.caddis/` | Committed, or gitignored to keep plans private | Committed: `caddis.md` is the team's rulebook | Committed |
+| Product section | Empty | Empty | Owners, tracker, sign-off route |
+| Review asks | You | The plan's author | Author: technical. Product owner: the Summary |
+| Plans are read | By you | In the PR that adds them | In the PR, plus sign-off on the ticket or PR |
+
+With product owners, the owner writes the intent and signs off the Summary. Engineers do
+the rest:
+
+```mermaid
+sequenceDiagram
+  participant PO as Product owner
+  participant Eng as Engineer
+  participant C as Claude
+  PO->>C: /caddis:intent, as a file or a ticket
+  Eng->>C: /caddis:project ABC-123
+  Eng->>C: /caddis:review
+  C->>Eng: technical questions, all at once
+  C->>PO: plain Summary and product questions
+  Eng->>C: /caddis:build
+  PO->>Eng: signs off before merge
+  Eng->>C: /caddis:complete
+  C->>PO: what shipped, on the ticket
+```
+
+By default the build doesn't wait for sign-off. Set `Wait for sign-off: yes` in
+`caddis.md` to hold a plan until the owner approves.
+
 ## Skills
 
 | When | Skill |
