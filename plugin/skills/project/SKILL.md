@@ -1,6 +1,6 @@
 ---
 name: project
-description: Write a plan for a piece of work into .caddis/projects/active/ as project-<name>.md, without implementing it. Use when the user asks to create a project, write a plan or plan out a feature. Triages small low-risk work to /caddis:task instead.
+description: Write a plan for a piece of work into .caddis/projects/active/ as project-<name>.md, without implementing it. Use when the user asks to create a project, write a plan or plan out a feature, including from an intent file or a ticket key. Triages small low-risk work to /caddis:task instead.
 ---
 
 Write a plan for the work described in my message. Do not implement it.
@@ -14,20 +14,27 @@ it is a project.
 
 ## 1. Gather
 
+- **The intent.** If my message names an intent file or a ticket key, read it (a ticket
+  with the tracker tool in caddis.md's Product section). It is the brief: the plan delivers
+  its Outcome and Done when, and stays inside Out of scope. Link it; don't copy it. If the
+  work changes what users see and caddis.md lists Product owners but there is no intent,
+  say so in one line and carry on.
 - Read `.caddis/caddis.md` and `.caddis/map/STRUCTURE.md`. If the map is missing or
   `python3 .caddis/bin/map.py status` says it is stale for the areas involved,
   refresh it first with the `map` skill.
 - Read the docs listed under Docs in `caddis.md`, and at least one existing plan in
   `.caddis/projects/active/` or `.caddis/projects/completed/` to match tone and shape.
 - Read the code the plan will touch. Use `python3 .caddis/bin/map.py uses <file>` to find
-  what depends on it.
-  Name nothing the code has not confirmed.
+  what depends on it. Name nothing the code has not confirmed.
 - If a Reference repo already solved this, read how.
 
 ## 2. Write
 
-File: `.caddis/projects/active/project-<kebab-name>.md`. About 100 lines for one phase; each phase
-of a longer plan fits on one screen. Concrete and technical, not corporate.
+File: `.caddis/projects/active/project-<kebab-name>.md`. Concrete and technical, not
+corporate. Short: about 60 lines for one phase, and each phase of a longer plan fits on one
+screen. **Leave out any section with nothing to say.** No "None" or "Skipped" lines; a
+missing section means none. Goal, Summary, Context, Changes and Verification are always
+there.
 
 If the plan changes a decision recorded in the Architecture doc or `caddis.md`, say so
 plainly and argue for it. Never diverge quietly.
@@ -41,29 +48,32 @@ plainly and argue for it. Never diverge quietly.
 **Type:** Project | Master plan
 **Phases:** <n>
 **Depends on:** <plan files, or None>
+**Intent:** <intent path or ticket key, or None>
 
 ## Goal
 One sentence: what this achieves and why it matters to the user.
 
+## Summary
+For the product owner and anyone non-technical. Plain-language bullets: what changes for
+users and why. Then:
+**Done when:** the intent's checks, in its words (or your own, in product terms).
+**Questions for product:** only scope or behaviour questions, each with a suggested answer.
+
 ## Context
-What exists now, what is missing or broken, what the user would notice. File paths and
-line numbers.
+What exists now, what is missing or broken. File paths and line numbers.
 
 ## Risk
 Low / Medium / High and why, using caddis.md's Risk list. Mitigation: phasing, reduced
-scope, flag, rollback. Name the metric or test that would catch a regression.
+scope, flag, rollback. The metric or test that would catch a regression.
 
 ## Experiment
-Only when caddis.md has Experiments set and this changes behaviour. Otherwise one line:
-"Skipped: <reason>".
-- Variants: the approach, real alternatives, and current behaviour as the baseline
-- How each runs: the real code path, the benchmark command, nothing mocked
-- Measures: the metrics from caddis.md that can move
-- Winner: the threshold, and what happens if nothing beats the baseline
-- Results: a table filled in before implementation starts
+Only when caddis.md has Experiments set and this changes behaviour: variants (the approach,
+real alternatives, current behaviour as baseline), how each runs (the real code path, the
+benchmark command, nothing mocked), the metrics, the rule for a winner, and a results table
+filled in before implementation starts.
 
 ## Key Reference Files
-Paths: files being edited, the Architecture doc section, reference repo files.
+Files to read but not edit: the Architecture doc section, reference repo files.
 
 ## Changes
 Every file that changes and how: functions, types, constants, new and deleted files. A
@@ -71,10 +81,10 @@ table if long. Name what is **reused**. Before proposing a new module, say what 
 searched and why nothing existing fits.
 
 ## Invariants
-Which numbered Invariants this touches and how each holds. "None touched" if so.
+Which numbered Invariants this touches and how each holds.
 
 ## Storage & State
-Migrations, new files, settings keys, upgrade path for existing data. "None" if so.
+Migrations, new files, settings keys, upgrade path for existing data.
 
 ## Phases
 For large, risky or multi-layer work. Each phase: what it delivers and a gate a machine can
@@ -91,57 +101,35 @@ New and changed logic to test, highest value first, per caddis.md's Tests priori
 Numbered end-to-end steps. Name the automated checks.
 
 ## Open Questions
-Each with a recommended default. /caddis:review asks the owner once; the build never stops
-to ask.
-
-## Summary
-Plain-language bullets for a non-developer: what changes and why it matters.
+Technical questions, each with a recommended default. /caddis:review asks the owner once;
+the build never stops to ask.
 ```
 
-If caddis.md's Plans section lists Required sections, write those in their stated format in
-place of `## Summary` (or as well, if it says Keep Summary), and follow its Other rules. A
-plan with nothing for those readers gets the Silent marker instead, if one is defined.
+The Summary follows the Writing rules in caddis.md's Product section. It is the only part
+a product owner needs to read, and the part they sign off.
+
+If caddis.md's Plans section lists Required sections, write those in their stated format at
+the end. They replace `## Summary` only when caddis.md has no Product section and Keep
+Summary is not yes. Follow its Other rules. A plan with nothing for those readers gets the
+Silent marker instead, if one is defined.
 
 ### Charts and flows
 
-Optional. Prose and tables are always fine. Each block is YAML in a fenced block, readable
-as text; viewers that know the block draw it. Use Mermaid for any other diagram.
-
-A `chart` for Experiment results. `better` is `lower` or `higher`; a row's third item, if
-any, is `winner` or `rejected`; `threshold` and `note` are optional.
-
-```chart
-title: p95 search latency (ms)
-better: lower
-threshold: 120
-rows:
-  - [baseline, 180]
-  - [trigram index, 95, winner]
-  - [full scan cache, 140, rejected]
-note: 10k queries, same fixture set
-```
-
-A `flow` for a lifecycle or state change the plan introduces. `steps` maps name to detail,
-in order. `branch` is optional; `from` and `to` name steps, `tone` is `good`, `bad` or
-`neutral`.
-
-```flow
-title: Upload lifecycle
-steps:
-  queued: file accepted, job created
-  scanning: virus scan
-  ready: visible to the user
-  rejected: user told why
-branch:
-  - {from: scanning, if: scan fails, to: rejected, tone: bad}
-```
+Optional; prose and tables are always fine. Each is YAML in a fenced block. Use Mermaid for
+any other diagram.
+- ` ```chart `: `title`, `better` (`lower` or `higher`), `rows` of `[label, number]` with an
+  optional third item `winner` or `rejected`; optional `threshold` and `note`. For
+  Experiment results.
+- ` ```flow `: `title`, `steps` (name: detail, in order), optional `branch` list of
+  `{from, if, to, tone}` where `from` and `to` name steps and `tone` is `good`, `bad` or
+  `neutral`. For a lifecycle or state change the plan introduces.
 
 ## 3. Check
 
-Re-read the plan against the code: every file named exists or is created by the plan,
-every risk and side effect is covered, nothing is assumed, the Plans sections are present and
-well formed. Fix it, then confirm the filename
-and scope in two lines.
+Re-read the plan against the code and the intent: every file named exists or is created by
+the plan, every Done when check is covered by Verification, nothing outside Out of scope is
+built, every risk and side effect is covered, nothing is assumed. Fix it, then confirm the
+filename and scope in two lines.
 
 ## Rules
 
@@ -149,3 +137,4 @@ and scope in two lines.
 - The plan lands as its own `docs:` commit via the `commit` skill, unless `.caddis/` is
   gitignored (then there is nothing to commit).
 - Phase headings must be `### Phase N - <name>` so progress tools can read them.
+- An intent file that this plan delivers gets `**Status:** Planned (project-<name>)`.

@@ -36,6 +36,9 @@ SendMessage, along with any decision I'd want to hear about before the end.
 - Every plan in scope has a `**Reviewed:**` line. If one doesn't, review it as the `review`
   skill does, but take each open question's default instead of asking. Record each as
   `(default, YYYY-MM-DD)` and mark it `**Reviewed:** YYYY-MM-DD (defaults, no owner input)`.
+- A plan marked `**Signed off:** pending` still builds, unless caddis.md's Wait for
+  sign-off is yes: then skip it and any plan that depends on it. Either way, list it as
+  waiting for product sign-off. Never sign off for the product owner.
 - Run the `learn` skill if it hasn't run this session.
 
 ## The loop
@@ -58,7 +61,8 @@ when the reviewed plans are done, name the next one worth writing and stop.
 - **A decision the plan didn't make:** pick the option that best fits caddis.md, the
   docs it lists (the Architecture doc and any doc on how the project works or what it
   values) and the plan. Record it under `## Decisions During Build` with a one-line
-  reason. Continue.
+  reason. Continue. If every option breaks something the Summary promises users, take the
+  closest, record it, and list it in the output for the product owner.
 - **The plan is wrong:** fix the plan, record what changed and why, continue.
 - **A failing gate:** fix the root cause. Try at least three different approaches before
   calling it blocked. Never weaken a test or silence a check to pass.

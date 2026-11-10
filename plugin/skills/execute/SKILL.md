@@ -18,6 +18,8 @@ just carries on.
    decision with no feature code.
 4. If the plan is ambiguous or contradicts the code, the code wins. Fix the plan, record it
    under `## Decisions During Build`, and carry on. Never diverge silently.
+5. If the plan has an Intent, read it. The Summary's Done when checks are part of every
+   final gate.
 
 ## 2. Explore
 
@@ -38,6 +40,11 @@ Work through Changes one file at a time, phase by phase.
 - **Check as you go.** Run lint, typecheck and format from caddis.md after each meaningful
   file. Never silence a rule to get green.
 - **No scope creep.** Note unrelated problems for the summary; don't fix them here.
+- **Keep the plan true.** When the work departs from Changes (a different file, function
+  or approach), update Changes in the same commit as the code, with a line under
+  `## Decisions During Build`. The plan must describe what was built, not what was guessed.
+  Never change the Summary on your own: if what users get must differ, record it and say so
+  in the final summary for the product owner.
 
 ## 4. Gate each phase
 

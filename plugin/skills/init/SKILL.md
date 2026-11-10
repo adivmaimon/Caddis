@@ -39,7 +39,9 @@ Gather evidence. Prefer what the repo does over what its docs say.
   deploy scripts, anything that sends data off the machine. Note any script that reads plan
   files and which headings or marker lines it looks for.
 - **Docs:** an architecture or decisions doc, a progress log or changelog, brand or copy
-  rules.
+  rules, plain-language or writing rules.
+- **Product:** ticket keys in commit subjects and branch names (`ABC-123`), a tracker named
+  in docs or settings, a product owner named in docs, an existing intent or spec folder.
 - **Logs and benchmarks:** where runtime logs go; any benchmark or eval harness.
 
 ## 3. Map
@@ -54,7 +56,11 @@ item came from when it isn't obvious. Rules:
 - **Invariants:** only rules the repo already states or clearly enforces in code. Never
   invent one. If none are stated, leave the section with a comment and ask the owner.
 - **Risk:** keep the defaults, add what this repo makes risky.
-- **Hard stops:** keep the defaults, add repo-specific ones (e.g. a deploy script).
+- **Hard stops:** keep the defaults, add repo-specific ones (e.g. a deploy script, a
+  shared database URL in env files).
+- **Product:** fill only if a product owner takes part, or the owner says so in step 5.
+  Tracker from the evidence; Writing points at existing writing rules rather than copying
+  them.
 - **Experiments:** fill only if a benchmark or eval harness exists.
 - **Plans:** fill only if something reads plan files: a deploy, notify or changelog script
   that parses plan headings or skips files on a marker line, or required sections stated in
@@ -76,7 +82,8 @@ code for everyone. Private suits a public repo whose owner keeps plans to themse
 
 Collect everything that needs the owner and ask in **one batch**, each with your
 recommended answer: the Invariants, anything marked `(guess - confirm)`, extra hard stops,
-whether to turn on Experiments, the commit trailer policy, and any migration choices from
+whether to turn on Experiments, whether product owners write intents (and the tracker and
+sign-off route), the commit trailer policy, and any migration choices from
 step 7, and private or shared. Use the question tool if there is one. If nobody answers, take the recommendations,
 mark them `(default, YYYY-MM-DD)`, and carry on.
 
@@ -111,7 +118,8 @@ agrees.
 
 ## 8. Wire it up
 
-- **Folders:** `.caddis/projects/active/.gitkeep` and `.caddis/projects/completed/.gitkeep`.
+- **Folders:** `.caddis/projects/active/.gitkeep` and `.caddis/projects/completed/.gitkeep`,
+  plus `.caddis/intents/.gitkeep` when Product is set.
 - **CLAUDE.md:** add `templates/claude-md-block.md` between its markers near the top,
   or replace the existing block on re-init. Create CLAUDE.md if missing. Don't move other
   content without asking; if CLAUDE.md holds commands or rules that now live in caddis.md,

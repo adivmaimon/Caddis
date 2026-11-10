@@ -5,6 +5,10 @@ description: Handle a small, low-risk change end to end - write a short task fil
 
 A task is a project with less ceremony: a short record, then the work, in one go.
 
+**Too small for a task:** a typo, a copy or config value, a dependency bump with no
+behaviour change, a comment or docs fix. Skip the task file: make the change, run the
+relevant checks and commit with the `commit` skill, no Caddis trailer. Say so in one line.
+
 ## 1. Qualify
 
 Read `.caddis/caddis.md`. It is a task only if **all** hold:

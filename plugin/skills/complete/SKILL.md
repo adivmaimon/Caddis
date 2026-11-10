@@ -10,8 +10,9 @@ Mark the plan named in my message complete by moving it from `.caddis/projects/a
 
 1. Find the matching file in `.caddis/projects/active/`.
 2. Check its Verification was actually worked through, and that it ends right:
-   - No Plans config: a plain-language `## Summary` a non-developer can read. Rewrite it if
-     missing or too technical: bullets, one change each.
+   - A plain-language `## Summary` a non-developer can read (unless Plans config replaces
+     it). Rewrite it if missing or too technical: bullets, one change each. Each Done when
+     check in it was met, or the outcome record says why not.
    - Plans config: every Required section, in its exact format and heading level, unless
      the file carries the Silent marker. Tasks follow the Tasks line. Write or repair what
      is missing or malformed, and apply the Other rules.
@@ -29,7 +30,11 @@ Mark the plan named in my message complete by moving it from `.caddis/projects/a
 5. Move the file: `git mv` when `.caddis/` is tracked, plain `mv` when it is gitignored.
    The folder is the source of truth for completion.
 6. If caddis.md lists a Progress log, add a one-paragraph entry at its top.
-7. Confirm the new path in one or two sentences. Next is usually the `commit` skill.
+7. If the plan has an Intent file and this plan delivered all of it, set the intent's
+   `**Status:** Done (project-<name>)`. If the Intent is a ticket and caddis.md's Sign-off
+   is `tracker comment`, post a short comment there: what shipped, in Summary language, and
+   any Done when check that changed.
+8. Confirm the new path in one or two sentences. Next is usually the `commit` skill.
 
 ## When not to complete
 

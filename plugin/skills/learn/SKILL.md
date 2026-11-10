@@ -10,8 +10,10 @@ Build context before doing anything else. Keep it quick: skim, don't read everyt
 
 ## 2. Active work
 List `.caddis/projects/active/`. For each file note its Type (project, master plan, task), Status
-line, Reviewed line and which phases are marked DONE. Read the ones relevant to what the
-user is likely to work on.
+line, Reviewed line, Signed off line and which phases are marked DONE. Read the ones
+relevant to what the user is likely to work on. If caddis.md has a Product section, list
+intents in its Intents folder marked Accepted (ready to plan) and plans whose sign-off is
+pending.
 
 ## 3. Recently shipped
 Read the three most recently modified files in `.caddis/projects/completed/` to see what shipped

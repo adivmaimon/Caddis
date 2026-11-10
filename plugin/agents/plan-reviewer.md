@@ -39,6 +39,9 @@ format or run anything heavy.
   for picking the winner.
 - **Reuse:** it proposes something new where the code already has one (grep for it).
 - **Hard stops:** no step needs one unless the plan says the owner does it.
+- **Intent:** if the plan has an Intent line, read the intent file, or the ticket text you
+  were given (you can't reach the tracker; with neither, say the check was skipped). Every Done when check is covered by a gate or a Verification step, and nothing
+  under Out of scope is built.
 - **Required sections:** what caddis.md's Plans section asks for, in its format.
 - **Open questions:** anything the build would have to guess that isn't listed.
 
