@@ -16,6 +16,7 @@ start=$1
 estimate=$(( $2 * 60 ))
 shift 2
 
+top=$(git rev-parse --show-toplevel 2>/dev/null)
 git_dir=$(git rev-parse --absolute-git-dir 2>/dev/null) || { echo "progress.sh: not a git repo" >&2; exit 2; }
 state="$git_dir/caddis-progress-$start"
 # The common dir, so a build in a worktree lands where the panel looks: $.session.repo() names
@@ -26,14 +27,41 @@ tick=${CADDIS_PROGRESS_TICK:-15}
 # Long enough to ride out a normal test run between edits, short enough to catch a hang.
 stuck_after=1200
 
+# The caddis/* worktrees, one path per line, refreshed each tick by scan.
+worktrees() {
+  git worktree list --porcelain 2>/dev/null | awk '
+    /^worktree /{wt = substr($0, 10)}
+    /^branch refs\/heads\/caddis\//{print wt}'
+}
+
+# The copy of a project to read. Builders in worktrees mark phases in their own copy when
+# .caddis/ is tracked, so take a completed copy anywhere first, then the active copy with
+# the most DONE markers, this checkout winning ties.
+locate() {
+  local name=$1 plan=$2 wt f n best="" best_n=-1
+  for f in "$top/.caddis/projects/completed/$name"; do
+    [ -f "$f" ] && { echo "$f"; return; }
+  done
+  while IFS= read -r wt; do
+    [ -n "$wt" ] && [ -f "$wt/.caddis/projects/completed/$name" ] \
+      && { echo "$wt/.caddis/projects/completed/$name"; return; }
+  done <<< "$wts"
+  while IFS= read -r f; do
+    [ -f "$f" ] || continue
+    n=$(grep -c '^### Phase [0-9].* - DONE (' "$f")
+    [ "$n" -gt "$best_n" ] && best=$f best_n=$n
+  done < <(echo "$plan"; [ -n "$wts" ] && printf '%s\n' "$wts" | sed "s|\$|/.caddis/projects/active/$name|")
+  echo "${best:-$plan}"
+}
+
 # Sets total, done, open and current from the project files.
 scan() {
+  wts=$(worktrees)
   total=0 done=0 open=0 current=""
   local plan name file phases marked
   for plan in "$@"; do
     name=$(basename "$plan")
-    file="$plan"
-    [ -f "$file" ] || file=".caddis/projects/completed/$name"
+    file=$(locate "$name" "$plan")
     phases=0 marked=0
     if [ -f "$file" ]; then
       phases=$(grep -c '^### Phase [0-9]' "$file")
@@ -73,8 +101,7 @@ json_str() {
 project_json() {
   local plan=$1 name file complete=false phases="" current="" line title isdone decisions=0 sep=""
   name=$(basename "$plan")
-  file="$plan"
-  [ -f "$file" ] || file=".caddis/projects/completed/$name"
+  file=$(locate "$name" "$plan")
   case "$file" in *projects/active/*) ;; *) complete=true ;; esac
   if [ -f "$file" ]; then
     while IFS= read -r line; do
@@ -133,8 +160,7 @@ last_activity() {
     [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
   done < <(git ls-files -m -o --exclude-standard -z 2>/dev/null)
   for plan in "${plans[@]}"; do
-    file="$plan"
-    [ -f "$file" ] || file=".caddis/projects/completed/$(basename "$plan")"
+    file=$(locate "$(basename "$plan")" "$plan")
     [ -f "$file" ] || continue
     stamp=$(stat -c %Y "$file" 2>/dev/null || stat -f %m "$file" 2>/dev/null)
     [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
