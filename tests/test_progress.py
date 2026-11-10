@@ -1,5 +1,6 @@
 """Tests for the build progress reporter (plugin/skills/build/scripts/progress.sh)."""
 
+import json
 import os
 import shutil
 import subprocess
@@ -13,7 +14,9 @@ PLAN = ".caddis/projects/active/project-demo.md"
 TWO_PHASES = "### Phase 1 - One - DONE (2026-01-01)\n\n### Phase 2 - Two\n"
 
 
-class ProgressTest(unittest.TestCase):
+class ScriptTest(unittest.TestCase):
+    """A temp git repo with Caddis project folders, and a way to run the script in it."""
+
     def setUp(self):
         self.repo = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.repo)
@@ -40,6 +43,8 @@ class ProgressTest(unittest.TestCase):
             out, _ = proc.communicate()
             return out, None
 
+
+class ProgressTest(ScriptTest):
     def test_short_build_stays_silent(self):
         self.write_plan()
         out, code = self.run_for(0, 3)
@@ -87,6 +92,60 @@ class ProgressTest(unittest.TestCase):
         out, _ = self.run_for(6, 20)
         self.assertIn("0/1 phases", out)
         self.assertIn("Current: project-demo.", out)
+
+
+class StatusFileTest(ScriptTest):
+    """caddis-build.json, written every tick for the build panel mod."""
+
+    def status(self):
+        return json.loads((self.repo / ".git/caddis-build.json").read_text())
+
+    def test_phases_and_current_phase_per_project(self):
+        self.write_plan()
+        self.run_for(1, 20)
+        s = self.status()
+        self.assertEqual((s["phases_done"], s["phases_total"], s["done"]), (1, 2, False))
+        self.assertEqual(s["estimate"], 1200)
+        p = s["projects"][0]
+        self.assertEqual(p["name"], "project-demo")
+        self.assertEqual(p["phases"], [{"name": "Phase 1 - One", "done": True},
+                                       {"name": "Phase 2 - Two", "done": False}])
+        self.assertEqual(p["current"], "Phase 2 - Two")
+        self.assertFalse(p["complete"])
+
+    def test_decisions_are_counted_under_their_heading_only(self):
+        self.write_plan(TWO_PHASES + "\n## Decisions During Build\n- one\n- two\n\n## Notes\n- not a decision\n")
+        self.run_for(1, 20)
+        self.assertEqual(self.status()["projects"][0]["decisions"], 2)
+
+    def test_quiet_flag_follows_last_activity(self):
+        self.write_plan()
+        old = time.time() - 30 * 60
+        os.utime(self.repo / PLAN, (old, old))
+        self.run_for(30, 60)
+        self.assertTrue(self.status()["quiet"])
+        self.write_plan()
+        self.run_for(30, 60)
+        self.assertFalse(self.status()["quiet"])
+
+    def test_done_after_the_last_project_moves(self):
+        self.write_plan()
+        self.run_for(1, 20)
+        shutil.move(self.repo / PLAN, self.repo / ".caddis/projects/completed/project-demo.md")
+        out, code = self.run_for(1, 20)
+        self.assertEqual(code, 0)
+        s = self.status()
+        self.assertTrue(s["done"])
+        self.assertEqual((s["phases_done"], s["phases_total"]), (2, 2))
+        self.assertTrue(s["projects"][0]["complete"])
+        self.assertTrue(all(ph["done"] for ph in s["projects"][0]["phases"]))
+
+    def test_phase_name_with_a_quote_and_a_tab_stays_valid_json(self):
+        self.write_plan('### Phase 1 - Say "hi"\\now\tthen\n')
+        self.run_for(1, 20)
+        p = self.status()["projects"][0]
+        self.assertEqual(p["phases"][0]["name"], 'Phase 1 - Say "hi"\\nowthen')
+        self.assertEqual(p["current"], 'Phase 1 - Say "hi"\\nowthen')
 
 
 if __name__ == "__main__":

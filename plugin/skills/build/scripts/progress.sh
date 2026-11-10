@@ -3,6 +3,8 @@
 # under the Monitor tool: each stdout line is an event. Reads project files and git, so it needs
 # nothing from the builder and still reports when the builder has hung. Exits 0 once every
 # project is in completed/. Safe to re-arm with the same arguments: state is kept per build.
+# Every tick it also writes caddis-build.json in the git common dir for the build panel mod
+# (plugin/hooks/panel.tsx) and leaves it there with "done": true at the end.
 #
 # Usage: progress.sh <start-epoch> <estimate-minutes> <project-path>...
 
@@ -16,6 +18,10 @@ shift 2
 
 git_dir=$(git rev-parse --absolute-git-dir 2>/dev/null) || { echo "progress.sh: not a git repo" >&2; exit 2; }
 state="$git_dir/caddis-progress-$start"
+# The common dir, so a build in a worktree lands where the panel looks: $.session.repo() names
+# the main working tree's root for a worktree.
+common_dir=$(cd "$(git rev-parse --git-common-dir)" 2>/dev/null && pwd) || common_dir=$git_dir
+status_file="$common_dir/caddis-build.json"
 tick=${CADDIS_PROGRESS_TICK:-15}
 # Long enough to ride out a normal test run between edits, short enough to catch a hang.
 stuck_after=1200
@@ -53,6 +59,59 @@ scan() {
   done
 }
 
+# A JSON string: backslash and quote escaped, control characters (tabs included) dropped.
+json_str() {
+  local s
+  s=$(printf '%s' "$1" | tr -d '\000-\037')
+  s=${s//\\/\\\\}
+  s=${s//\"/\\\"}
+  printf '"%s"' "$s"
+}
+
+# One project as a JSON object: its phases with done flags, the current phase and how many
+# bullets sit under its Decisions During Build heading.
+project_json() {
+  local plan=$1 name file complete=false phases="" current="" line title isdone decisions=0 sep=""
+  name=$(basename "$plan")
+  file="$plan"
+  [ -f "$file" ] || file=".caddis/projects/completed/$name"
+  case "$file" in *projects/active/*) ;; *) complete=true ;; esac
+  if [ -f "$file" ]; then
+    while IFS= read -r line; do
+      title=${line#\#\#\# }
+      isdone=false
+      case "$line" in *" - DONE ("*) isdone=true; title=${title% - DONE (*} ;; esac
+      [ "$complete" = true ] && isdone=true
+      [ "$isdone" = false ] && [ -z "$current" ] && current=$title
+      phases="$phases$sep{\"name\":$(json_str "$title"),\"done\":$isdone}"
+      sep=","
+    done < <(grep '^### Phase [0-9]' "$file")
+    decisions=$(awk '/^## /{on = ($0 ~ /^## Decisions During Build/)} on && /^[-*] /{n++} END{print n+0}' "$file")
+  fi
+  printf '{"name":%s,"complete":%s,"phases":[%s],"current":%s,"decisions":%s}' \
+    "$(json_str "${name%.md}")" "$complete" "$phases" \
+    "$( [ -n "$current" ] && json_str "$current" || echo null )" "$decisions"
+}
+
+# Writes the status file atomically (a temp file, then mv), so the panel never reads half.
+write_status() {
+  local finished=$1 now idle quiet=false projects="" sep="" plan tmp
+  now=$(date +%s)
+  idle=$(( now - $(last_activity) ))
+  [ "$idle" -ge "$stuck_after" ] && quiet=true
+  for plan in "${plans[@]}"; do
+    projects="$projects$sep$(project_json "$plan")"
+    sep=","
+  done
+  tmp="$status_file.tmp.$$"
+  printf '{"version":1,"start":%s,"estimate":%s,"elapsed":%s,"left":%s,"phases_done":%s,"phases_total":%s,"last_activity":%s,"idle":%s,"quiet":%s,"done":%s,"current":%s,"projects":[%s]}\n' \
+    "$start" "$estimate" "$(( now - start ))" "${left:-null}" "$done" "$total" "$(( now - idle ))" \
+    "$idle" "$quiet" "$finished" "$( [ -n "$current" ] && json_str "$current" || echo null )" \
+    "$projects" > "$tmp" 2>/dev/null && mv -f "$tmp" "$status_file" 2>/dev/null
+  rm -f "$tmp" 2>/dev/null
+  return 0
+}
+
 fmt() {
   local minutes=$(( $1 / 60 ))
   if [ "$minutes" -lt 1 ]; then echo "<1m"
@@ -72,6 +131,7 @@ last_activity() {
   echo "$newest"
 }
 
+plans=("$@")
 scan "$@"
 if [ -f "$state" ]; then
   read -r last base < "$state"
@@ -84,6 +144,8 @@ while :; do
   scan "$@"
   if [ "$open" -eq 0 ]; then
     rm -f "$state"
+    left=0
+    write_status true
     exit 0
   fi
 
@@ -97,6 +159,7 @@ while :; do
     left=$(( estimate - elapsed ))
   fi
   if [ "$left" -gt 0 ]; then length=$(( elapsed + left )); else length=$elapsed; fi
+  write_status false
 
   if [ "$length" -lt 300 ]; then interval=0
   elif [ "$length" -le 1800 ]; then interval=300
