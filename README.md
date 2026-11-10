@@ -84,8 +84,7 @@ plan's plain Summary. Engineers do the rest.
 
 ```mermaid
 flowchart LR
-  I["Intent"] --> P["/caddis:project"] --> V["/caddis:review"] --> B["/caddis:build"] --> M[Merge] --> C["/caddis:complete"]
-  V -.->|Summary| S["Sign-off"] -.-> M
+  I["Intent"] --> P["/caddis:project"] --> V["/caddis:review<br>sends the Summary"] --> B["/caddis:build"] --> S["Sign-off<br>any time before merge"] --> M[Merge] --> C["/caddis:complete"]
   classDef po fill:#f2b950,stroke:#a8741a,color:#1b1b1f
   class I,S po
 ```
