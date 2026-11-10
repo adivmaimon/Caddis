@@ -46,7 +46,12 @@ gate, silences a check or skips the gate-verifier.
    just the project's path, plus the ticket's text when its Intent is a ticket (the agent has
    no tracker tool). Run up to Machine limits' Parallel agents at once (default: no
    cap). Treat its blocking findings as yours to fix; judge its minor ones.
-3. **Measure reach.** For each project, run `python3 .caddis/bin/map.py reach <files>` on the
+3. **Check what can build in parallel.** Run `python3 <the build skill's scripts
+   folder>/waves.py --ignore <Workflow's Merge by rule files> <projects in build order>`.
+   From its `sequenced` list, name each project that will run after another because they
+   share files, and the files. If a shared file is one every project touches by rule (a
+   version file), suggest adding it to Merge by rule.
+4. **Measure reach.** For each project, run `python3 .caddis/bin/map.py reach <files>` on the
    existing files its Changes list (skip ones it creates). Write the result into its Risk
    section as a `**Reach:**` paragraph, one or two sentences on what the change touches,
    then a table:
@@ -57,17 +62,17 @@ gate, silences a check or skips the gate-verifier.
 
    Name any hubs it touches in the paragraph. With no reach, one line saying so, no table. If the reach and the stated Risk level
    disagree (a wide reach rated low, or a hub change with no Risk note), that is an owner
-   question for step 5, with your recommended level. Add each direct importer no test
+   question for step 6, with your recommended level. Add each direct importer no test
    reaches to the project's Tests section as a suggested entry.
-4. **Fix what you can** directly: stale paths, missing gates, wrong order, vague steps.
-5. **Collect every technical question** across all projects, including each project's Open
+5. **Fix what you can** directly: stale paths, missing gates, wrong order, vague steps.
+6. **Collect every technical question** across all projects, including each project's Open
    Questions. Ask them **once, together**, each with a recommended answer. Ask only what
    changes what gets built; decide the rest and record it. Scope and behaviour questions
    belong to product: move them to the Summary's Questions for product instead.
-6. **Write the answers in** as decisions `(owner, YYYY-MM-DD)`. Give every remaining open
+7. **Write the answers in** as decisions `(owner, YYYY-MM-DD)`. Give every remaining open
    question a default the build will use.
-7. **Mark each project** with `**Reviewed:** YYYY-MM-DD` under its Status line.
-8. **Product sign-off.** Skip unless Product is on (caddis.md's Product owners line names someone), its
+8. **Mark each project** with `**Reviewed:** YYYY-MM-DD` under its Status line.
+9. **Product sign-off.** Skip unless Product is on (caddis.md's Product owners line names someone), its
    Sign-off isn't `none`, and the project changes something users see. Send the project's
    Summary, with its Questions for product, where Sign-off says: a comment on the intent's
    ticket with the tracker tool, or the branch's PR (if there isn't one, tell me to open a
@@ -77,7 +82,7 @@ gate, silences a check or skips the gate-verifier.
    If the project is already in `completed/`, finish the intent step of the `complete`
    skill now. Ask again only if the Summary changes: technical changes never need a new
    sign-off.
-9. **Commit** the reviewed projects as one `docs:` commit with the `commit` skill, unless
+10. **Commit** the reviewed projects as one `docs:` commit with the `commit` skill, unless
    `.caddis/` is gitignored.
 
 ## Output
@@ -85,7 +90,7 @@ gate, silences a check or skips the gate-verifier.
 - Projects reviewed and what was fixed in each
 - Owner decisions and defaults chosen
 - Sign-off sent, and to whom, per project
-- The build order
+- The build order, and which projects will run in sequence because they share files
 - "Ready for /caddis:build", or the one thing blocking it (a pending sign-off counts,
   unless caddis.md's Workflow has Wait for sign-off set to no)
 

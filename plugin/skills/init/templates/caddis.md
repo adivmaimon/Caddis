@@ -43,6 +43,9 @@ that skill (see the Caddis README, Adapting Caddis). -->
   /caddis:review marked Reviewed -->
 - Wait for sign-off: yes <!-- "no": a project builds before the product owner signs off,
   and its intent stays open until they do -->
+- Merge by rule: none <!-- files every project touches that the integrator reconciles
+  when parallel builds merge, e.g. a version file. Comma-separated paths. Projects that
+  share only these still build side by side -->
 - Build panel: on <!-- "off": no live panel beside the chat during /caddis:build; progress
   shows on the status line instead. Text reports in the chat are the same either way -->
 

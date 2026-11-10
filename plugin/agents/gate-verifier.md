@@ -13,7 +13,9 @@ weakens a gate, silences a check or skips the gate-verifier.
 
 ## What you receive
 
-The project path and the phase number. Nothing about what was done: find that out yourself.
+The project path and the phase number, and sometimes the repo to verify (a builder's
+worktree): run git and every check there. Nothing about what was done: find that out
+yourself.
 
 ## Read first
 

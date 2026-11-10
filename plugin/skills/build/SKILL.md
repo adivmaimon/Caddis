@@ -16,25 +16,44 @@ gate, silences a check or skips the gate-verifier.
 
 If you are the background builder, skip this section. Otherwise, in the main session:
 
-1. List the projects in scope and estimate the build in minutes from their phases and Changes.
-   Tell me the estimate in one line.
-2. Note the start time with `date +%s`. Start one background `caddis:builder` agent with
-   the project paths, the main checkout's absolute path and anything else from my message.
-   Its standing brief holds the builder's rules.
-3. Start the Monitor tool with `bash <this skill's scripts folder>/progress.sh <start>
-   <estimate> <project paths>` and a `timeout_ms` of 1800000. The script stays silent on short
-   builds and sets its own report interval as the estimate changes. The build panel and its
-   status line follow the file it writes; nothing for the builder to do.
-4. Pass each status line to me as it arrives, in one line. On `Possibly stuck`, say so and
-   leave the agent running: a long check can look the same. If the monitor expires while the
-   agent is running, start it again with the same arguments.
-5. When the agent finishes, stop the monitor with TaskStop and give me its report. If it is
-   waiting on a hard stop, ask me, then pass my answer on with SendMessage.
+1. Run Before starting below once, here, for every project in scope. Builders skip it.
+2. **Plan the waves.** Run `python3 <this skill's scripts folder>/waves.py --ignore <files>
+   <project paths>`, with the files on Workflow's Merge by rule line. Leave `--ignore` out
+   when the line is missing or says none. It prints JSON: `waves`, each a list of projects that share no file and
+   depend only on earlier waves, and `sequenced`, the projects waiting on another because
+   they share files.
+3. List the projects in scope, the waves, and an estimate in minutes from their phases and
+   Changes (the longest project per wave, summed). Tell me the estimate in one line.
+4. Note the start time with `date +%s`. Start the Monitor tool with `bash <this skill's
+   scripts folder>/progress.sh <start> <estimate> <every project path>` and a `timeout_ms`
+   of 1800000. One reporter covers every wave and builder. It stays silent on short builds
+   and sets its own report interval as the estimate changes. The build panel and its status
+   line follow the file it writes; nothing for the builders to do.
+5. **Each wave in turn:**
+   - A wave of one project: one background `caddis:builder` agent, in this checkout.
+   - A wave of several: one background `caddis:builder` agent per project with
+     `isolation: "worktree"`, up to Parallel agents at once (start the rest as others
+     finish). The build branch must be checked out at its tip, so every worktree branches
+     from it. Each builder makes its own `caddis/<project>` branch there.
+   - Give each builder its project path (absolute, in this checkout), this checkout's
+     absolute path and anything else from my message. Its standing brief holds the rules.
+   - When every builder in a parallel wave is done, start the `caddis:integrator` agent
+     with the build branch, this checkout's path and the wave's projects in build order,
+     each with its branch and worktree. Wait for it before the next wave. A project it
+     couldn't merge stays on its branch: skip any later project that depends on it, and
+     tell me which ones are marked complete but not merged.
+6. Pass each status line to me as it arrives, in one line. On `Possibly stuck`, say so and
+   leave the agents running: a long check can look the same. If the monitor expires while
+   an agent is running, start it again with the same arguments.
+7. When the last wave is done, stop the monitor with TaskStop and give me the builders' and
+   integrator's reports as one. If a builder is waiting on a hard stop, ask me, then pass
+   my answer on with SendMessage.
 
-If the Agent or Monitor tool isn't available, or the `caddis:builder` agent isn't, build in
-this session instead.
+Fall back to one `caddis:builder` for every project in build order, as before waves, when
+there is only one project, `waves.py` fails, or a worktree can't be made. If the Agent or
+Monitor tool isn't available, or the `caddis:builder` agent isn't, build in this session.
 
-The builder can't ask me anything. It sends blockers and hard stops to `main` with
+Builders can't ask me anything. They send blockers and hard stops to `main` with
 SendMessage, along with any decision I'd want to hear about before the end.
 
 ## Before starting

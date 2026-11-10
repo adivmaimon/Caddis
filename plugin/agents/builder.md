@@ -17,15 +17,20 @@ said. Projects already reviewed and in build order.
 
 ## Start
 
-1. **Where `.caddis/` lives.** Read and write everything under `.caddis/` (config, team
-   rules, map, `bin/map.py`, projects) at the main checkout's absolute path, never a copy
-   in a worktree. When `.caddis/` is not in git, a worktree has none.
+1. **Where `.caddis/` lives.** If `.caddis/` is gitignored (`git check-ignore -q
+   .caddis/caddis.md` succeeds, or caddis.md says `.caddis/ in git: no`), a worktree has
+   none: read and write everything under it (config, team rules, map, `bin/map.py`,
+   projects) at the main checkout's absolute path. If it is tracked, use your worktree's
+   own copy, so your commits carry the project's changes and the main checkout stays clean.
 2. **In a worktree** (your working directory is not the main checkout): first create and
    switch to branch `caddis/<project name>`, from the commit you started on. All your
    commits go there.
-3. Run the `build` skill's loop on your projects, skipping its "Run it in the background"
-   section: you are the background builder. Its Before starting, experiments, `execute`
-   per project, gates, the gate-verifier and commits all apply.
+3. Hand the gate-verifier your working directory as the repo to verify, with the project
+   path, so it checks your diff and not the main checkout's.
+4. Run the `build` skill on your projects, skipping its "Run it in the background" section:
+   you are the background builder. Read caddis.md as its Before starting says; the main
+   session already ran the rest of Before starting (reviews, sign-off, learn). Its loop,
+   experiments, `execute` per project, gates, the gate-verifier and commits all apply.
 
 ## Limits
 
