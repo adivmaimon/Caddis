@@ -215,5 +215,24 @@ class ReachTests(unittest.TestCase):
         self.assertNotEqual(bad.returncode, 0)
 
 
+class OrphansTests(unittest.TestCase):
+    # main.py is an entry point, lonely.py imports nothing, stray.py imports used.py.
+    FILES = {
+        "src/main.py": "import os\n",
+        "src/lonely.py": "X = 1\n",
+        "src/used.py": "Y = 2\n",
+        "src/stray.py": "from src import used\n",
+    }
+    TEXT = (
+        "3 source files that nothing imports (tests excluded). Entry points, config, or dead code:\n"
+        "  src/lonely.py  leaf\n"
+        "  src/main.py  entry?\n"
+        "  src/stray.py  \n"
+    )
+
+    def test_text_output_is_unchanged(self):
+        self.assertEqual(Repo(self.FILES).map("orphans"), self.TEXT)
+
+
 if __name__ == "__main__":
     unittest.main()

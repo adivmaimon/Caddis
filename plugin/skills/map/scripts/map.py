@@ -15,7 +15,7 @@ Commands:
   deps <path>        what this file imports
   reach <path>...    blast radius of a change: importers, hubs, reach by area, untested
   area <dir>         files in an area with their in and out degree
-  orphans            source files nothing imports (entry points or dead code)
+  orphans [--json]   source files nothing imports (entry points or dead code)
   stamp              the commit stamp line to put at the top of STRUCTURE.md
 
 graph.json and summary.md are a cache: queries rebuild them when the tree has moved on.
@@ -33,7 +33,7 @@ import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 
-VERSION = "0.1.5"
+VERSION = "0.1.6"
 
 # Directories never mapped, even when tracked by git.
 ALWAYS_SKIP = {
@@ -923,14 +923,19 @@ def cmd_area(root, out_dir, area):
         print(f"  {f}  in {len(rev.get(f, ()))}  out {len(g[f]['imports'])}  {g[f]['lines']} lines")
 
 
-def cmd_orphans(root, out_dir):
+def cmd_orphans(root, out_dir, as_json=False):
     g = load(root, out_dir)["files"]
     rev = reverse(g)
     orph = sorted(f for f in g if not rev.get(f) and not TEST_PATH.search(f))
+    files = [{"path": f, "tag": "entry" if ENTRY_NAMES.search(f) else ("leaf" if not g[f]["imports"] else None)}
+             for f in orph]
+    if as_json:
+        print(json.dumps({"count": len(files), "files": files}, indent=2, sort_keys=True))
+        return
     print(f"{len(orph)} source files that nothing imports (tests excluded). Entry points, config, or dead code:")
-    for f in orph:
-        tag = "entry?" if ENTRY_NAMES.search(f) else ("leaf" if not g[f]["imports"] else "")
-        print(f"  {f}  {tag}")
+    for o in files:
+        tag = {"entry": "entry?", "leaf": "leaf", None: ""}[o["tag"]]
+        print(f"  {o['path']}  {tag}")
 
 
 def baseline(root, out_dir, stamp):
@@ -995,7 +1000,8 @@ def main():
     r.add_argument("--json", action="store_true", help="print the result as JSON")
     a = sub.add_parser("area")
     a.add_argument("dir")
-    sub.add_parser("orphans")
+    o = sub.add_parser("orphans")
+    o.add_argument("--json", action="store_true", help="print the result as JSON")
     sub.add_parser("stamp", help="print the commit stamp line for STRUCTURE.md")
     sub.add_parser("version")
     args = ap.parse_args()
@@ -1019,7 +1025,7 @@ def main():
     elif args.cmd == "area":
         cmd_area(root, out_dir, args.dir)
     elif args.cmd == "orphans":
-        cmd_orphans(root, out_dir)
+        cmd_orphans(root, out_dir, args.json)
     elif args.cmd == "stamp":
         print(f"<!-- caddis-map commit: {head_commit(root) or 'none'} -->")
     elif args.cmd == "version":
