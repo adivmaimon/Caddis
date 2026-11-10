@@ -19,9 +19,9 @@ is for developing Caddis, not for repos that use it.
 - `plugin/agents/` - read-only reviewers the skills hand work to. They get a path, not the
   author's context, and must never edit, run heavy jobs or touch a hard stop.
 - `plugin/hooks/` - plain bash scripts, run by literal `${CLAUDE_PLUGIN_ROOT}` paths (the
-  directory refuses computed paths). `session-start.sh` reports a stale map, `announce.sh`
+  directory refuses computed paths). `session-start.sh` reports a config older than the plugin and a stale map, `announce.sh`
   shows the skill badge. Both must stay silent and exit 0 when there's nothing to say.
-- `tests/` - map.py and progress.sh tests, stdlib unittest.
+- `tests/` - map.py, progress.sh and session-start.sh tests, stdlib unittest.
 
 ## Rules
 
@@ -43,8 +43,11 @@ is for developing Caddis, not for repos that use it.
    Workflow section. A new skill or agent gets the same Team rules line. Keep the
    extension file names equal to the skill and agent names; renaming one breaks every
    repo that extends it.
-6. Keep each SKILL.md under about 150 lines. Plain, direct language. No em dashes.
-7. Test map.py changes on real repos of different stacks, not only the fixtures.
+6. **Updates never overwrite the repo.** Only `config` writes to `.caddis/extend/`, and only
+   at the owner's request. A new caddis.md setting must work at its default when the line
+   is missing, so older configs keep working; `config` offers to add it.
+7. Keep each SKILL.md under about 150 lines. Plain, direct language. No em dashes.
+8. Test map.py changes on real repos of different stacks, not only the fixtures.
 
 ## Commands
 

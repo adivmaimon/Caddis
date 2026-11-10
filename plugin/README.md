@@ -68,6 +68,8 @@ A change is a task only if all of these hold, otherwise it is a project:
 | Map | `/caddis:map` |
 | Monthly | `/caddis:maintenance`: full audit, with a log carried between runs |
 | Set up or refresh | `/caddis:init` |
+| Change how Caddis works here | `/caddis:config`: settings and team rules, from plain words |
+| Set up or refresh | `/caddis:init` |
 
 You can also ask in plain words ("create a task to...", "create a project for..."). Naming
 the skill is more reliable. With no project named, review and build work on the projects
@@ -75,10 +77,13 @@ your branch added, so teammates' work is left alone.
 
 ## Adapting Caddis
 
-Switches in the Workflow section of `caddis.md` (pause after each phase, skip unreviewed
-projects, wait for sign-off) cover the common changes. For anything else, write
-`.caddis/extend/<skill>.md`: every skill reads its file first and follows it. A team rule
-can add or change steps and add hard stops, never remove one.
+Run `/caddis:config` and say what you want in plain words. Common changes are switches in
+`caddis.md` (pause after each phase, skip unreviewed projects, wait for sign-off). Anything
+else becomes a team rule in `.caddis/extend/<skill>.md`, which that skill reads first and
+follows. A team rule can add or change steps and add hard stops, never remove one.
+
+Updates replace the plugin, never your repo's config or team rules. When an update adds
+settings, a line at session start says so and `/caddis:config` shows them.
 
 Full docs, diagrams, the map commands and the project format:
 https://github.com/adivmaimon/caddis

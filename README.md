@@ -104,6 +104,7 @@ A change is a task only if all of these hold, otherwise it is a project:
 | Map | `/caddis:map` |
 | Monthly | `/caddis:maintenance`: full audit, with a log carried between runs |
 | Set up or refresh | `/caddis:init` |
+| Change how Caddis works here | `/caddis:config`: settings and team rules, from plain words |
 
 You can also ask in plain words ("create a task to...", "create a project for..."). Naming
 the skill is more reliable. With no project named, review and build work on the projects
@@ -144,8 +145,10 @@ until the owner signs off.
 
 ## Adapting Caddis
 
-Teams change how Caddis works in two ways, without forking it. Both are files in your repo,
-so plugin upgrades never overwrite them.
+Run `/caddis:config` and say what you want in plain words: "stop after every phase",
+"never touch `legacy/`", "post to the release channel after each build". It shows what's
+set, decides where each change belongs, shows you the diff and commits it. You can also
+edit the files by hand. There are three kinds of change.
 
 **Switches** in the Workflow section of `caddis.md`, for the common changes:
 
@@ -159,22 +162,42 @@ so plugin upgrades never overwrite them.
 
 **Team rules** for anything else: `.caddis/extend/<skill>.md`, named after the skill or
 agent it changes. Every skill and agent reads its file first and follows it. A team rule can
-add steps, change them or add hard stops. It can never remove a hard stop.
+add steps, change them or add hard stops. It can never remove a hard stop or weaken a gate.
 
 ```markdown
-<!-- .caddis/extend/build.md -->
-- Before starting, rebase the branch on main.
-- After each phase, run the `preview-deploy` skill and paste its URL into the project.
-- Never touch anything under `legacy/`.
+# Team rules: build
+
+## Before
+- Rebase the branch on main. (owner, 2026-11-10)
+
+## Each phase
+- Run the `preview-deploy` skill and paste its URL into the project. (owner, 2026-11-10)
+
+## Always
+- Never touch anything under `legacy/`. (owner, 2026-11-10)
 ```
 
-Names you can extend: `init`, `learn`, `intent`, `evaluate`, `task`, `project`, `review`,
-`build`, `execute`, `tests`, `commit`, `complete`, `map`, `maintenance`, and the agents
-`plan-reviewer`, `gate-verifier` and `auditor`.
+Names you can extend: `init`, `config`, `learn`, `intent`, `evaluate`, `task`, `project`,
+`review`, `build`, `execute`, `tests`, `commit`, `complete`, `map`, `maintenance`, and the
+agents `plan-reviewer`, `gate-verifier` and `auditor`.
 
 **Your own skills** go in `.claude/skills/`. List each under Local skills in `caddis.md`
 with when to use it, and Caddis skills will call it at the right moment. Team rules can call
 them too, as in the example above.
+
+### Updates keep your setup
+
+A Caddis update replaces the plugin and nothing in your repo. `caddis.md`, team rules,
+intents and projects are yours:
+- `/caddis:init` run again proposes changes to `caddis.md` as a diff, keeps everything you
+  wrote, and never writes to `.caddis/extend/`.
+- `/caddis:learn` fixes stale paths in `caddis.md` but only reports problems in team rules.
+- When an update adds settings, a line at session start says so. `/caddis:config` lists
+  them with their defaults and adds the ones you pick. A setting you haven't added
+  already works at its default.
+
+Only `.caddis/bin/map.py` and the Caddis block in `CLAUDE.md` (between its markers) are
+replaced on re-init. Put your own CLAUDE.md rules outside the markers.
 
 ## Reference
 
@@ -184,7 +207,7 @@ them too, as in the example above.
 .caddis/
   caddis.md              commands, stack, rules, risk, product, workflow, docs, commits,
                          tests, hard stops
-  extend/                team rules, one file per skill (optional)
+  extend/                team rules, one file per skill (optional, via /caddis:config)
   intents/active/        product intents not yet delivered (when Product is on)
   intents/completed/     delivered intents
   projects/active/       projects and tasks in progress

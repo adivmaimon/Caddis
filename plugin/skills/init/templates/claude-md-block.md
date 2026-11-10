@@ -9,7 +9,7 @@
   `.caddis/intents/active/` (or the tracker) and move to `.caddis/intents/completed/`
   when delivered.
 - **Team rules:** `.caddis/extend/<skill>.md` adds to or overrides a Caddis skill. Follow
-  it whenever that skill runs.
+  it whenever that skill runs. Change settings and team rules with `/caddis:config`.
 
 | When | Use |
 | --- | --- |
@@ -23,4 +23,5 @@
 | Commit a finished chunk | `/caddis:commit` |
 | Map stale or missing | `/caddis:map` |
 | Monthly | `/caddis:maintenance` |
+| Change settings or team rules | `/caddis:config` |
 <!-- caddis:end -->
