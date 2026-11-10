@@ -233,6 +233,15 @@ class OrphansTests(unittest.TestCase):
     def test_text_output_is_unchanged(self):
         self.assertEqual(Repo(self.FILES).map("orphans"), self.TEXT)
 
+    def test_json_lists_the_same_files_with_tags(self):
+        r = Repo(self.FILES)
+        d = json.loads(r.map("orphans", "--json"))
+        self.assertEqual(d["count"], len(d["files"]))
+        self.assertEqual(sorted(o["tag"] for o in d["files"] if o["tag"]), ["entry", "leaf"])
+        self.assertEqual([o["tag"] for o in d["files"]].count(None), 1)
+        text = {line.split()[0] for line in r.map("orphans").splitlines()[1:]}
+        self.assertEqual({o["path"] for o in d["files"]}, text)
+
 
 if __name__ == "__main__":
     unittest.main()

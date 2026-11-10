@@ -270,7 +270,7 @@ python3 .caddis/bin/map.py uses <file>      # what imports this (--depth 2 for i
 python3 .caddis/bin/map.py deps <file>      # what this imports
 python3 .caddis/bin/map.py area <dir>       # files in an area, imported by and importing
 python3 .caddis/bin/map.py reach <files>    # what a change to these files can reach
-python3 .caddis/bin/map.py orphans          # files nothing imports
+python3 .caddis/bin/map.py orphans [--json] # files nothing imports
 ```
 
 Resolves imports in TypeScript and JavaScript (tsconfig paths, `@/` aliases, React Native

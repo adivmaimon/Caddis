@@ -59,7 +59,7 @@ Keep it under about 200 lines. For a large repo, keep this as the index and put 
 # <Repo> - Structure
 
 > Generated with the Caddis map skill. The graph behind it: `python3 .caddis/bin/map.py`
-> `uses <file>`, `deps <file>`, `reach <file>...`, `area <dir>`, `orphans`.
+> `uses <file>`, `deps <file>`, `reach <file>...`, `area <dir>`, `orphans [--json]`.
 
 ## Areas
 
