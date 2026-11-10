@@ -15,13 +15,20 @@ is for developing Caddis, not for repos that use it.
 - `plugin/skills/map/scripts/map.py` - the map script. Init copies it to `.caddis/bin/map.py` in
   each repo; bump `VERSION` in it on every change so repos pick up the new copy.
 - `plugin/skills/build/scripts/progress.sh` - the build status reporter, run under Monitor.
-  It reads project files and git only, so builders need do nothing to be reported on.
+  It reads project files and git only, so builders need do nothing to be reported on. Each
+  tick it also writes `caddis-build.json` in the git common dir for the panel.
 - `plugin/agents/` - read-only reviewers the skills hand work to. They get a path, not the
   author's context, and must never edit, run heavy jobs or touch a hard stop.
 - `plugin/hooks/` - plain bash scripts, run by literal `${CLAUDE_PLUGIN_ROOT}` paths (the
   directory refuses computed paths). `session-start.sh` reports a config older than the plugin and a stale map, `announce.sh`
   shows the skill badge. Both must stay silent and exit 0 when there's nothing to say.
-- `tests/` - map.py, progress.sh and session-start.sh tests, stdlib unittest.
+  `hooks.json` also names one TypeScript hooks module, `panel.tsx`, the live build panel. Its
+  state contract is `plugin/types/panel-state.d.ts`. It only reads files and draws, arms
+  nothing outside Caddis repos and never throws out of a hook. Check it with
+  `claude plugin validate plugin`.
+- `tests/` - map.py, progress.sh and session-start.sh tests, stdlib unittest. The panel's
+  render tests are in `tests/panel/`; `test_panel.py` runs them with `claude plugin test` on a
+  temp copy of `plugin/`, skipped without the `claude` CLI.
 
 ## Rules
 
@@ -57,3 +64,4 @@ is for developing Caddis, not for repos that use it.
 | --- | --- |
 | Tests | `python3 -m unittest discover tests` |
 | Map a repo without touching it | `python3 plugin/skills/map/scripts/map.py --root <repo> --out /tmp/map build` |
+| Check the plugin and its hooks module | `claude plugin validate plugin` |

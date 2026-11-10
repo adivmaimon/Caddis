@@ -1,6 +1,8 @@
 // Caddis build panel: shows a running /caddis:build beside the chat. It reads the status file
-// progress.sh writes (caddis-build.json in the git dir) and draws it; nothing else. Outside a
-// repo with .caddis/caddis.md it arms nothing, and no hook lets an error out (Invariant 6).
+// progress.sh writes (caddis-build.json in the git dir) and draws it; nothing else. With
+// Workflow's `Build panel: off`, or where no pane can be placed, it shows the same progress on
+// the status line. Outside a repo with .caddis/caddis.md it arms nothing, and no hook lets an
+// error out (Invariant 6).
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
@@ -12,6 +14,12 @@ const TITLE = 'Caddis build'
 const POLL_MS = 2000
 const BAR = 30
 
+function statusLine(s: BuildStatus): string {
+  const quiet = s.quiet ? `, quiet for ${fmt(s.idle)}` : ''
+  const current = s.current ? `, ${s.current}` : ''
+  return `Caddis build: ${s.phases_done}/${s.phases_total} phases${current}, ${fmt(s.elapsed)} of ~${fmt(s.estimate)}${quiet}`
+}
+
 // Change a shape tag when its fields change: it declines what an older version stored.
 const build = atom({ plugin: 'caddis', key: 'build' } as const, null, { shape: 'build-1' })
 const watch = atom({ plugin: 'caddis', key: 'watch' } as const, { start: 0, status: false }, {
@@ -22,6 +30,12 @@ const watch = atom({ plugin: 'caddis', key: 'watch' } as const, { start: 0, stat
 function gitdirOf(text: string, root: string): string {
   const path = (text.match(/^gitdir:\s*(.+)$/m)?.[1] ?? '').trim()
   return path.startsWith('/') ? path : `${root}/${path}`
+}
+
+// Workflow's `- Build panel: off` turns the pane off. A missing line means on (Invariant 9).
+function panelOn(config: string): boolean {
+  const workflow = config.split(/^## /m).find(part => part.startsWith('Workflow')) ?? ''
+  return !/^-\s*Build panel:\s*off\b/im.test(workflow)
 }
 
 function fmt(seconds: number): string {
@@ -55,12 +69,21 @@ export const register: Register = on => {
           const status = JSON.parse(String(await $.fs.read(file))) as BuildStatus
           seen = st.mtimeMs
           await update($, build, () => status)
-          const last = await read($, watch)
+          let last = await read($, watch)
           // A build is new when it is running and started at another time than the last one
           // seen, so a finished file from an earlier session never reopens the panel.
-          if (status.done || status.start === last.start) return
-          await $.ui.open({ id: PANE, title: TITLE })
-          await update($, watch, () => ({ start: status.start, status: false }))
+          if (!status.done && status.start !== last.start) {
+            let onStatusLine = !panelOn(String(await $.fs.read(config)))
+            if (!onStatusLine) {
+              // A pane this surface can't place, or an open that fails, falls back to the line.
+              onStatusLine = !(await $.ui.open({ id: PANE, title: TITLE }).catch(() => ({ isPlaced: false }))).isPlaced
+            }
+            last = { start: status.start, status: onStatusLine }
+            await update($, watch, () => last)
+          }
+          if (last.status && last.start === status.start) {
+            await $.ui.status(status.done ? undefined : statusLine(status))
+          }
         } catch {
           // No status file yet, or one mid-replace: the next poll tries again.
         }

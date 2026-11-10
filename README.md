@@ -158,6 +158,7 @@ edit the files by hand. There are three kinds of change.
 - Pause after each phase: yes      # build stops after every phase; run it again to continue
 - Unreviewed projects: skip        # build only runs projects /caddis:review marked
 - Wait for sign-off: yes           # a project waits for the product owner (the default)
+- Build panel: off                 # no live panel during a build; the status line shows it
 ```
 
 **Team rules** for anything else: `.caddis/extend/<skill>.md`, named after the skill or
@@ -308,6 +309,14 @@ and report status based on the estimated build length:
 
 The estimate is replaced by the measured pace once a phase finishes. A build with no commits
 or file changes for 20 minutes is flagged as possibly stuck.
+
+In Claude Code versions with mods, a **Caddis build** panel also opens beside the chat when a
+build starts: each project's phases, the one in progress, a progress bar, time against the
+estimate and a warning when the build goes quiet. It updates as phases finish and stays open
+showing done. `/caddis-panel` opens it again. Where a panel can't be placed, or with
+`Build panel: off` in the Workflow section, the same progress shows on the status line under
+the prompt. The text reports above stay the same everywhere, so surfaces without mods lose
+nothing.
 
 ### Settings
 

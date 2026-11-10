@@ -143,6 +143,41 @@ test('a .git file leads to the git dir it names', async ($, on) => {
   expect(seen.opens).toEqual(['caddis-build'])
 })
 
+test('with Build panel off, no pane opens and the status line shows progress', async ($, on) => {
+  const config = '## Workflow\n\n- Pause after each phase: no\n- Build panel: off\n\n## Commands\n'
+  const { seen, write } = world(on, { config })
+  const clock = mock.clock(on)
+  await start($, clock)
+  expect(seen.opens).toEqual([])
+  expect(seen.statuses).toEqual([
+    'Caddis build: 2/5 phases, project-search Phase 3 - Query, 30m of ~55m',
+  ])
+  write(status({ phases_done: 5, done: true }))
+  await clock.advance(2000)
+  expect(seen.statuses[seen.statuses.length - 1]).toBe(undefined)
+})
+
+test('a pane the surface cannot place falls back to the status line', async ($, on) => {
+  const { seen } = world(on, { placed: false, file: status({ quiet: true, idle: 25 * 60 }) })
+  await start($, mock.clock(on))
+  expect(seen.opens).toEqual(['caddis-build'])
+  expect(seen.statuses).toEqual([
+    'Caddis build: 2/5 phases, project-search Phase 3 - Query, 30m of ~55m, quiet for 25m',
+  ])
+})
+
+test('a placed pane leaves the status line alone', async ($, on) => {
+  const { seen } = world(on, {})
+  await start($, mock.clock(on))
+  expect(seen.statuses).toEqual([])
+})
+
+test('a Build panel line outside Workflow does not turn the pane off', async ($, on) => {
+  const { seen } = world(on, { config: '## Workflow\n\n## Notes\n- Build panel: off\n' })
+  await start($, mock.clock(on))
+  expect(seen.opens).toEqual(['caddis-build'])
+})
+
 test('a quiet build shows the warning on every surface', async ($, on) => {
   world(on, { file: status({ quiet: true, idle: 25 * 60 }) })
   await start($, mock.clock(on))

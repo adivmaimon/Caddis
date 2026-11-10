@@ -23,7 +23,8 @@ If you are the background builder, skip this section. Otherwise, in the main ses
    Include anything else from my message.
 3. Start the Monitor tool with `bash <this skill's scripts folder>/progress.sh <start>
    <estimate> <project paths>` and a `timeout_ms` of 1800000. The script stays silent on short
-   builds and sets its own report interval as the estimate changes.
+   builds and sets its own report interval as the estimate changes. The build panel and its
+   status line follow the file it writes; nothing for the builder to do.
 4. Pass each status line to me as it arrives, in one line. On `Possibly stuck`, say so and
    leave the agent running: a long check can look the same. If the monitor expires while the
    agent is running, start it again with the same arguments.

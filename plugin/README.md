@@ -41,7 +41,9 @@ Needs Claude Code with plugin support, git, and Python 3.8+ for the map script.
 
 Small changes are tasks. Anything bigger is a project: write it with `/caddis:project`,
 check it with `/caddis:review`, then `/caddis:build` runs it unattended, one gated commit
-per phase. It stops only for the hard stops in `caddis.md`.
+per phase. It stops only for the hard stops in `caddis.md`. While it runs, a Caddis build
+panel beside the chat shows each phase as it finishes, or the status line does where a panel
+can't be drawn or `Build panel: off` is set.
 
 A change is a task only if all of these hold, otherwise it is a project:
 - about 3 files or fewer, in one layer
@@ -77,7 +79,7 @@ your branch added, so teammates' work is left alone.
 ## Adapting Caddis
 
 Run `/caddis:config` and say what you want in plain words. Common changes are switches in
-`caddis.md` (pause after each phase, skip unreviewed projects, wait for sign-off). Anything
+`caddis.md` (pause after each phase, skip unreviewed projects, wait for sign-off, build panel). Anything
 else becomes a team rule in `.caddis/extend/<skill>.md`, which that skill reads first and
 follows. A team rule can add or change steps and add hard stops. It can never remove a hard stop,
 weaken a gate, silence a check or skip the gate-verifier.
