@@ -88,23 +88,23 @@ A change is a task only if all of these hold, otherwise it is a project:
 
 ## Skills
 
-| When | Skill |
+| Skill | What it does |
 | --- | --- |
-| Start of a session | `/caddis:learn`: recent commits, open projects, map and log health |
-| A product owner's request | `/caddis:intent`: problem, outcome, done when, in a file or a ticket |
-| Is this worth doing? | `/caddis:evaluate`: verdict, impact per layer, risk, alternatives |
-| A small change | `/caddis:task` |
-| Anything bigger | `/caddis:project`, from an intent or ticket if there is one |
-| Before building | `/caddis:review`: checks projects, asks everything at once, sends the Summary for sign-off |
-| Build | `/caddis:build`: runs every reviewed project, unattended |
-| Build one project | `/caddis:execute` |
-| Tests | `/caddis:tests` |
-| Commit | `/caddis:commit`: stages only this chunk of work |
-| Done | `/caddis:complete`: adds the outcome and moves it to `completed/` (build does this for you) |
-| Map | `/caddis:map` |
-| Monthly | `/caddis:maintenance`: full audit, with a log carried between runs |
-| Set up or refresh | `/caddis:init` |
-| Change how Caddis works here | `/caddis:config`: settings and team rules, from plain words |
+| `/caddis:init` | Sets up Caddis in a repo, or refreshes it: config, map, CLAUDE.md |
+| `/caddis:config` | Changes settings and team rules from plain words |
+| `/caddis:learn` | Start of a session: recent commits, open projects, map and log health |
+| `/caddis:intent` | A product owner's request: problem, outcome, done when, in a file or a ticket |
+| `/caddis:evaluate` | Is this worth doing? Verdict, impact per layer, risk, alternatives |
+| `/caddis:task` | A small change: task file, change, checks, commit |
+| `/caddis:project` | Anything bigger: writes a project, from an intent or ticket if there is one |
+| `/caddis:review` | Checks projects, asks everything at once, sends the Summary for sign-off |
+| `/caddis:build` | Runs every reviewed project, unattended |
+| `/caddis:execute` | Runs one project |
+| `/caddis:tests` | Writes and runs tests for a change, riskiest behaviour first |
+| `/caddis:commit` | Commits only this chunk of work, with a conventional message |
+| `/caddis:complete` | Adds the outcome and moves a project to `completed/` (build does this for you) |
+| `/caddis:map` | Builds or refreshes the codebase map: the import graph and `STRUCTURE.md` |
+| `/caddis:maintenance` | Monthly full audit, with a log carried between runs |
 
 You can also ask in plain words ("create a task to...", "create a project for..."). Naming
 the skill is more reliable. With no project named, review and build work on the projects
