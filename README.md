@@ -10,21 +10,23 @@ writes `.caddis/caddis.md`: the commands, the rules that must never break, what 
 risky, the commit style. Every Caddis skill reads that file, so the skills stay generic and
 the repo-specific facts live in one place you can edit.
 
-- **Projects.** Evaluate an idea, write it up as a project, review all open projects in one
-  pass, then build them unattended. The build records its decisions instead of asking, and
-  stops only for publishing, spending money, secrets, or deleting outside the repo.
-- **Intents.** Product owners say what they want and how they'll know it works, in product
-  terms only. `/caddis:intent` writes it as a short file in the repo, or tidies up an
-  existing ticket. Claude writes the project from it; the owner reads and signs off one plain
-  Summary, and is never asked a technical question.
-- **Tasks.** Small changes skip the project. `/caddis:task` writes a short task file, makes the
-  change, runs the checks and commits. Typos and bumps skip Caddis entirely. If the work
-  turns out risky, it becomes a project.
-- **The map.** A script builds the import graph from the imports in your code. Claude writes
-  `STRUCTURE.md` on top of it: areas, entry points, the most-imported files, the main flows,
-  where new code goes. A hook at session start says when it is out of date.
+- **Projects.** Write up a piece of work, review it once, then let Claude build it
+  unattended. The build records its decisions instead of asking.
+- **Tasks.** Small changes skip the ceremony: a short task file, the change, the checks, a
+  commit. Typos and bumps skip Caddis entirely.
+- **Intents.** Product owners say what they want in product terms, then sign off one plain
+  Summary. They're never asked a technical question.
+- **The map.** An import graph of your code, plus a short guide to what lives where. A hook
+  says when it is out of date.
 
-Finished projects and tasks stay in `.caddis/projects/completed/` with what was built and why.
+## Contents
+
+- [Install](#install)
+- [How work flows](#how-work-flows)
+- [Skills](#skills)
+- [Solo, team, or team with product owners](#solo-team-or-team-with-product-owners)
+- [Adapting Caddis](#adapting-caddis)
+- [Reference](#reference): files, project format, map, agents, build progress, settings
 
 ## Install
 
@@ -42,14 +44,13 @@ Then, in your repo:
 ```
 
 Init builds the map, writes `.caddis/caddis.md`, asks its questions in one batch (your
-rules, anything it had to guess) and commits.
+rules, anything it had to guess, how your team works) and commits.
 
 Needs Claude Code with plugin support, git, and Python 3.8+ for the map script.
 
-## Workflow
+## How work flows
 
-Every change takes one of three paths, by size and risk. Amber steps belong to a product
-owner, when one takes part.
+Every change takes one of three paths, by size and risk:
 
 ```mermaid
 flowchart LR
@@ -62,35 +63,28 @@ flowchart LR
   E["/caddis:evaluate"] -.->|worth doing?| P
   P --> V["/caddis:review"]
   V --> B["/caddis:build"]
-  B --> C["/caddis:complete"]
+  B --> M[Merge]
   classDef po fill:#f2b950,stroke:#a8741a,color:#1b1b1f
   class I po
 ```
 
-Review is the last time anyone is asked a question. The build decides, records why, and
-stops only for the hard stops in `caddis.md`.
+- **Project:** a file in `.caddis/projects/active/` saying what changes, the risk, and a
+  gate a machine can check for each phase.
+- **Review:** checks every project against the code and asks you all its questions in one
+  batch. It is the last time anyone is asked anything.
+- **Build:** runs each project phase by phase in the background. Every phase passes its
+  gate and gets its own commit. When a project is done it moves to `completed/` with what
+  was built and why.
+- **Stops:** only for the hard stops in `caddis.md`: publishing, spending money, secrets,
+  deleting outside the repo, destructive commands against a shared database. You can add
+  more.
 
-### Who's involved
-
-| | Solo | Engineering team | Team with product owners |
-| --- | --- | --- | --- |
-| `.caddis/` | Committed, or gitignored to keep projects private | Committed: `caddis.md` is the team's rulebook | Committed |
-| Product section | Empty | Empty | Owners, tracker, sign-off route |
-| Review asks | You | The project's author | Author: technical. Product owner: the Summary |
-| Projects are read | By you | In the PR that adds them | In the PR, plus sign-off on the ticket or PR |
-
-With product owners, the owner does two things: writes the intent, and signs off the
-project's plain Summary. Engineers do the rest.
-
-```mermaid
-flowchart LR
-  I["Intent"] --> P["/caddis:project"] --> V["/caddis:review<br>sends the Summary"] --> B["/caddis:build"] --> S["Sign-off<br>any time before merge"] --> M[Merge] --> C["/caddis:complete"]
-  classDef po fill:#f2b950,stroke:#a8741a,color:#1b1b1f
-  class I,S po
-```
-
-By default the build doesn't wait for sign-off. Set `Wait for sign-off: yes` in
-`caddis.md` to hold a project until the owner approves.
+A change is a task only if all of these hold, otherwise it is a project:
+- about 3 files or fewer, in one layer
+- nothing on the Risk list in `caddis.md`
+- no rule from `caddis.md` touched
+- no experiment needed to pick the approach
+- one commit can revert it
 
 ## Skills
 
@@ -100,27 +94,182 @@ By default the build doesn't wait for sign-off. Set `Wait for sign-off: yes` in
 | A product owner's request | `/caddis:intent`: problem, outcome, done when, in a file or a ticket |
 | Is this worth doing? | `/caddis:evaluate`: verdict, impact per layer, risk, alternatives |
 | A small change | `/caddis:task` |
-| Anything bigger | `/caddis:project`: a project in `.caddis/projects/active/`, from an intent or ticket if there is one |
-| Before building | `/caddis:review`: checks every project, asks you everything at once, sends the Summary to the product owner |
+| Anything bigger | `/caddis:project`, from an intent or ticket if there is one |
+| Before building | `/caddis:review`: checks projects, asks everything at once, sends the Summary for sign-off |
 | Build | `/caddis:build`: runs every reviewed project, unattended |
 | Build one project | `/caddis:execute` |
 | Tests | `/caddis:tests` |
 | Commit | `/caddis:commit`: stages only this chunk of work |
-| Done | `/caddis:complete`: adds the outcome and moves it to `completed/` |
+| Done | `/caddis:complete`: adds the outcome and moves it to `completed/` (build does this for you) |
 | Map | `/caddis:map` |
 | Monthly | `/caddis:maintenance`: full audit, with a log carried between runs |
+| Set up or refresh | `/caddis:init` |
 
-You can also ask in plain words ("create a task to...", "create a project for..."). Naming the
-skill is more reliable.
+You can also ask in plain words ("create a task to...", "create a project for..."). Naming
+the skill is more reliable. With no project named, review and build work on the projects
+your branch added, so teammates' work is left alone.
 
-A change is a task only if all of these hold, otherwise it is a project:
-- about 3 files or fewer, in one layer
-- nothing on the Risk list in `caddis.md`
-- no rule from `caddis.md` touched
-- no experiment needed to pick the approach
-- one commit can revert it
+## Solo, team, or team with product owners
 
-## Build progress
+The same skills fit all three. Init asks which one you are.
+
+| | Solo | Engineering team | Team with product owners |
+| --- | --- | --- | --- |
+| `.caddis/` | Committed, or gitignored to keep projects private | Committed: `caddis.md` is the team's rulebook | Committed |
+| Product section in `caddis.md` | Empty | Empty | Owners, tracker, sign-off route |
+| Who answers review | You | The engineer running it | Engineer: technical. Product owner: the Summary |
+| Where projects are read | Locally | In the branch's PR | In the PR, with sign-off on the ticket or PR |
+
+**Solo.** Review is optional: build reviews any unreviewed project itself, takes the
+recommended answers and records that it did. `project`, then `build`, is enough.
+
+**Engineering team.** Each project lands as a `docs:` commit on your branch, so teammates
+read it in the PR before or alongside the code. Agree team-wide changes in `caddis.md`.
+
+**With product owners.** The product owner does two things: writes the intent, and signs
+off the project's Summary. Engineers do the rest. By default a project waits for sign-off
+before it builds:
+
+```mermaid
+flowchart LR
+  I["Intent"] --> P["/caddis:project"] --> V["/caddis:review<br>sends the Summary"] --> S["Sign-off"] --> B["/caddis:build"] --> M[Merge]
+  classDef po fill:#f2b950,stroke:#a8741a,color:#1b1b1f
+  class I,S po
+```
+
+The intent lives in `.caddis/intents/active/`, or stays as the ticket. When its project is
+built, it moves to `completed/` and, for tickets, Claude posts what shipped in plain
+language. Set `Wait for sign-off: no` to build before sign-off; the intent then stays open
+until the owner signs off.
+
+## Adapting Caddis
+
+Teams change how Caddis works in two ways, without forking it. Both are files in your repo,
+so plugin upgrades never overwrite them.
+
+**Switches** in the Workflow section of `caddis.md`, for the common changes:
+
+```markdown
+## Workflow
+
+- Pause after each phase: yes      # build stops after every phase; run it again to continue
+- Unreviewed projects: skip        # build only runs projects /caddis:review marked
+- Wait for sign-off: yes           # a project waits for the product owner (the default)
+```
+
+**Team rules** for anything else: `.caddis/extend/<skill>.md`, named after the skill or
+agent it changes. Every skill and agent reads its file first and follows it. A team rule can
+add steps, change them or add hard stops. It can never remove a hard stop.
+
+```markdown
+<!-- .caddis/extend/build.md -->
+- Before starting, rebase the branch on main.
+- After each phase, run the `preview-deploy` skill and paste its URL into the project.
+- Never touch anything under `legacy/`.
+```
+
+Names you can extend: `init`, `learn`, `intent`, `evaluate`, `task`, `project`, `review`,
+`build`, `execute`, `tests`, `commit`, `complete`, `map`, `maintenance`, and the agents
+`plan-reviewer`, `gate-verifier` and `auditor`.
+
+**Your own skills** go in `.claude/skills/`. List each under Local skills in `caddis.md`
+with when to use it, and Caddis skills will call it at the right moment. Team rules can call
+them too, as in the example above.
+
+## Reference
+
+### Files
+
+```
+.caddis/
+  caddis.md              commands, stack, rules, risk, product, workflow, docs, commits,
+                         tests, hard stops
+  extend/                team rules, one file per skill (optional)
+  intents/active/        product intents not yet delivered (when Product is on)
+  intents/completed/     delivered intents
+  projects/active/       projects and tasks in progress
+  projects/completed/    finished projects and tasks
+  map/STRUCTURE.md       the map Claude reads (committed)
+  map/graph.json         the import graph (gitignored, rebuilt when needed)
+  bin/map.py             the map script, so the repo works without the plugin
+CLAUDE.md                a short block pointing at the above
+.claude/settings.json    Caddis skills and your commands allowed; git push and sudo denied
+.claude/skills/          repo-specific skills where the repo needs one (release,
+                         migrations, bench, logs)
+```
+
+Projects already in `.claude/projects/active` and `completed` are moved into
+`.caddis/projects/` with `git mv`, if you agree. Running init again merges with what is
+there and shows you the changes first.
+
+### Project format
+
+```markdown
+# Title
+
+**Status:** Pending
+**Type:** Project
+**Intent:** ABC-123
+**Reviewed:** 2026-10-27
+**Signed off:** Sam 2026-10-28
+
+### Phase 1 - The engine - DONE (2026-10-28)
+### Phase 2 - The UI
+```
+
+[Monty](https://github.com/adivmaimon/monty) reads these lines to show project progress in
+VS Code and the Mac menu bar.
+
+Every commit made for a project or task ends with a trailer naming it, so git can answer
+"which project changed this?":
+
+```
+feat(search): rank exact matches first
+
+Caddis-Plan: project-search-index
+```
+
+```bash
+git log --grep "Caddis-Plan: project-search-index"                          # that project's commits
+git log --format='%h %(trailers:key=Caddis-Plan,valueonly,separator=%x2C )'  # project per commit
+```
+
+Repos that keep `.caddis/` gitignored get no trailer, so private projects stay out of
+history.
+
+### The map
+
+```
+python3 .caddis/bin/map.py build            # write graph.json and summary.md
+python3 .caddis/bin/map.py status           # is STRUCTURE.md out of date, and where
+python3 .caddis/bin/map.py uses <file>      # what imports this (--depth 2 for indirect)
+python3 .caddis/bin/map.py deps <file>      # what this imports
+python3 .caddis/bin/map.py area <dir>       # files in an area, imported by and importing
+python3 .caddis/bin/map.py reach <files>    # what a change to these files can reach
+python3 .caddis/bin/map.py orphans          # files nothing imports
+```
+
+Resolves imports in TypeScript and JavaScript (tsconfig paths, `@/` aliases, React Native
+platform files, Vue, Svelte), Python, Go, Rust, PHP (PSR-4), Ruby, Java, Kotlin, C,
+Objective-C, Dart, CSS, SCSS and Less. Swift and C# files appear without edges. An import it
+can't resolve is counted in `summary.md`, never guessed. Nine real repos of 30 to 1,300
+source files each mapped in under two seconds.
+
+### Agents
+
+Three read-only agents. Two check work without the context of whoever did it, and one keeps
+wide sweeps out of the main session:
+- `plan-reviewer`: `/caddis:review` hands it each project. It checks paths, gates, rules and
+  risks against the code and reports only problems.
+- `gate-verifier`: at every phase gate, `/caddis:execute` and `/caddis:build` hand it the
+  project and phase number, nothing more. It compares the diff with the project, checks the
+  rules, reruns the gate's checks and answers PASS, FAIL or INCOMPLETE. It never runs heavy
+  jobs or anything on the hard stops list.
+- `auditor`: `/caddis:maintenance` hands it one focus at a time (invariants, reuse,
+  comments, performance, tests, security, docs, AI cost) and keeps only its findings, each
+  with file, line and whether it is a quick fix or needs a project.
+
+### Build progress
 
 `/caddis:build` and `/caddis:execute` run in a background agent, so the session stays free,
 and report status based on the estimated build length:
@@ -136,117 +285,26 @@ and report status based on the estimated build length:
 The estimate is replaced by the measured pace once a phase finishes. A build with no commits
 or file changes for 20 minutes is flagged as possibly stuck.
 
-## Agents
-
-Three read-only agents. Two check work without the context of whoever did it, and one keeps
-wide sweeps out of the main session:
-- `plan-reviewer`: `/caddis:review` hands it each project. It checks paths, gates, rules and
-  risks against the code and reports only problems.
-- `gate-verifier`: at every phase gate, `/caddis:execute` and `/caddis:build` hand it the
-  project and phase number, nothing more. It compares the diff with the project, checks the rules,
-  reruns the gate's checks and answers PASS, FAIL or INCOMPLETE. It never runs heavy jobs or
-  anything on the hard stops list.
-- `auditor`: `/caddis:maintenance` hands it one focus at a time (invariants, reuse,
-  comments, performance, tests, security, docs, AI cost) and keeps only its findings, each
-  with file, line and whether it is a quick fix or needs a project.
-
-## What init creates
-
-```
-.caddis/
-  caddis.md              commands, stack, layers, rules, risk, product, docs, commits,
-                         tests, hard stops
-  intents/active/        product intents not yet delivered (when Product is set)
-  intents/completed/     delivered intents
-  projects/active/       projects and tasks in progress
-  projects/completed/    finished projects and tasks
-  map/STRUCTURE.md       the map Claude reads (committed)
-  map/graph.json         the import graph (gitignored, rebuilt when needed)
-  bin/map.py             the map script, so the repo works without the plugin
-CLAUDE.md                a short block pointing at the above
-.claude/settings.json    Caddis skills and your commands allowed; git push and sudo denied
-.claude/skills/          repo-specific skills where the repo needs one (release,
-                         migrations, bench, logs)
-```
-
-Projects already in `.claude/projects/active` and `completed` are moved into
-`.caddis/projects/` with `git mv`, if you agree.
-
-Running init again merges with what is there and shows you the changes first.
-
-## The map
-
-```
-python3 .caddis/bin/map.py build            # write graph.json and summary.md
-python3 .caddis/bin/map.py status           # is STRUCTURE.md out of date, and where
-python3 .caddis/bin/map.py uses <file>      # what imports this (--depth 2 for indirect)
-python3 .caddis/bin/map.py deps <file>      # what this imports
-python3 .caddis/bin/map.py area <dir>       # files in an area, imported by and importing
-python3 .caddis/bin/map.py orphans          # files nothing imports
-```
-
-Resolves imports in TypeScript and JavaScript (tsconfig paths, `@/` aliases, React Native
-platform files, Vue, Svelte), Python, Go, Rust, PHP (PSR-4), Ruby, Java, Kotlin, C,
-Objective-C, Dart, CSS, SCSS and Less. Swift and C# files appear without edges. An import it
-can't resolve is counted in `summary.md`, never guessed. Nine real repos of 30 to 1,300
-source files each mapped in under two seconds.
-
-## Project format
-
-```markdown
-# Title
-
-**Status:** Pending
-**Type:** Project
-**Intent:** ABC-123
-**Reviewed:** 2026-10-27
-**Signed off:** Sam 2026-10-28
-
-### Phase 1 - The engine - DONE (2026-10-28)
-### Phase 2 - The UI
-```
-
-[Monty](https://github.com/adivmaimon/monty) reads these lines to show project progress in VS Code
-and the Mac menu bar.
-
-Every commit made for a project or task ends with a trailer naming it, so git can answer "which
-project changed this?":
-
-```
-feat(search): rank exact matches first
-
-Caddis-Plan: project-search-index
-```
-
-```bash
-git log --grep "Caddis-Plan: project-search-index"                          # that project's commits
-git log --format='%h %(trailers:key=Caddis-Plan,valueonly,separator=%x2C )'  # project per commit
-```
-
-Repos that keep `.caddis/` gitignored get no trailer, so private projects stay out of history.
-
-## Settings
+### Settings
 
 - `CADDIS_QUIET=1` hides the `caddis · <skill>` line shown when a skill starts. The line
   appears in the terminal; the VS Code panel doesn't show hook messages.
-- Your own skills go in `.claude/skills/`. List them under Local skills in `caddis.md` so
-  Caddis skills know when to call them.
 
 ## Principles
 
 - **The repo's facts live in one file.** Skills say when to do something; `caddis.md` says
-  how, for this repo. Upgrading Caddis never touches your config.
+  how, for this repo. Upgrading Caddis never touches your config or team rules.
 - **Nothing invented.** Init only records rules the repo already states. The map only draws
   edges it can resolve.
 - **Ask once.** Questions are batched at init and review. The build decides and writes down
   why.
-- **Stop for what can't be undone.** Publishing, money, secrets and deletions outside the
-  repo wait for you.
+- **Stop for what can't be undone.** Publishing, money, secrets, deletions outside the repo
+  and destructive commands against shared data wait for you.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Tests: `python3 -m unittest discover tests`. Keep skills generic; anything about one repo
-belongs in that repo's `caddis.md`.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Tests: `python3 -m unittest discover tests`. Keep
+skills generic; anything about one repo belongs in that repo's `caddis.md`.
 
 ## License
 

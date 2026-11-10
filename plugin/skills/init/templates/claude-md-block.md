@@ -8,6 +8,8 @@
   `project-*.md` for planned work, `task-*.md` for small changes. Product intents live in
   `.caddis/intents/active/` (or the tracker) and move to `.caddis/intents/completed/`
   when delivered.
+- **Team rules:** `.caddis/extend/<skill>.md` adds to or overrides a Caddis skill. Follow
+  it whenever that skill runs.
 
 | When | Use |
 | --- | --- |
