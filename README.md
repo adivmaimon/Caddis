@@ -75,6 +75,12 @@ flowchart LR
 - **Build:** runs each project phase by phase in the background. Every phase passes its
   gate and gets its own commit. When a project is done it moves to `completed/` with what
   was built and why.
+- **Parallel builds:** projects that share no files build side by side, each in its own
+  copy of the code (a git worktree) on its own branch. After each batch the integrator
+  merges them in order and runs the tests after each merge; a real clash is stopped and
+  reported, never overwritten. Projects that share files build one after another. Files
+  every project touches, like a version file, go on the `Merge by rule` line in
+  `caddis.md` so they don't force a queue.
 - **Stops:** only for the hard stops in `caddis.md`: publishing, spending money, secrets,
   deleting outside the repo, destructive commands against a shared database. You can add
   more.
@@ -159,6 +165,7 @@ edit the files by hand. There are three kinds of change.
 - Unreviewed projects: skip        # build only runs projects /caddis:review marked
 - Wait for sign-off: yes           # a project waits for the product owner (the default)
 - Build panel: off                 # no live panel during a build; the status line shows it
+- Merge by rule: package.json      # files parallel builds may share; the integrator merges them
 ```
 
 **Team rules** for anything else: `.caddis/extend/<skill>.md`, named after the skill or
@@ -181,7 +188,7 @@ silence a check or skip the gate-verifier.
 
 Names you can extend: `init`, `config`, `learn`, `intent`, `evaluate`, `task`, `project`,
 `review`, `build`, `execute`, `tests`, `commit`, `complete`, `map`, `maintenance`, and the
-agents `plan-reviewer`, `gate-verifier` and `auditor`.
+agents `plan-reviewer`, `gate-verifier`, `auditor`, `builder` and `integrator`.
 
 **Your own skills** go in `.claude/skills/`. List each under Local skills in `caddis.md`
 with when to use it, and Caddis skills will call it at the right moment. Team rules can call
@@ -282,17 +289,17 @@ source files each mapped in under two seconds.
 
 ### Agents
 
-Three read-only agents. Two check work without the context of whoever did it, and one keeps
-wide sweeps out of the main session:
-- `plan-reviewer`: `/caddis:review` hands it each project. It checks paths, gates, rules and
-  risks against the code and reports only problems.
-- `gate-verifier`: at every phase gate, `/caddis:execute` and `/caddis:build` hand it the
-  project and phase number, nothing more. It compares the diff with the project, checks the
-  rules, reruns the gate's checks and answers PASS, FAIL or INCOMPLETE. It never runs heavy
-  jobs or anything on the hard stops list.
-- `auditor`: `/caddis:maintenance` hands it one focus at a time (invariants, reuse,
-  comments, performance, tests, security, docs, AI cost) and keeps only its findings, each
-  with file, line and whether it is a quick fix or needs a project.
+Five agents. The three reviewers check work without the context of whoever did it and change
+nothing. The builder and the integrator do the build itself. None of them pushes, runs two
+heavy jobs at once or touches anything on the hard stops list.
+
+| Agent | When it runs | What it does | Edits code |
+| --- | --- | --- | --- |
+| `plan-reviewer` | `/caddis:review`, once per project | Reads the project cold against the code and reports only problems: wrong paths, gates a machine can't check, broken rules, missed risks | No |
+| `gate-verifier` | Every phase gate in `/caddis:execute` and `/caddis:build` | Gets the project and phase number, nothing more. Compares the diff with the project, checks the rules, reruns the gate and answers PASS, FAIL or INCOMPLETE | No |
+| `auditor` | `/caddis:maintenance`, once per focus; `/caddis:evaluate` for wide areas | Sweeps one focus (invariants, reuse, comments, performance, tests, security, docs, AI cost) and returns findings with file and line | No |
+| `builder` | `/caddis:build` and `/caddis:execute`, in the background, one per project when builds run side by side | Builds its projects phase by phase, passes each gate and commits, deciding and recording instead of asking | Yes, inside the repo, on its own branch. Never pushes or merges |
+| `integrator` | `/caddis:build`, after each wave of parallel builds | Merges each builder's branch in build order, runs the tests after every merge, and resolves only the files on the Merge by rule line. Any other clash is aborted and reported | Merges only, never writes code. Never pushes |
 
 ### Build progress
 

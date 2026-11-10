@@ -43,7 +43,18 @@ Small changes are tasks. Anything bigger is a project: write it with `/caddis:pr
 check it with `/caddis:review`, then `/caddis:build` runs it unattended, one gated commit
 per phase. It stops only for the hard stops in `caddis.md`. While it runs, a Caddis build
 panel beside the chat shows each phase as it finishes, or the status line does where a panel
-can't be drawn or `Build panel: off` is set.
+can't be drawn or `Build panel: off` is set. Projects that share no files build side by
+side, each in its own worktree, and are merged in order with the tests run after each merge.
+
+## Agents
+
+| Agent | When it runs | What it does | Edits code |
+| --- | --- | --- | --- |
+| `plan-reviewer` | `/caddis:review`, once per project | Reads the project cold against the code and reports only problems: wrong paths, gates a machine can't check, broken rules, missed risks | No |
+| `gate-verifier` | Every phase gate in `/caddis:execute` and `/caddis:build` | Gets the project and phase number, nothing more. Compares the diff with the project, checks the rules, reruns the gate and answers PASS, FAIL or INCOMPLETE | No |
+| `auditor` | `/caddis:maintenance`, once per focus; `/caddis:evaluate` for wide areas | Sweeps one focus (invariants, reuse, comments, performance, tests, security, docs, AI cost) and returns findings with file and line | No |
+| `builder` | `/caddis:build` and `/caddis:execute`, in the background, one per project when builds run side by side | Builds its projects phase by phase, passes each gate and commits, deciding and recording instead of asking | Yes, inside the repo, on its own branch. Never pushes or merges |
+| `integrator` | `/caddis:build`, after each wave of parallel builds | Merges each builder's branch in build order, runs the tests after every merge, and resolves only the files on the Merge by rule line. Any other clash is aborted and reported | Merges only, never writes code. Never pushes |
 
 A change is a task only if all of these hold, otherwise it is a project:
 - about 3 files or fewer, in one layer
@@ -79,7 +90,7 @@ your branch added, so teammates' work is left alone.
 ## Adapting Caddis
 
 Run `/caddis:config` and say what you want in plain words. Common changes are switches in
-`caddis.md` (pause after each phase, skip unreviewed projects, wait for sign-off, build panel). Anything
+`caddis.md` (pause after each phase, skip unreviewed projects, wait for sign-off, build panel, merge by rule). Anything
 else becomes a team rule in `.caddis/extend/<skill>.md`, which that skill reads first and
 follows. A team rule can add or change steps and add hard stops. It can never remove a hard stop,
 weaken a gate, silence a check or skip the gate-verifier.

@@ -14,11 +14,15 @@ is for developing Caddis, not for repos that use it.
 - `plugin/skills/init/templates/` - `caddis.md` (the per-repo config) and the CLAUDE.md block.
 - `plugin/skills/map/scripts/map.py` - the map script. Init copies it to `.caddis/bin/map.py` in
   each repo; bump `VERSION` in it on every change so repos pick up the new copy.
+- `plugin/skills/build/scripts/waves.py` - groups projects into build waves from their
+  `Depends on` lines and Changes paths. Standard library only, like map.py.
 - `plugin/skills/build/scripts/progress.sh` - the build status reporter, run under Monitor.
   It reads project files and git only, so builders need do nothing to be reported on. Each
   tick it also writes `caddis-build.json` in the git common dir for the panel.
-- `plugin/agents/` - read-only reviewers the skills hand work to. They get a path, not the
-  author's context, and must never edit, run heavy jobs or touch a hard stop.
+- `plugin/agents/` - agents the skills hand work to. The reviewers (`plan-reviewer`,
+  `gate-verifier`, `auditor`) get a path, not the author's context, and are read-only: they
+  never edit or run heavy jobs. The `builder` and `integrator` edit, but only inside the
+  repo: they never push, run heavy jobs outside the shared lock, or touch a hard stop.
 - `plugin/hooks/` - plain bash scripts, run by literal `${CLAUDE_PLUGIN_ROOT}` paths (the
   directory refuses computed paths). `session-start.sh` reports a config older than the plugin and a stale map, `announce.sh`
   shows the skill badge. Both must stay silent and exit 0 when there's nothing to say.
@@ -26,7 +30,7 @@ is for developing Caddis, not for repos that use it.
   state contract is `plugin/types/panel-state.d.ts`. It only reads files and draws, arms
   nothing outside Caddis repos and never throws out of a hook. Check it with
   `claude plugin validate plugin`.
-- `tests/` - map.py, progress.sh and session-start.sh tests, stdlib unittest. The panel's
+- `tests/` - map.py, waves.py, progress.sh and session-start.sh tests, stdlib unittest. The panel's
   render tests are in `tests/panel/`; `test_panel.py` runs them with `claude plugin test` on a
   temp copy of `plugin/`, skipped without the `claude` CLI.
 
