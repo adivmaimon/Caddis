@@ -48,7 +48,8 @@ Needs Claude Code with plugin support, git, and Python 3.8+ for the map script.
 
 ## Workflow
 
-Every change takes one of three paths, by size and risk:
+Every change takes one of three paths, by size and risk. Amber steps belong to a product
+owner, when one takes part.
 
 ```mermaid
 flowchart LR
@@ -56,11 +57,14 @@ flowchart LR
   S -->|typo, bump, docs| Q[Edit, check, commit]
   S -->|small, low risk| T["/caddis:task"]
   S -->|anything else| P["/caddis:project"]
-  R -.->|worth doing?| E["/caddis:evaluate"] -.-> P
   T -->|turns risky| P
+  I["/caddis:intent"] -.->|or a ticket| P
+  E["/caddis:evaluate"] -.->|worth doing?| P
   P --> V["/caddis:review"]
   V --> B["/caddis:build"]
   B --> C["/caddis:complete"]
+  classDef po fill:#f2b950,stroke:#a8741a,color:#1b1b1f
+  class I po
 ```
 
 Review is the last time anyone is asked a question. The build decides, records why, and
@@ -75,23 +79,15 @@ stops only for the hard stops in `caddis.md`.
 | Review asks | You | The plan's author | Author: technical. Product owner: the Summary |
 | Plans are read | By you | In the PR that adds them | In the PR, plus sign-off on the ticket or PR |
 
-With product owners, the owner writes the intent and signs off the Summary. Engineers do
-the rest:
+With product owners, the owner does two things: writes the intent, and signs off the
+plan's plain Summary. Engineers do the rest.
 
 ```mermaid
-sequenceDiagram
-  participant PO as Product owner
-  participant Eng as Engineer
-  participant C as Claude
-  PO->>C: /caddis:intent, as a file or a ticket
-  Eng->>C: /caddis:project ABC-123
-  Eng->>C: /caddis:review
-  C->>Eng: technical questions, all at once
-  C->>PO: plain Summary and product questions
-  Eng->>C: /caddis:build
-  PO->>Eng: signs off before merge
-  Eng->>C: /caddis:complete
-  C->>PO: what shipped, on the ticket
+flowchart LR
+  I["Intent"] --> P["/caddis:project"] --> V["/caddis:review"] --> B["/caddis:build"] --> M[Merge] --> C["/caddis:complete"]
+  V -.->|Summary| S["Sign-off"] -.-> M
+  classDef po fill:#f2b950,stroke:#a8741a,color:#1b1b1f
+  class I,S po
 ```
 
 By default the build doesn't wait for sign-off. Set `Wait for sign-off: yes` in
