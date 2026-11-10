@@ -11,7 +11,8 @@ The map has two layers:
   read first.
 
 **Team rules.** If `.caddis/extend/map.md` exists, read it before anything else and follow
-it. It adds to or overrides this skill; it can add hard stops but never remove one.
+it. It adds to or overrides this skill, but it never removes a hard stop, weakens a gate,
+silences a check or skips the gate-verifier.
 
 ## 0. Install the script
 

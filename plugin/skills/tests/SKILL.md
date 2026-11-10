@@ -6,7 +6,8 @@ description: Write and update tests for new or changed logic, following the fram
 Write and update tests for the change in hand, or for the area named in my message.
 
 **Team rules.** If `.caddis/extend/tests.md` exists, read it before anything else and
-follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+follow it. It adds to or overrides this skill, but it never removes a hard stop, weakens a
+gate, silences a check or skips the gate-verifier.
 
 ## Before writing
 

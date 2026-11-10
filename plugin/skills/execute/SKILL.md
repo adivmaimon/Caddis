@@ -6,7 +6,8 @@ description: Execute one active project end to end - read it, confirm the code m
 Execute the project named in my message, or the most recently discussed active project.
 
 **Team rules.** If `.caddis/extend/execute.md` exists, read it before anything else and
-follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+follow it. It adds to or overrides this skill, but it never removes a hard stop, weakens a
+gate, silences a check or skips the gate-verifier.
 
 If I invoked this directly in the main session, hand the project off as in "Run it in the
 background" in the `build` skill, with this skill as the agent's job. A background builder

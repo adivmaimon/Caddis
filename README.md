@@ -162,7 +162,8 @@ edit the files by hand. There are three kinds of change.
 
 **Team rules** for anything else: `.caddis/extend/<skill>.md`, named after the skill or
 agent it changes. Every skill and agent reads its file first and follows it. A team rule can
-add steps, change them or add hard stops. It can never remove a hard stop or weaken a gate.
+add steps, change them or add hard stops. It can never remove a hard stop, weaken a gate,
+silence a check or skip the gate-verifier.
 
 ```markdown
 # Team rules: build

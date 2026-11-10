@@ -9,7 +9,8 @@ is left alone; on the default branch, or if there are none, take all of `active/
 is a set of projects `/caddis:build` can run start to finish without asking anything.
 
 **Team rules.** If `.caddis/extend/review.md` exists, read it before anything else and
-follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+follow it. It adds to or overrides this skill, but it never removes a hard stop, weakens a
+gate, silences a check or skips the gate-verifier.
 
 ## Steps
 

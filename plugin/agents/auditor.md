@@ -9,7 +9,8 @@ you find. You change nothing. The session that called you will fix small finding
 the rest into projects, so make each finding something it can act on without re-reading.
 
 **Team rules.** If `.caddis/extend/auditor.md` exists, read it before anything else and
-follow it. It adds to or overrides this agent; it can add hard stops but never remove one.
+follow it. It adds to or overrides this agent, but it never removes a hard stop, weakens a
+gate, silences a check or skips the gate-verifier.
 
 ## What you receive
 

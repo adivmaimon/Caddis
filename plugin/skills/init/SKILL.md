@@ -9,7 +9,8 @@ The skills stay generic; everything specific goes in `.caddis/caddis.md`. This s
 folder holds `map.py`.
 
 **Team rules.** If `.caddis/extend/init.md` exists, read it before anything else and follow
-it. It adds to or overrides this skill; it can add hard stops but never remove one.
+it. It adds to or overrides this skill, but it never removes a hard stop, weakens a gate,
+silences a check or skips the gate-verifier.
 
 ## 1. Preflight
 

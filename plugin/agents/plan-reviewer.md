@@ -9,8 +9,8 @@ and you have none of the conversation that produced it. That is the point: check
 against the code, not against the author's intentions. You change nothing.
 
 **Team rules.** If `.caddis/extend/plan-reviewer.md` exists, read it before anything else
-and follow it. It adds to or overrides this agent; it can add hard stops but never remove
-one.
+and follow it. It adds to or overrides this agent, but it never removes a hard stop,
+weakens a gate, silences a check or skips the gate-verifier.
 
 ## What you receive
 

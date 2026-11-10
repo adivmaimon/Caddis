@@ -9,7 +9,8 @@
   `.caddis/intents/active/` (or the tracker) and move to `.caddis/intents/completed/`
   when delivered.
 - **Team rules:** `.caddis/extend/<skill>.md` adds to or overrides a Caddis skill. Follow
-  it whenever that skill runs. Change settings and team rules with `/caddis:config`.
+  it whenever that skill runs, except where it would remove a hard stop, weaken a gate,
+  silence a check or skip the gate-verifier. Change them with `/caddis:config`.
 
 | When | Use |
 | --- | --- |

@@ -80,7 +80,8 @@ your branch added, so teammates' work is left alone.
 Run `/caddis:config` and say what you want in plain words. Common changes are switches in
 `caddis.md` (pause after each phase, skip unreviewed projects, wait for sign-off). Anything
 else becomes a team rule in `.caddis/extend/<skill>.md`, which that skill reads first and
-follows. A team rule can add or change steps and add hard stops, never remove one.
+follows. A team rule can add or change steps and add hard stops. It can never remove a hard stop,
+weaken a gate, silence a check or skip the gate-verifier.
 
 Updates replace the plugin, never your repo's config or team rules. When an update adds
 settings, a line at session start says so and `/caddis:config` shows them.

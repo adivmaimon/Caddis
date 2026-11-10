@@ -40,7 +40,9 @@ is for developing Caddis, not for repos that use it.
    major version bump.
 5. **Teams adapt Caddis without forking it.** Every skill and agent starts by following
    `.caddis/extend/<name>.md` when it exists, and repo switches live in caddis.md's
-   Workflow section. A new skill or agent gets the same Team rules line. Keep the
+   Workflow section. A team rule never removes a hard stop, weakens a gate, silences a
+   check or skips the gate-verifier, and every skill and agent says so in its Team rules
+   line; a new one gets the same line. Keep the
    extension file names equal to the skill and agent names; renaming one breaks every
    repo that extends it.
 6. **Updates never overwrite the repo.** Only `config` writes to `.caddis/extend/`, and only
