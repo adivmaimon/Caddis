@@ -148,7 +148,12 @@ variants against a baseline before building. -->
 
 ## Machine limits
 
-<!-- e.g. "One heavy job at a time: never run the model beside a release build." -->
+<!-- What this machine can run at once. A missing line means its default. Heavy jobs always
+run one at a time, never beside each other. -->
+
+- Parallel agents: no cap
+- Heavy jobs: full build, benchmark, model load
+- Notes:
 
 ## Hard stops
 

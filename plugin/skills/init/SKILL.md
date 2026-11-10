@@ -26,7 +26,8 @@ silences a check or skips the gate-verifier.
 
 ## 2. Scan
 
-Gather evidence. Prefer what the repo does over what its docs say.
+Gather evidence. Prefer what the repo does over what its docs say. Never change
+application code, and never invent invariants, owners or policies.
 
 - **Commands:** `package.json` scripts, `Makefile`, `justfile`, `pyproject.toml`,
   `composer.json` scripts, `Cargo.toml`, `go.mod`, task runners. **CI workflows are the most
@@ -69,6 +70,8 @@ item came from when it isn't obvious. Rules:
 - **Workflow:** keep the defaults unless the owner says otherwise in step 5, or an older
   setup already did it (for example a rule to stop after each phase).
 - **Experiments:** fill only if a benchmark or eval harness exists.
+- **Machine limits:** fill Heavy jobs from evidence (long CI jobs, the benchmark, model
+  files), marked `(guess - confirm)`. Leave Parallel agents at its default unless told.
 - **Plans:** fill only if something reads project files: a deploy, notify or changelog script
   that parses project headings or skips files on a marker line, or required sections stated in
   CLAUDE.md or an older project skill. Copy the headings, formats and marker exactly.
@@ -108,13 +111,12 @@ skills in caddis.md. Only with clear evidence. Typical cases:
 Each is under about 60 lines, uses the exact commands and paths, and says when Caddis
 skills should call it.
 
-A repo skill that keeps a Caddis skill's name (`build`, `tests`, `commit`, `review` and the
-rest) but does a different job, such as a site build or a manual check routine with no test
-suite, makes "use the tests skill" ambiguous. Rename it after what it does (`verify`,
-`release`, `deploy`) and update every reference to it: CLAUDE.md, caddis.md, other skills,
-and `Skill(...)` entries in `.claude/settings.json`. If the repo already has skills, keep them. Where an existing skill
-duplicates a Caddis one (an older `commit`, `project`, `execute`...), move anything
-repo-specific from it into caddis.md and ask before removing it.
+A repo skill that keeps a Caddis skill's name (`build`, `tests`, `review`...) but does a
+different job makes "use the tests skill" ambiguous. Rename it after what it does (`verify`,
+`release`) and update every reference: CLAUDE.md, caddis.md, other skills, and `Skill(...)`
+entries in `.claude/settings.json`. Keep existing skills. Where one duplicates a Caddis skill
+(an older `commit`, `project`...), move its repo-specific parts into caddis.md and ask before
+removing it.
 
 ## 7. Migrate existing projects
 
@@ -126,9 +128,8 @@ agrees.
 
 ## 8. Wire it up
 
-- **Folders:** `.caddis/projects/active/.gitkeep` and `.caddis/projects/completed/.gitkeep`,
-  plus `active/.gitkeep` and `completed/.gitkeep` in the Intents folder when Product is
-  on.
+- **Folders:** `.gitkeep` in `.caddis/projects/active/` and `completed/`, and in the Intents
+  folder's `active/` and `completed/` when Product is on.
 - **CLAUDE.md:** add `templates/claude-md-block.md` between its markers near the top,
   or replace the existing block on re-init. Create CLAUDE.md if missing. Don't move other
   content without asking; if CLAUDE.md holds commands or rules that now live in caddis.md,
@@ -143,14 +144,6 @@ agrees.
 
 ## 9. Commit and report
 
-Commit everything as `chore(caddis): set up Caddis` with the `commit` skill. Then report in
-a few lines: the areas found, the commands, the invariants (and which are defaults), local
-skills created, projects migrated, and what to run next (usually `/caddis:learn`, then
-`/caddis:task` or `/caddis:project`).
-
-## Rules
-
-- Evidence over assumption. Every command and path in caddis.md exists.
-- Never invent invariants, owners or policies.
-- Don't change application code.
-- Re-running init must be safe: merge, don't overwrite.
+Commit everything as `chore(caddis): set up Caddis` with the `commit` skill. Report in a few
+lines: areas, commands, invariants (and which are defaults), local skills, projects
+migrated, and what to run next (usually `/caddis:learn`, then `/caddis:task` or `/caddis:project`).
