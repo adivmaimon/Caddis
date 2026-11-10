@@ -1,13 +1,13 @@
 #!/bin/bash
 # Prints a one-line status for a running build at intervals set by its estimated length. Run
-# under the Monitor tool: each stdout line is an event. Reads plan files and git, so it needs
+# under the Monitor tool: each stdout line is an event. Reads project files and git, so it needs
 # nothing from the builder and still reports when the builder has hung. Exits 0 once every
-# plan is in completed/. Safe to re-arm with the same arguments: state is kept per build.
+# project is in completed/. Safe to re-arm with the same arguments: state is kept per build.
 #
-# Usage: progress.sh <start-epoch> <estimate-minutes> <plan-path>...
+# Usage: progress.sh <start-epoch> <estimate-minutes> <project-path>...
 
 if [ "$#" -lt 3 ]; then
-  echo "usage: progress.sh <start-epoch> <estimate-minutes> <plan-path>..." >&2
+  echo "usage: progress.sh <start-epoch> <estimate-minutes> <project-path>..." >&2
   exit 2
 fi
 start=$1
@@ -20,7 +20,7 @@ tick=${CADDIS_PROGRESS_TICK:-15}
 # Long enough to ride out a normal test run between edits, short enough to catch a hang.
 stuck_after=1200
 
-# Sets total, done, open and current from the plan files.
+# Sets total, done, open and current from the project files.
 scan() {
   total=0 done=0 open=0 current=""
   local plan name file phases marked
@@ -35,7 +35,7 @@ scan() {
     fi
     case "$file" in
       *projects/active/*) ;;
-      # A plan gone from active/ is finished, whatever its phase markers say.
+      # A project gone from active/ is finished, whatever its phase markers say.
       *) [ "$phases" -gt 0 ] || phases=1
          total=$(( total + phases )) done=$(( done + phases ))
          continue ;;

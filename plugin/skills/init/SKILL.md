@@ -4,24 +4,23 @@ description: Set up Caddis in a repo - scan the codebase, build the map, write .
 ---
 
 Set up Caddis in the current repo so every Caddis skill knows how this codebase works.
-The skills stay generic; everything specific goes in `.caddis/caddis.md`.
+The skills stay generic; everything specific goes in `.caddis/caddis.md`. This skill's
+`templates/` folder holds `caddis.md` and `claude-md-block.md`; the map skill's `scripts/`
+folder holds `map.py`.
 
 **Team rules.** If `.caddis/extend/init.md` exists, read it before anything else and follow
 it. It adds to or overrides this skill; it can add hard stops but never remove one.
 
-This skill's `templates/` folder holds `caddis.md` and `claude-md-block.md`. The map skill's
-`scripts/` folder holds `map.py`.
-
 ## 1. Preflight
 
-- Confirm this is the repo root and a git repo. If it isn't git, say so; Caddis works but
-  staleness checks and the commit skill won't.
+- Confirm this is the repo root and a git repo, and the tree is clean. If it isn't git,
+  say so: Caddis works but staleness checks and the commit skill won't. Leave anything
+  uncommitted alone and list it.
 - If `.caddis/caddis.md` exists, this is a **re-init**: do every step, but propose changes
   to the existing config as a diff and keep everything the owner wrote.
 - Note what's already there: `CLAUDE.md`, `AGENTS.md`, `.claude/skills/`, `.claude/agents/`,
   `.claude/settings.json`, and any older project folders (`.claude/projects/`, `projects/`,
   `docs/projects/`).
-- Check the working tree is clean. If not, list what's uncommitted and leave it alone.
 
 ## 2. Scan
 

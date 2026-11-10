@@ -20,8 +20,7 @@ is for developing Caddis, not for repos that use it.
   author's context, and must never edit, run heavy jobs or touch a hard stop.
 - `plugin/hooks/` - plain bash scripts, run by literal `${CLAUDE_PLUGIN_ROOT}` paths (the
   directory refuses computed paths). `session-start.sh` reports a stale map, `announce.sh`
-  shows the skill badge. Both must stay silent and exit 0 when
-  there's nothing to say.
+  shows the skill badge. Both must stay silent and exit 0 when there's nothing to say.
 - `tests/` - map.py and progress.sh tests, stdlib unittest.
 
 ## Rules
@@ -33,11 +32,19 @@ is for developing Caddis, not for repos that use it.
    live in the config, never hardcoded in a skill.
 3. **map.py stays standard library only**, Python 3.8+, and never invents an edge. An
    import it can't resolve is counted as unresolved.
-4. **Project format is a contract.** `**Status:**`, `**Type:**`, `**Reviewed:**` lines and
-   `### Phase N - <name>` headings with ` - DONE (YYYY-MM-DD)` markers. Other tools (Monty)
-   parse them. Don't change them without a major version bump.
-5. Keep each SKILL.md under about 150 lines. Plain, direct language. No em dashes.
-6. Test map.py changes on real repos of different stacks, not only the fixtures.
+4. **The file formats are a contract.** In projects and tasks: the `**Status:**`,
+   `**Type:**`, `**Depends on:**`, `**Intent:**`, `**Reviewed:**` and `**Signed off:**`
+   lines, `### Phase N - <name>` headings with ` - DONE (YYYY-MM-DD)` markers, and the
+   `Caddis-Plan:` and `Caddis-Task:` trailers. In intents: the `**Status:**` values Draft,
+   Accepted, Planned and Done. Other tools (Monty) parse them. Don't change them without a
+   major version bump.
+5. **Teams adapt Caddis without forking it.** Every skill and agent starts by following
+   `.caddis/extend/<name>.md` when it exists, and repo switches live in caddis.md's
+   Workflow section. A new skill or agent gets the same Team rules line. Keep the
+   extension file names equal to the skill and agent names; renaming one breaks every
+   repo that extends it.
+6. Keep each SKILL.md under about 150 lines. Plain, direct language. No em dashes.
+7. Test map.py changes on real repos of different stacks, not only the fixtures.
 
 ## Commands
 
