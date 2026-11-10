@@ -31,7 +31,8 @@ Mark the plan named in my message complete by moving it from `.caddis/projects/a
    The folder is the source of truth for completion.
 6. If caddis.md lists a Progress log, add a one-paragraph entry at its top.
 7. If the plan has an Intent file and this plan delivered all of it, set the intent's
-   `**Status:** Done (project-<name>)`. If the Intent is a ticket and caddis.md's Sign-off
+   `**Status:** Done (project-<name>)` and move it from the Intents folder's `active/` to
+   `completed/`, the same way as step 5. If the Intent is a ticket and caddis.md's Sign-off
    is `tracker comment`, post a short comment there: what shipped, in Summary language, and
    any Done when check that changed.
 8. Confirm the new path in one or two sentences. Next is usually the `commit` skill.

@@ -6,7 +6,8 @@
   session.
 - **Work lives in** `.caddis/projects/active/` and moves to `.caddis/projects/completed/` when done:
   `project-*.md` for planned work, `task-*.md` for small changes. Product intents live in
-  `.caddis/intents/` or the tracker.
+  `.caddis/intents/active/` (or the tracker) and move to `.caddis/intents/completed/`
+  when delivered.
 
 | When | Use |
 | --- | --- |

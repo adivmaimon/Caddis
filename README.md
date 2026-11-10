@@ -156,7 +156,8 @@ wide sweeps out of the main session:
 .caddis/
   caddis.md              commands, stack, layers, rules, risk, product, docs, commits,
                          tests, hard stops
-  intents/               product intents written in the repo (when Product is set)
+  intents/active/        product intents not yet delivered (when Product is set)
+  intents/completed/     delivered intents
   projects/active/       plans and tasks in progress
   projects/completed/    finished plans and tasks
   map/STRUCTURE.md       the map Claude reads (committed)

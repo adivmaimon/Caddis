@@ -48,7 +48,7 @@ plainly and argue for it. Never diverge quietly.
 **Type:** Project | Master plan
 **Phases:** <n>
 **Depends on:** <plan files, or None>
-**Intent:** <intent path or ticket key, or None>
+**Intent:** <intent file name or ticket key, or None>
 
 ## Goal
 One sentence: what this achieves and why it matters to the user.

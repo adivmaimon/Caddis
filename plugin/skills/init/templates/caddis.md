@@ -19,7 +19,8 @@
 with /caddis:intent and sign off each plan's Summary; plans built from an intent quote it. -->
 
 - Product owners: <!-- names. Product decisions are tagged (product, YYYY-MM-DD) -->
-- Intents: `.caddis/intents/` <!-- folder for intent files written in the repo -->
+- Intents: `.caddis/intents/` <!-- intent files live in its active/ until delivered, then
+  completed/ -->
 - Tracker: <!-- e.g. "Jira, projects ABC and XYZ, via the Atlassian connector", or none.
   Tickets can be the intent instead of a file -->
 - Sign-off: <!-- where the owner approves a plan's Summary: "tracker comment" or "PR".

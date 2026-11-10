@@ -1,6 +1,6 @@
 ---
 name: intent
-description: Capture what a product owner wants built, in product terms only - write an intent file in .caddis/intents/, or check and complete a ticket in the issue tracker. For product managers and owners; no technical questions. Feeds /caddis:project.
+description: Capture what a product owner wants built, in product terms only - write an intent file in .caddis/intents/active/, or check and complete a ticket in the issue tracker. For product managers and owners; no technical questions. Feeds /caddis:project.
 ---
 
 Capture the intent described in my message: the problem, the outcome and how we'll know it
@@ -37,8 +37,9 @@ Don't put what you find there into the intent, beyond a one-line "Related:" poin
 
 ## 2a. Write it here
 
-File: the Intents folder from caddis.md (default `.caddis/intents/`), named
-`intent-<kebab-name>.md`. 15 to 40 lines:
+File: `active/` in the Intents folder from caddis.md (default `.caddis/intents/active/`),
+named `intent-<kebab-name>.md`. It moves to `completed/` when a plan delivers it. 15 to
+40 lines:
 
 ```markdown
 # <Title>

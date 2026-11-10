@@ -119,7 +119,8 @@ agrees.
 ## 8. Wire it up
 
 - **Folders:** `.caddis/projects/active/.gitkeep` and `.caddis/projects/completed/.gitkeep`,
-  plus `.caddis/intents/.gitkeep` when Product is set.
+  plus `.caddis/intents/active/.gitkeep` and `.caddis/intents/completed/.gitkeep` when
+  Product is set.
 - **CLAUDE.md:** add `templates/claude-md-block.md` between its markers near the top,
   or replace the existing block on re-init. Create CLAUDE.md if missing. Don't move other
   content without asking; if CLAUDE.md holds commands or rules that now live in caddis.md,
