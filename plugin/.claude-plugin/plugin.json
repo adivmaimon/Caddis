@@ -1,6 +1,6 @@
 {
   "name": "caddis",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Projects, tasks and a codebase map for Claude Code, set up from your own repo.",
   "author": {
     "name": "Adiv Maimon",
@@ -16,5 +16,6 @@
     "codebase-map",
     "autonomous",
     "project-management"
-  ]
+  ],
+  "types": "./types/panel-state.d.ts"
 }
