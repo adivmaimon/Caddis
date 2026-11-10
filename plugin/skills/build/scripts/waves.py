@@ -7,12 +7,14 @@ ignored). Two projects conflict when they share a path, after dropping the paths
 --ignore (files the integrator reconciles by rule, such as a version file). A project with no
 Changes section conflicts with every other, so it gets a wave of its own.
 
-A project goes in the wave after the latest of its dependencies and of the earlier projects
-(in the order given) it conflicts with, so build order holds wherever it matters.
+Projects are first put in build order: the order given, moved only as far as needed so each
+comes after every listed project it depends on. A dependency not in the list (already built)
+is ignored. A project goes in the wave after the latest of its dependencies and of the earlier
+projects it conflicts with, so build order holds wherever it matters.
 
 Prints JSON: {"waves": [[path, ...], ...], "sequenced": [{"project", "after", "files"}]}.
 "sequenced" names each earlier project a project waits for because they share files.
-Standard library only, Python 3.8+. Exits 2 on a missing project file.
+Standard library only, Python 3.8+. Exits 2 on a missing project file or a dependency cycle.
 
 Usage: waves.py [--ignore <path>[,<path>...]]... <project-path>...
 """
@@ -91,6 +93,20 @@ def depends_on(text):
     return {stem(part) for part in value.split(",") if part.strip()}
 
 
+def build_order(info):
+    """The projects in the order given, each moved after every listed project it depends on."""
+    names = {p["name"] for p in info}
+    placed, ordered, pending = set(), [], list(info)
+    while pending:
+        ready = next((p for p in pending if (p["deps"] & names) <= placed), None)
+        if ready is None:
+            raise ValueError("dependency cycle among: " + ", ".join(p["name"] for p in pending))
+        pending.remove(ready)
+        placed.add(ready["name"])
+        ordered.append(ready)
+    return ordered
+
+
 def waves(projects, ignore):
     """projects: [(path, text)] in build order. Returns (waves, sequenced)."""
     info = []
@@ -99,6 +115,7 @@ def waves(projects, ignore):
         if files is not None:
             files -= ignore
         info.append({"path": path, "name": stem(path), "deps": depends_on(text), "files": files})
+    info = build_order(info)
     wave_of, sequenced = {}, []
     for i, p in enumerate(info):
         level = 0
@@ -135,7 +152,11 @@ def main(argv=None):
         except OSError as exc:
             print("waves.py: cannot read %s: %s" % (path, exc), file=sys.stderr)
             return 2
-    grouped, sequenced = waves(projects, ignore)
+    try:
+        grouped, sequenced = waves(projects, ignore)
+    except ValueError as exc:
+        print("waves.py: %s" % exc, file=sys.stderr)
+        return 2
     print(json.dumps({"waves": grouped, "sequenced": sequenced}))
     return 0
 

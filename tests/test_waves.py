@@ -62,6 +62,19 @@ class WavesTest(unittest.TestCase):
         c = self.write("project-c.md", project(table("`src/c.py`"), depends="project-x.md, project-b"))
         self.assertEqual(self.names(self.run_waves(a, b, c)), [["project-a"], ["project-b"], ["project-c"]])
 
+    def test_dependency_listed_first_still_waits(self):
+        cli = self.write("project-cli.md", project(table("`src/cli.py`"), depends="project-a, project-b"))
+        a = self.write("project-a.md", project(table("`src/a.py`")))
+        b = self.write("project-b.md", project(table("`src/b.py`")))
+        self.assertEqual(self.names(self.run_waves(cli, a, b)), [["project-a", "project-b"], ["project-cli"]])
+
+    def test_dependency_cycle_fails(self):
+        a = self.write("project-a.md", project(table("`src/a.py`"), depends="project-b"))
+        b = self.write("project-b.md", project(table("`src/b.py`"), depends="project-a"))
+        proc = subprocess.run([sys.executable, str(SCRIPT), a, b], capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 2)
+        self.assertIn("cycle", proc.stderr)
+
     def test_missing_changes_gets_a_wave_of_its_own(self):
         a = self.write("project-a.md", project(table("`src/a.py`")))
         b = self.write("project-b.md", project(None))
