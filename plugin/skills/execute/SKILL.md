@@ -9,9 +9,9 @@ Execute the project named in my message, or the most recently discussed active p
 follow it. It adds to or overrides this skill, but it never removes a hard stop, weakens a
 gate, silences a check or skips the gate-verifier.
 
-If I invoked this directly in the main session, hand the project off as in "Run it in the
-background" in the `build` skill, with this skill as the agent's job. A background builder
-just carries on.
+If I invoked this directly in the main session, hand the project off to a `caddis:builder`
+agent as in "Run it in the background" in the `build` skill. A background builder just
+carries on.
 
 ## 1. Load
 

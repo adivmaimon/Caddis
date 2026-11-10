@@ -18,9 +18,9 @@ If you are the background builder, skip this section. Otherwise, in the main ses
 
 1. List the projects in scope and estimate the build in minutes from their phases and Changes.
    Tell me the estimate in one line.
-2. Note the start time with `date +%s`. Start one background `general-purpose` agent: "You
-   are the background builder. Run the `caddis:build` skill on these projects: <paths>."
-   Include anything else from my message.
+2. Note the start time with `date +%s`. Start one background `caddis:builder` agent with
+   the project paths, the main checkout's absolute path and anything else from my message.
+   Its standing brief holds the builder's rules.
 3. Start the Monitor tool with `bash <this skill's scripts folder>/progress.sh <start>
    <estimate> <project paths>` and a `timeout_ms` of 1800000. The script stays silent on short
    builds and sets its own report interval as the estimate changes. The build panel and its
@@ -31,7 +31,8 @@ If you are the background builder, skip this section. Otherwise, in the main ses
 5. When the agent finishes, stop the monitor with TaskStop and give me its report. If it is
    waiting on a hard stop, ask me, then pass my answer on with SendMessage.
 
-If the Agent or Monitor tool isn't available, build in this session instead.
+If the Agent or Monitor tool isn't available, or the `caddis:builder` agent isn't, build in
+this session instead.
 
 The builder can't ask me anything. It sends blockers and hard stops to `main` with
 SendMessage, along with any decision I'd want to hear about before the end.
