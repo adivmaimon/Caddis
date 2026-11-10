@@ -11,7 +11,7 @@ the repo-specific facts live in one place you can edit.
 - **Projects.** Write up a piece of work, review it once, then let Claude build it
   unattended. The build records its decisions instead of asking.
 - **Tasks.** Small changes skip the ceremony: a short task file, the change, the checks, a
-  commit. Typos and bumps skip Caddis entirely.
+  commit. Typos and version bumps skip Caddis entirely.
 - **Intents.** Product owners say what they want in product terms, then sign off one plain
   Summary. They're never asked a technical question.
 - **The map.** An import graph of your code, plus a short guide to what lives where. A hook
@@ -40,11 +40,22 @@ Needs Claude Code with plugin support, git, and Python 3.8+ for the map script.
 ## How work flows
 
 Small changes are tasks. Anything bigger is a project: write it with `/caddis:project`,
-check it with `/caddis:review`, then `/caddis:build` runs it unattended, one gated commit
-per phase. It stops only for the hard stops in `caddis.md`. While it runs, a Caddis build
-panel beside the chat shows each phase as it finishes, or the status line does where a panel
-can't be drawn or `Build panel: off` is set. Projects that share no files build side by
-side, each in its own worktree, and are merged in order with the tests run after each merge.
+check it with `/caddis:review`, then `/caddis:build` runs it unattended, one checked commit
+per phase. It stops only for the hard stops in `caddis.md`.
+
+Projects that share no files build side by side, each in its own copy of the code, and are
+merged one at a time with the tests run after each merge. A project that depends on another
+waits for it.
+
+While a build runs, a Caddis build panel beside the chat shows each phase as it finishes.
+Where a panel can't be drawn, or with `Build panel: off`, the status line shows it instead.
+
+A change is a task only if all of these hold, otherwise it is a project:
+- about 3 files or fewer, in one layer
+- nothing on the Risk list in `caddis.md`
+- no rule from `caddis.md` touched
+- no experiment needed to pick the approach
+- one commit can revert it
 
 ## Agents
 
@@ -55,13 +66,6 @@ side, each in its own worktree, and are merged in order with the tests run after
 | `auditor` | `/caddis:maintenance`, once per focus; `/caddis:evaluate` for wide areas | Sweeps one focus (invariants, reuse, comments, performance, tests, security, docs, AI cost) and returns findings with file and line | No |
 | `builder` | `/caddis:build` and `/caddis:execute`, in the background, one per project when builds run side by side | Builds its projects phase by phase, passes each gate and commits, deciding and recording instead of asking | Yes, inside the repo, on its own branch. Never pushes or merges |
 | `integrator` | `/caddis:build`, after each wave of parallel builds | Merges each builder's branch in build order, runs the tests after every merge, and resolves only the files on the Merge by rule line. Any other clash is aborted and reported | Merges only, never writes code. Never pushes |
-
-A change is a task only if all of these hold, otherwise it is a project:
-- about 3 files or fewer, in one layer
-- nothing on the Risk list in `caddis.md`
-- no rule from `caddis.md` touched
-- no experiment needed to pick the approach
-- one commit can revert it
 
 ## Skills
 
@@ -90,8 +94,8 @@ your branch added, so teammates' work is left alone.
 ## Adapting Caddis
 
 Run `/caddis:config` and say what you want in plain words. Common changes are switches in
-`caddis.md` (pause after each phase, skip unreviewed projects, wait for sign-off, build panel, merge by rule). Anything
-else becomes a team rule in `.caddis/extend/<skill>.md`, which that skill reads first and
+`caddis.md`: pause after each phase, skip unreviewed projects, wait for sign-off, build
+panel, merge by rule. Anything else becomes a team rule in `.caddis/extend/<skill>.md`, which that skill reads first and
 follows. A team rule can add or change steps and add hard stops. It can never remove a hard stop,
 weaken a gate, silence a check or skip the gate-verifier.
 

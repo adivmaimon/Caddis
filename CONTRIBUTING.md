@@ -15,9 +15,11 @@ is for developing Caddis, not for repos that use it.
 - `plugin/skills/map/scripts/map.py` - the map script. Init copies it to `.caddis/bin/map.py` in
   each repo; bump `VERSION` in it on every change so repos pick up the new copy.
 - `plugin/skills/build/scripts/waves.py` - groups projects into build waves from their
-  `Depends on` lines and Changes paths. Standard library only, like map.py.
+  `Depends on` lines and Changes paths, in any input order; a dependency cycle exits 2.
+  Standard library only, like map.py.
 - `plugin/skills/build/scripts/progress.sh` - the build status reporter, run under Monitor.
-  It reads project files and git only, so builders need do nothing to be reported on. Each
+  It reads project files (a builder's worktree copy too) and git only, so builders need do
+  nothing to be reported on. Each
   tick it also writes `caddis-build.json` in the git common dir for the panel.
 - `plugin/agents/` - agents the skills hand work to. The reviewers (`plan-reviewer`,
   `gate-verifier`, `auditor`) get a path, not the author's context, and are read-only: they

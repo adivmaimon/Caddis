@@ -13,7 +13,7 @@ the repo-specific facts live in one place you can edit.
 - **Projects.** Write up a piece of work, review it once, then let Claude build it
   unattended. The build records its decisions instead of asking.
 - **Tasks.** Small changes skip the ceremony: a short task file, the change, the checks, a
-  commit. Typos and bumps skip Caddis entirely.
+  commit. Typos and version bumps skip Caddis entirely.
 - **Intents.** Product owners say what they want in product terms, then sign off one plain
   Summary. They're never asked a technical question.
 - **The map.** An import graph of your code, plus a short guide to what lives where. A hook
@@ -76,11 +76,11 @@ flowchart LR
   gate and gets its own commit. When a project is done it moves to `completed/` with what
   was built and why.
 - **Parallel builds:** projects that share no files build side by side, each in its own
-  copy of the code (a git worktree) on its own branch. After each batch the integrator
-  merges them in order and runs the tests after each merge; a real clash is stopped and
-  reported, never overwritten. Projects that share files build one after another. Files
-  every project touches, like a version file, go on the `Merge by rule` line in
-  `caddis.md` so they don't force a queue.
+  copy of the code (a git worktree) on its own branch. When a batch is done, the integrator
+  agent merges the branches one at a time and runs the tests after each merge. A real clash
+  is stopped and reported, never overwritten. A project waits for any project it depends on
+  or shares files with, in whatever order you list them. Files every project touches, like
+  a version file, go on the `Merge by rule` line in `caddis.md` so they don't force a wait.
 - **Stops:** only for the hard stops in `caddis.md`: publishing, spending money, secrets,
   deleting outside the repo, destructive commands against a shared database. You can add
   more.
@@ -319,8 +319,8 @@ or file changes for 20 minutes is flagged as possibly stuck.
 
 In Claude Code versions with mods, a **Caddis build** panel also opens beside the chat when a
 build starts: each project's phases, the one in progress, a progress bar, time against the
-estimate and a warning when the build goes quiet. It updates as phases finish and stays open
-showing done. `/caddis-panel` opens it again. Where a panel can't be placed, or with
+estimate and a warning when the build goes quiet. A phase counts as soon as its builder
+finishes it, before its branch is merged. The panel stays open showing done. `/caddis-panel` opens it again. Where a panel can't be placed, or with
 `Build panel: off` in the Workflow section, the same progress shows on the status line under
 the prompt. The text reports above stay the same everywhere, so surfaces without mods lose
 nothing.
