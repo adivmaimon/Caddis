@@ -35,8 +35,9 @@ refresh mode now, or tell the user it is stale if they want to skip that.
   (caddis.md's Machine limits).
 
 ## 6. Instructions check
-Scan `CLAUDE.md`, `.caddis/caddis.md` and any repo-local skills in `.claude/skills/`. Fix
-clear rot now: file paths, script and command names, table names, decisions a completed
+Scan `CLAUDE.md`, `.caddis/caddis.md`, `.caddis/extend/` and any repo-local skills in
+`.claude/skills/`. Team rules in `.caddis/extend/` are the owner's: report rot there, don't
+fix it. Elsewhere, fix clear rot now: file paths, script and command names, table names, decisions a completed
 project has since settled. Verify against the tree rather than assuming. Keep each file under
 about 250 lines.
 

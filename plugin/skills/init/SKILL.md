@@ -17,7 +17,8 @@ it. It adds to or overrides this skill; it can add hard stops but never remove o
   say so: Caddis works but staleness checks and the commit skill won't. Leave anything
   uncommitted alone and list it.
 - If `.caddis/caddis.md` exists, this is a **re-init**: do every step, but propose changes
-  to the existing config as a diff and keep everything the owner wrote.
+  to the existing config as a diff and keep everything the owner wrote. Never write to
+  `.caddis/extend/`: team rules belong to the owner and the `config` skill.
 - Note what's already there: `CLAUDE.md`, `AGENTS.md`, `.claude/skills/`, `.claude/agents/`,
   `.claude/settings.json`, and any older project folders (`.claude/projects/`, `projects/`,
   `docs/projects/`).
@@ -52,7 +53,8 @@ Run the `map` skill in full mode. Its area names feed the commit scopes and the 
 
 ## 4. Write `.caddis/caddis.md`
 
-Start from `templates/caddis.md`. Fill every section from the evidence, citing where each
+Start from `templates/caddis.md`, with `VERSION` on its first line set to the version in
+this plugin's `.claude-plugin/plugin.json`. Fill every section from the evidence, citing where each
 item came from when it isn't obvious. Rules:
 - **Commands:** exact, copy-pasteable, verified where safe.
 - **Invariants:** only rules the repo already states or clearly enforces in code. Never

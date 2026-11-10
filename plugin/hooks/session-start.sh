@@ -1,9 +1,25 @@
 #!/bin/bash
-# SessionStart: if this repo uses Caddis and its codebase map is out of date, say so.
-# Plain stdout from a SessionStart hook goes to Claude as context. Silent when the map is
-# fresh or the repo has no Caddis map. Never fails the session.
+# SessionStart: if this repo uses Caddis, say when its config predates the installed Caddis
+# and when its codebase map is out of date. Plain stdout from a SessionStart hook goes to
+# Claude as context. Silent when both are current or the repo doesn't use Caddis. Never
+# fails the session.
 
 cd "${CLAUDE_PROJECT_DIR:-.}" 2>/dev/null || exit 0
+
+# An update can add settings. caddis.md's first line records the version it was last brought
+# up to date with, <!-- caddis-config: 0.6.0 -->; no marker means older than 0.6.0.
+config=".caddis/caddis.md"
+manifest="${CLAUDE_PLUGIN_ROOT:-}/.claude-plugin/plugin.json"
+if [ -f "$config" ] && [ -f "$manifest" ]; then
+  plugin=$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([0-9.]*\)".*/\1/p' "$manifest" | head -n 1)
+  seen=$(sed -n '1s/.*caddis-config: \([0-9.]*\).*/\1/p' "$config")
+  seen=${seen:-0}
+  newest=$(printf '%s\n%s\n' "$seen" "$plugin" | sort -t. -k1,1n -k2,2n -k3,3n | tail -n 1)
+  if [ -n "$plugin" ] && [ "$seen" != "$plugin" ] && [ "$newest" = "$plugin" ]; then
+    echo "Caddis was updated to $plugin. This repo's config and team rules are unchanged. Run /caddis:config to see any new settings."
+  fi
+fi
+
 map=".caddis/map/STRUCTURE.md"
 [ -f "$map" ] || exit 0
 git rev-parse --git-dir >/dev/null 2>&1 || exit 0

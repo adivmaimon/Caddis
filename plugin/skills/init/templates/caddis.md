@@ -1,8 +1,9 @@
+<!-- caddis-config: VERSION -->
 # Caddis config
 
 > Every Caddis skill reads this file. It holds everything specific to this repo so the
-> skills themselves stay generic and can be upgraded. `/caddis:init` writes it; edit it by
-> hand whenever something here changes. Leave a section empty, or delete it, when it does
+> skills themselves stay generic and can be upgraded. `/caddis:init` writes it; change it with
+> `/caddis:config` or by hand. Caddis updates never overwrite it. Leave a section empty, or delete it, when it does
 > not apply. Keep the whole file under about 200 lines.
 
 ## About
