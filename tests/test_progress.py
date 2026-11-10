@@ -128,6 +128,39 @@ class StatusFileTest(ScriptTest):
         self.run_for(30, 60)
         self.assertFalse(self.status()["quiet"])
 
+    def hide_caddis(self):
+        """Ignore .caddis/ as a repo that keeps its projects private does."""
+        with open(self.repo / ".git/info/exclude", "a") as f:
+            f.write(".caddis/\n")
+
+    def test_commit_on_a_builder_branch_counts_as_activity(self):
+        self.hide_caddis()
+        self.write_plan()
+        old = time.time() - 30 * 60
+        os.utime(self.repo / PLAN, (old, old))
+        self.run_for(30, 60)
+        self.assertTrue(self.status()["quiet"])
+        env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
+                   GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+        tree = subprocess.run(["git", "write-tree"], cwd=self.repo, env=env, check=True,
+                              capture_output=True, text=True).stdout.strip()
+        commit = subprocess.run(["git", "commit-tree", tree, "-m", "builder"], cwd=self.repo,
+                                env=env, check=True, capture_output=True, text=True).stdout.strip()
+        subprocess.run(["git", "update-ref", "refs/heads/caddis/x", commit], cwd=self.repo, check=True)
+        self.run_for(30, 60)
+        self.assertFalse(self.status()["quiet"])
+
+    def test_touched_project_file_counts_when_caddis_is_ignored(self):
+        self.hide_caddis()
+        self.write_plan()
+        old = time.time() - 30 * 60
+        os.utime(self.repo / PLAN, (old, old))
+        self.run_for(30, 60)
+        self.assertTrue(self.status()["quiet"])
+        os.utime(self.repo / PLAN, None)
+        self.run_for(30, 60)
+        self.assertFalse(self.status()["quiet"])
+
     def test_done_after_the_last_project_moves(self):
         self.write_plan()
         self.run_for(1, 20)

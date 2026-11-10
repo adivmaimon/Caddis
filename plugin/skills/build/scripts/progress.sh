@@ -120,14 +120,25 @@ fmt() {
 }
 
 # Newest commit or uncommitted file change, never earlier than the start of the build.
+# Builders in worktrees commit on caddis/<project> branches and edit files this checkout
+# can't see, so those branches and the project files (kept here, often gitignored) count too.
 last_activity() {
-  local newest=$start stamp file
-  stamp=$(git log -1 --format=%ct 2>/dev/null)
-  [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
+  local newest=$start stamp file plan
+  for stamp in $(git log -1 --format=%ct 2>/dev/null) \
+      $(git log -1 --format=%ct --branches='caddis/*' 2>/dev/null); do
+    [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
+  done
   while IFS= read -r -d '' file; do
     stamp=$(stat -c %Y "$file" 2>/dev/null || stat -f %m "$file" 2>/dev/null)
     [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
   done < <(git ls-files -m -o --exclude-standard -z 2>/dev/null)
+  for plan in "${plans[@]}"; do
+    file="$plan"
+    [ -f "$file" ] || file=".caddis/projects/completed/$(basename "$plan")"
+    [ -f "$file" ] || continue
+    stamp=$(stat -c %Y "$file" 2>/dev/null || stat -f %m "$file" 2>/dev/null)
+    [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
+  done
   echo "$newest"
 }
 
