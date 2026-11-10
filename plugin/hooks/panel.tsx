@@ -12,6 +12,7 @@ const PANE = 'caddis-build'
 const TITLE = 'Caddis build'
 // progress.sh rewrites the file every 15s; a 2s poll shows each write promptly for one stat.
 const POLL_MS = 2000
+// The bar's widest; a narrower pane gets a shorter one, so the body never scrolls sideways.
 const BAR = 30
 
 function statusLine(s: BuildStatus): string {
@@ -116,7 +117,9 @@ export const register: Register = on => {
     }
 
     const total = Math.max(1, s.phases_total)
-    const filled = Math.round((BAR * s.phases_done) / total)
+    // The body less the paddingX on each side and the ' 100%' after the bar.
+    const bar = Math.max(4, Math.min(BAR, (e.props.bodyColumns || BAR + 7) - 7))
+    const filled = Math.round((bar * s.phases_done) / total)
     const pct = Math.round((100 * s.phases_done) / total)
     const decisions = s.projects.reduce((n, p) => n + p.decisions, 0)
     const time = s.done
@@ -156,7 +159,7 @@ export const register: Register = on => {
         </Box>
         <Box flexDirection="row">
           <Text color="success">{'▓'.repeat(filled)}</Text>
-          <Text dimColor>{'░'.repeat(BAR - filled)}</Text>
+          <Text dimColor>{'░'.repeat(bar - filled)}</Text>
           <Text> {pct}%</Text>
         </Box>
         {s.projects.map(project)}

@@ -135,6 +135,18 @@ test('a new build opens the panel, drawn mid-build on every surface', async ($, 
   }
 })
 
+test('the bar fits a narrow pane', async ($, on) => {
+  world(on, {})
+  await start($, mock.clock(on))
+  for (const [cols, width] of [[20, 13], [48, 30]] as const) {
+    const ui = await $.ui.mount({ ...PANE, surface: 'terminal', props: { ...PANE.props, bodyColumns: cols } })
+    const filled = (await ui.find({ type: 'Text', text: /^▓+$/ }))?.text ?? ''
+    const empty = (await ui.find({ type: 'Text', text: /^░+$/ }))?.text ?? ''
+    expect(filled.length + empty.length).toBe(width)
+    await ui.unmount()
+  }
+})
+
 test('a .git file leads to the git dir it names', async ($, on) => {
   const file = '/.git/modules/repo/caddis-build.json'
   const { seen } = world(on, { gitdir: { line: '../.git/modules/repo', file } })
