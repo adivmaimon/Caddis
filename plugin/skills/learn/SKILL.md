@@ -32,8 +32,8 @@ refresh mode now, or tell the user it is stale if they want to skip that.
 - If caddis.md has Logs, check the newest for errors or crashes. Never copy private
   content out of them.
 - If caddis.md has Experiments, check the latest benchmark state for open regressions.
-- Before anything heavy, check nothing heavy is still running from an earlier session
-  (caddis.md's Machine limits).
+- Before one of caddis.md's Machine limits Heavy jobs (default: a full build, a benchmark,
+  a model load), check none is still running from an earlier session.
 
 ## 6. Instructions check
 Scan `CLAUDE.md`, `.caddis/caddis.md`, `.caddis/extend/` and any repo-local skills in

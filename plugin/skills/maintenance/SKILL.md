@@ -17,15 +17,16 @@ Skip any step whose subject doesn't exist yet and say so.
 **Sweeps go to the `auditor` agent.** Steps marked *(auditor)* below are read-only sweeps:
 hand each to the auditor with its focus, any scope, and the log's settled items for that
 focus. Keep its findings, not the files. Fix `in-pass` findings yourself, then rerun the
-checks; group `project` findings into projects with the `project` skill. Run auditors in parallel
-only when caddis.md's Machine limits allow it, otherwise one at a time. On a large repo,
+checks; group `project` findings into projects with the `project` skill. Run auditors in parallel,
+up to Parallel agents under caddis.md's Machine limits (default: no cap). On a large repo,
 give each auditor one area of the map at a time. Steps that run commands (benchmark, lint
 and build, dependencies) stay with you.
 
 ## 0. Local skills
 Run every skill marked `Maintenance:` under Local skills in caddis.md, honouring its ordering
 note: start long-running or background ones first and carry on with the steps below while
-they run, respecting Machine limits. Where a local skill covers a step (performance, UI,
+they run, but never beside one of Machine limits' Heavy jobs (default: a full build, a
+benchmark, a model load). Where a local skill covers a step (performance, UI,
 docs), take its findings for that step instead of repeating the work. Wait for every one to
 finish before the log, and record each one's result, or why it didn't run.
 

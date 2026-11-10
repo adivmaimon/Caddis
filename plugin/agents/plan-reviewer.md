@@ -37,6 +37,8 @@ format or run anything heavy.
   code, a measurement against a threshold, a file that exists). "Looks right" is not a gate.
 - **Invariants:** every numbered rule in caddis.md the change could touch is named, with
   how it holds. Look for ones it touches without saying so.
+- **Heavy gates:** a gate that runs one of Machine limits' Heavy jobs (default: a full
+  build, a benchmark, a model load) says so and runs alone.
 - **Risk:** the level matches caddis.md's Risk list. Missing rollback for medium or high.
 - **Experiments:** if caddis.md has Experiments set and the project changes behaviour, the
   first phase is an experiment with a baseline, variants, the benchmark command and a rule

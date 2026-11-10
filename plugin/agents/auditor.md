@@ -21,7 +21,8 @@ gate, silences a check or skips the gate-verifier.
 
 ## Read first
 
-`.caddis/caddis.md` (Stack, Layers, Invariants, Risk, Tests, Machine limits) and
+`.caddis/caddis.md` (Stack, Layers, Invariants, Risk, Tests, Machine limits: never run its
+Heavy jobs, by default a full build, a benchmark, a model load) and
 `.caddis/map/STRUCTURE.md`. Use the map to go where the focus lives instead of reading
 everything: `python3 .caddis/bin/map.py area <dir>`, `uses <file>`, `deps <file>`,
 `orphans`. Bash is for reading and searching only: `git grep`, `git log`, `ls`, `wc`,

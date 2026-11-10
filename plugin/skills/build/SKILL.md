@@ -37,7 +37,9 @@ SendMessage, along with any decision I'd want to hear about before the end.
 
 ## Before starting
 
-- Read `.caddis/caddis.md`, in particular Workflow, Hard stops and Machine limits.
+- Read `.caddis/caddis.md`, in particular Workflow, Hard stops and Machine limits: one of
+  its Heavy jobs at a time (default: a full build, a benchmark, a model load), and no more
+  background agents at once than Parallel agents (default: no cap).
 - Every project in scope has a `**Reviewed:**` line. If one doesn't and Workflow's
   Unreviewed projects is `skip`, leave it out and say so. Otherwise review it as the
   `review` skill does, but take each open question's default instead of asking. Record each

@@ -44,8 +44,8 @@ gate, silences a check or skips the gate-verifier.
      the `project` skill).
    Then hand each project to the `plan-reviewer` agent for a fresh read without your context:
    just the project's path, plus the ticket's text when its Intent is a ticket (the agent has
-   no tracker tool). Run them one at a time if caddis.md's Machine limits rule out
-   parallel agents. Treat its blocking findings as yours to fix; judge its minor ones.
+   no tracker tool). Run up to Machine limits' Parallel agents at once (default: no
+   cap). Treat its blocking findings as yours to fix; judge its minor ones.
 3. **Measure reach.** For each project, run `python3 .caddis/bin/map.py reach <files>` on the
    existing files its Changes list (skip ones it creates). Write the result into its Risk
    section as a `**Reach:**` paragraph, one or two sentences on what the change touches,

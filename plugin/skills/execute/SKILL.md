@@ -17,7 +17,8 @@ just carries on.
 
 1. Find the file in `.caddis/projects/active/` and read all of it before writing code.
 2. Read `.caddis/caddis.md`. Its Workflow, Invariants, Commands and Machine limits apply
-   throughout.
+   throughout: one of its Heavy jobs at a time (default: a full build, a benchmark, a model
+   load), and Parallel agents caps background agents (default: no cap).
 3. If it is a master plan (`Type: Master plan`), don't implement it directly: each phase
    becomes its own project via the `project` skill, unless the phase says it is a spike or a
    decision with no feature code.

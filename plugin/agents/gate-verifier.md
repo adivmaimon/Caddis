@@ -39,8 +39,9 @@ The project path and the phase number. Nothing about what was done: find that ou
 
 - Never edit, format, commit, install or push. Never run a formatter in write mode or a
   linter with `--fix`; use the check form, or report the step as not run.
-- Respect Machine limits. If a gate needs a heavy job (a full build, a benchmark, a model
-  load), don't run it: report it as **not run, heavy** so the main session runs it.
+- Respect Machine limits. If a gate needs anything listed under its Heavy jobs (default: a
+  full build, a benchmark, a model load), don't run it: report it as **not run, heavy** so
+  the main session runs it.
 - Never run anything on the Hard stops list.
 
 ## Report

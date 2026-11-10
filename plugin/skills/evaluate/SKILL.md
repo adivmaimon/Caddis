@@ -15,7 +15,8 @@ gate, silences a check or skips the gate-verifier.
 - Read, don't guess. Every claim about the code cites a file.
 - Measure when measuring is cheap. A short spike (speed, memory, bundle size, start time)
   beats an argument. Spikes live in a scratch directory outside the repo and are deleted.
-  Respect caddis.md's Machine limits.
+  Respect caddis.md's Machine limits: a spike never runs beside one of its Heavy jobs
+  (default: a full build, a benchmark, a model load).
 - Every section filled, briefly.
 
 ## Explore
