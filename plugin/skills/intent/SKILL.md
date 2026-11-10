@@ -4,8 +4,11 @@ description: Capture what a product owner wants built, in product terms only - w
 ---
 
 Capture the intent described in my message: the problem, the outcome and how we'll know it
-works. No solution, no code. This is the product owner's only writing step; Claude writes
-the project from it later with the `project` skill.
+works. No solution, no code. Writing this and signing off the project's Summary are all the
+product owner does; Claude writes the project from it with the `project` skill.
+
+**Team rules.** If `.caddis/extend/intent.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
 
 ## 0. Setup
 

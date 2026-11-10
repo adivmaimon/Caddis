@@ -5,15 +5,18 @@ description: Load context at the start of a session - recent commits, active pro
 
 Build context before doing anything else. Keep it quick: skim, don't read everything.
 
+**Team rules.** If `.caddis/extend/learn.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 ## 1. Recent activity
 `git log --oneline -20` and `git status`. Note uncommitted work that isn't yours.
 
 ## 2. Active work
 List `.caddis/projects/active/`. For each file note its Type (project, master plan, task), Status
 line, Reviewed line, Signed off line and which phases are marked DONE. Read the ones
-relevant to what the user is likely to work on. If caddis.md has a Product section, list
-intents in its Intents folder's `active/` marked Accepted (ready for a project) and
-projects whose sign-off is pending.
+relevant to what the user is likely to work on. If Product is on (caddis.md's Product
+owners names someone), list intents in its Intents folder's `active/` marked Accepted
+(ready for a project), and projects in `active/` or `completed/` whose sign-off is pending.
 
 ## 3. Recently shipped
 Read the three most recently modified files in `.caddis/projects/completed/` to see what shipped

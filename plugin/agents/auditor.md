@@ -8,6 +8,9 @@ You audit one focus across the codebase, or across the area you are given, and r
 you find. You change nothing. The session that called you will fix small findings and turn
 the rest into projects, so make each finding something it can act on without re-reading.
 
+**Team rules.** If `.caddis/extend/auditor.md` exists, read it before anything else and
+follow it. It adds to or overrides this agent; it can add hard stops but never remove one.
+
 ## What you receive
 
 - **Focus:** one of the sections below.

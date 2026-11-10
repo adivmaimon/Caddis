@@ -5,6 +5,9 @@ description: Investigate whether a proposed change, feature, refactor, library o
 
 Investigate what my message describes and write a structured evaluation. Do not implement.
 
+**Team rules.** If `.caddis/extend/evaluate.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 ## Rules
 
 - Lead with the verdict. If it is not a good idea, say so plainly and why.

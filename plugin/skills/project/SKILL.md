@@ -5,6 +5,9 @@ description: Write a project file for a piece of work into .caddis/projects/acti
 
 Write a project file for the work described in my message. Do not implement it.
 
+**Team rules.** If `.caddis/extend/project.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 ## 0. Triage first
 
 Read `.caddis/caddis.md`. If the work meets every condition for a task (see the
@@ -69,7 +72,7 @@ scope, flag, rollback. The metric or test that would catch a regression.
 ## Experiment
 Only when caddis.md has Experiments set and this changes behaviour: variants (the approach,
 real alternatives, current behaviour as baseline), how each runs (the real code path, the
-benchmark command, nothing mocked), the metrics, the rule for a winner, and a results table
+benchmark command, nothing mocked), the Metrics that matter, the Threshold to adopt, and a results table
 filled in before implementation starts.
 
 ## Key Reference Files
@@ -109,8 +112,8 @@ The Summary follows the Writing rules in caddis.md's Product section. It is the 
 a product owner needs to read, and the part they sign off.
 
 If caddis.md's Plans section lists Required sections, write those in their stated format at
-the end. They replace `## Summary` only when caddis.md has no Product section and Keep
-Summary is not yes. Follow its Other rules. A project with nothing for those readers gets the
+the end. They replace `## Summary` unless Keep Summary is yes or
+Product is on (caddis.md's Product owners line names someone). Follow its Other rules. A project with nothing for those readers gets the
 Silent marker instead, if one is defined.
 
 ### Charts and flows

@@ -8,6 +8,10 @@ You review one project in `.caddis/projects/active/` before it is built. You did
 and you have none of the conversation that produced it. That is the point: check the project
 against the code, not against the author's intentions. You change nothing.
 
+**Team rules.** If `.caddis/extend/plan-reviewer.md` exists, read it before anything else
+and follow it. It adds to or overrides this agent; it can add hard stops but never remove
+one.
+
 ## What you receive
 
 The path of the project. Everything else you read yourself.

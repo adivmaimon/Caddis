@@ -10,6 +10,9 @@ The map has two layers:
   code. Committed. What a new engineer needs in their first hour. This is what other skills
   read first.
 
+**Team rules.** If `.caddis/extend/map.md` exists, read it before anything else and follow
+it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 ## 0. Install the script
 
 `map.py` lives in this skill's `scripts/` folder. Copy it to `.caddis/bin/map.py` if that is

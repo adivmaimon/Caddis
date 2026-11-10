@@ -5,6 +5,9 @@ description: Execute one active project end to end - read it, confirm the code m
 
 Execute the project named in my message, or the most recently discussed active project.
 
+**Team rules.** If `.caddis/extend/execute.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 If I invoked this directly in the main session, hand the project off as in "Run it in the
 background" in the `build` skill, with this skill as the agent's job. A background builder
 just carries on.
@@ -12,7 +15,8 @@ just carries on.
 ## 1. Load
 
 1. Find the file in `.caddis/projects/active/` and read all of it before writing code.
-2. Read `.caddis/caddis.md`. Its Invariants, Commands and Machine limits apply throughout.
+2. Read `.caddis/caddis.md`. Its Workflow, Invariants, Commands and Machine limits apply
+   throughout.
 3. If it is a master plan (`Type: Master plan`), don't implement it directly: each phase
    becomes its own project via the `project` skill, unless the phase says it is a spike or a
    decision with no feature code.
@@ -60,6 +64,8 @@ Work through Changes one file at a time, phase by phase.
 4. Mark the phase heading done: `### Phase 2 - <name> - DONE (YYYY-MM-DD)`. Progress tools
    read this marker.
 5. Commit the phase with the `commit` skill. Never commit a failing gate. Don't push.
+6. If caddis.md's Workflow has Pause after each phase set to yes, stop and report the phase
+   and what's next. Running this skill again carries on from the first phase not DONE.
 
 ## 5. Complete
 

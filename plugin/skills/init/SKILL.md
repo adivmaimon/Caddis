@@ -6,6 +6,9 @@ description: Set up Caddis in a repo - scan the codebase, build the map, write .
 Set up Caddis in the current repo so every Caddis skill knows how this codebase works.
 The skills stay generic; everything specific goes in `.caddis/caddis.md`.
 
+**Team rules.** If `.caddis/extend/init.md` exists, read it before anything else and follow
+it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 This skill's `templates/` folder holds `caddis.md` and `claude-md-block.md`. The map skill's
 `scripts/` folder holds `map.py`.
 
@@ -61,6 +64,8 @@ item came from when it isn't obvious. Rules:
 - **Product:** fill only if a product owner takes part, or the owner says so in step 5.
   Tracker from the evidence; Writing points at existing writing rules rather than copying
   them.
+- **Workflow:** keep the defaults unless the owner says otherwise in step 5, or an older
+  setup already did it (for example a rule to stop after each phase).
 - **Experiments:** fill only if a benchmark or eval harness exists.
 - **Plans:** fill only if something reads project files: a deploy, notify or changelog script
   that parses project headings or skips files on a marker line, or required sections stated in
@@ -75,7 +80,8 @@ item came from when it isn't obvious. Rules:
 
 Decide whether `.caddis/` goes in git. Shared (the default) keeps projects and the map with the
 code for everyone. Private suits a public repo whose owner keeps projects to themselves: if
-`.claude/` or `CLAUDE.md` is already gitignored, recommend private. For private, add
+`.claude/` or `CLAUDE.md` is already gitignored, recommend private. With Product on,
+recommend shared: product owners can't read a gitignored `.caddis/`. For private, add
 `/.caddis/` to `.gitignore` and record `.caddis/ in git: no` under Commits.
 
 ## 5. Ask once
@@ -83,9 +89,9 @@ code for everyone. Private suits a public repo whose owner keeps projects to the
 Collect everything that needs the owner and ask in **one batch**, each with your
 recommended answer: the Invariants, anything marked `(guess - confirm)`, extra hard stops,
 whether to turn on Experiments, whether product owners write intents (and the tracker and
-sign-off route), the commit trailer policy, and any migration choices from
-step 7, and private or shared. Use the question tool if there is one. If nobody answers, take the recommendations,
-mark them `(default, YYYY-MM-DD)`, and carry on.
+sign-off route), any Workflow switch to change, the commit trailer policy, any migration
+choices from step 7, and private or shared. Use the question tool if there is one. If
+nobody answers, take the recommendations, mark them `(default, YYYY-MM-DD)`, and carry on.
 
 ## 6. Repo-specific skills
 
@@ -119,8 +125,8 @@ agrees.
 ## 8. Wire it up
 
 - **Folders:** `.caddis/projects/active/.gitkeep` and `.caddis/projects/completed/.gitkeep`,
-  plus `.caddis/intents/active/.gitkeep` and `.caddis/intents/completed/.gitkeep` when
-  Product is set.
+  plus `active/.gitkeep` and `completed/.gitkeep` in the Intents folder when Product is
+  on.
 - **CLAUDE.md:** add `templates/claude-md-block.md` between its markers near the top,
   or replace the existing block on re-init. Create CLAUDE.md if missing. Don't move other
   content without asking; if CLAUDE.md holds commands or rules that now live in caddis.md,

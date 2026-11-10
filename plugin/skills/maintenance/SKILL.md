@@ -6,6 +6,9 @@ description: Run the periodic (monthly) maintenance pass over the whole codebase
 Run across the whole codebase, not just recent changes. Report and fix small things in
 the pass; anything bigger becomes a project via the `project` skill.
 
+**Team rules.** If `.caddis/extend/maintenance.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 **Before starting:** read `.caddis/maintenance-log.md` (create it from the template below if
 missing). It holds carry-over from the last pass. Don't re-report what it has settled.
 Skip any step whose subject doesn't exist yet and say so.
@@ -55,8 +58,8 @@ baseline, and any failure is a regression, never "pre-existing".
 Every command in caddis.md's Commands, one heavy job at a time. Zero warnings.
 
 ## 8. Dependencies
-Outdated or vulnerable packages in every manifest (`npm audit`, `pip-audit`,
-`cargo audit` or the equivalent). Log upgrades for a scoped project; don't upgrade mid-pass.
+Outdated or vulnerable packages in every manifest, with the Dependency audit command from
+caddis.md's Commands. If it has none, say so and suggest one for the config. Log upgrades for a scoped project; don't upgrade mid-pass.
 
 ## 9. Security and privacy *(auditor: security)*
 Secrets, user data in logs, unvalidated input, data leaving where it shouldn't.

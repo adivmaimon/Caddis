@@ -15,20 +15,33 @@
 
 ## Product
 
-<!-- Leave empty when no product owner takes part. When set, product owners write intents
-with /caddis:intent and sign off each project's Summary; projects built from an intent quote it. -->
+<!-- Product is on when Product owners names someone; otherwise leave this section empty.
+When on, product owners write intents with /caddis:intent and sign off each project's
+Summary; projects built from an intent quote it. Needs `.caddis/` in git. -->
 
 - Product owners: <!-- names. Product decisions are tagged (product, YYYY-MM-DD) -->
 - Intents: `.caddis/intents/` <!-- intent files live in its active/ until delivered, then
   completed/ -->
 - Tracker: <!-- e.g. "Jira, projects ABC and XYZ, via the Atlassian connector", or none.
   Tickets can be the intent instead of a file -->
-- Sign-off: <!-- where the owner approves a project's Summary: "tracker comment" or "PR".
-  Default: PR. "none" turns sign-off off -->
-- Wait for sign-off: <!-- "yes" holds a project out of the build until the owner approves.
-  Default: no, the build runs and the owner signs off before the PR merges -->
+- Sign-off: <!-- where the owner approves a project's Summary: "tracker comment" (on the
+  intent's ticket) or "PR" (the draft PR for the project's branch). Default: PR. "none"
+  turns sign-off off -->
 - Writing: <!-- path to plain-language rules for intents and Summaries, e.g. "CLAUDE.md,
   Communication". Default: short sentences, plain words, no jargon -->
+
+## Workflow
+
+<!-- Switches for how this team works. Leave a line out to keep its default. For anything
+these don't cover, write `.caddis/extend/<skill>.md`: instructions that add to or override
+that skill (see the Caddis README, Adapting Caddis). -->
+
+- Pause after each phase: no <!-- "yes": build and execute stop after every phase commit and
+  report. Run /caddis:build again to carry on -->
+- Unreviewed projects: review with defaults <!-- or "skip": build runs only projects that
+  /caddis:review marked Reviewed -->
+- Wait for sign-off: yes <!-- "no": a project builds before the product owner signs off,
+  and its intent stays open until they do -->
 
 ## Commands
 
@@ -44,6 +57,7 @@ with /caddis:intent and sign off each project's Summary; projects built from an 
 | Build | |
 | Dev server | |
 | Benchmark | |
+| Dependency audit | |
 
 ## Stack
 
@@ -88,8 +102,8 @@ Medium or higher, whatever the size:
 something reads project files (a deploy script, a changelog tool) and needs set headings. -->
 
 - Required sections: <!-- each heading and its format, e.g. "`## Release notes`: bullets
-  `- <b>Headline</b>. Description.`". These replace `## Summary` unless the next line says
-  otherwise. -->
+  `- <b>Headline</b>. Description.`". These replace `## Summary` unless Keep Summary is yes or
+  Product is on. -->
 - Keep Summary: <!-- "yes" to write `## Summary` as well; default no -->
 - Silent marker: <!-- a line that tells the tool to skip a file, and where it goes, e.g.
   "`**Silent:** true` above the Status line". Silent files carry no required sections. -->
@@ -118,7 +132,8 @@ never break. Patterns to follow (mocks, fixtures). -->
 <!-- Leave empty to turn experiment phases off. When set, projects that change behaviour run
 variants against a baseline before building. -->
 
-- Benchmark command:
+<!-- Uses the Benchmark command under Commands. -->
+
 - Metrics that matter:
 - Threshold to adopt:
 

@@ -5,6 +5,9 @@ description: Handle a small, low-risk change end to end - write a short task fil
 
 A task is a project with less ceremony: a short record, then the work, in one go.
 
+**Team rules.** If `.caddis/extend/task.md` exists, read it before anything else and follow
+it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 **Too small for a task:** a typo, a copy or config value, a dependency bump with no
 behaviour change, a comment or docs fix. Skip the task file: make the change, run the
 relevant checks and commit with the `commit` skill, no Caddis trailer. Say so in one line.
@@ -47,11 +50,13 @@ One or two plain-language bullets for a non-developer.
 ```
 
 If caddis.md's Plans section is set, its Tasks line decides the ending: `sections` means the
-Required sections in their format instead of `## Summary`; `silent` means no Summary and the
+Required sections in their format, in place of `## Summary` unless Keep Summary is yes or
+Product is on; `silent` means no Summary and the
 Silent marker where it says.
 
 Use `.caddis/map/STRUCTURE.md` and `python3 .caddis/bin/map.py uses <file>` to confirm nothing else depends on
-what changes. If the user only wants it logged, stop here with `**Status:** Pending`.
+what changes. If the user only wants it logged, stop here with `**Status:** Pending`. Running this skill
+later on that task file picks up at step 3.
 
 ## 3. Do it
 

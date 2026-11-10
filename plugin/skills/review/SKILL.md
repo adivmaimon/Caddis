@@ -3,8 +3,13 @@ name: review
 description: Review the active projects before a build - check them against caddis.md, the architecture doc, the code, their intent and each other, fix what can be fixed, ask the owner every technical question in one batch, send the Summary to the product owner for sign-off, and mark each project Reviewed so /caddis:build can run without stopping.
 ---
 
-Review every project in `.caddis/projects/active/`, or the ones named in my message. The goal is a set
-of projects `/caddis:build` can run start to finish without asking anything.
+Review the projects named in my message. With none named, take the ones this branch added or
+changed in `.caddis/projects/active/` since it left the default branch, so teammates' work
+is left alone; on the default branch, or if there are none, take all of `active/`. The goal
+is a set of projects `/caddis:build` can run start to finish without asking anything.
+
+**Team rules.** If `.caddis/extend/review.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
 
 ## Steps
 
@@ -34,7 +39,8 @@ of projects `/caddis:build` can run start to finish without asking anything.
      `[label, number]` plus an optional `winner` or `rejected` tag; a flow has `title` and
      `steps`, and every `branch` `from` and `to` names a step. Fix a broken block in place.
    - It carries the sections caddis.md's Plans section requires, in the stated format, or
-     the Silent marker, plus the `## Summary` the `project` skill describes.
+     the Silent marker, plus `## Summary` unless those sections replace it (the rule in
+     the `project` skill).
    Then hand each project to the `plan-reviewer` agent for a fresh read without your context:
    just the project's path, plus the ticket's text when its Intent is a ticket (the agent has
    no tracker tool). Run them one at a time if caddis.md's Machine limits rule out
@@ -60,14 +66,16 @@ of projects `/caddis:build` can run start to finish without asking anything.
 6. **Write the answers in** as decisions `(owner, YYYY-MM-DD)`. Give every remaining open
    question a default the build will use.
 7. **Mark each project** with `**Reviewed:** YYYY-MM-DD` under its Status line.
-8. **Product sign-off.** Skip when caddis.md has no Product section, its Sign-off is
-   `none`, or the project changes nothing users see. Otherwise send the project's Summary, with
-   its Questions for product, where Sign-off says: a comment on the intent's ticket with the
-   tracker tool, or the PR that adds the project (tell me to raise it if there isn't one). Add
-   `**Signed off:** pending` under the Reviewed line. When the owner approves (I tell you,
-   or their reply is on the ticket or PR), set `**Signed off:** <name> YYYY-MM-DD` and write
-   their answers in as `(product, YYYY-MM-DD)`. Ask again only if the Summary changes:
-   technical changes never need a new sign-off.
+8. **Product sign-off.** Skip unless Product is on (caddis.md's Product owners line names someone), its
+   Sign-off isn't `none`, and the project changes something users see. Send the project's
+   Summary, with its Questions for product, where Sign-off says: a comment on the intent's
+   ticket with the tracker tool, or the branch's PR (if there isn't one, tell me to open a
+   draft PR with the project commit). Add `**Signed off:** pending` under the Reviewed line.
+   When the owner approves (I tell you, or their reply is on the ticket or PR), set
+   `**Signed off:** <name> YYYY-MM-DD` and write their answers in as `(product, YYYY-MM-DD)`.
+   If the project is already in `completed/`, finish the intent step of the `complete`
+   skill now. Ask again only if the Summary changes: technical changes never need a new
+   sign-off.
 9. **Commit** the reviewed projects as one `docs:` commit with the `commit` skill, unless
    `.caddis/` is gitignored.
 
@@ -77,8 +85,8 @@ of projects `/caddis:build` can run start to finish without asking anything.
 - Owner decisions and defaults chosen
 - Sign-off sent, and to whom, per project
 - The build order
-- "Ready for /caddis:build", or the one thing blocking it (a pending sign-off counts only
-  when caddis.md's Wait for sign-off is yes)
+- "Ready for /caddis:build", or the one thing blocking it (a pending sign-off counts,
+  unless caddis.md's Workflow has Wait for sign-off set to no)
 
 ## Rules
 

@@ -6,13 +6,17 @@ description: Mark a project or task done - append an outcome record, set its sta
 Mark the project named in my message complete by moving it from `.caddis/projects/active/` to
 `.caddis/projects/completed/`.
 
+**Team rules.** If `.caddis/extend/complete.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 ## Steps
 
 1. Find the matching file in `.caddis/projects/active/`.
 2. Check its Verification was actually worked through, and that it ends right:
-   - A plain-language `## Summary` a non-developer can read (unless Plans config replaces
-     it). Rewrite it if missing or too technical: bullets, one change each. Each Done when
-     check in it was met, or the outcome record says why not.
+   - A plain-language `## Summary` a non-developer can read, unless Required sections
+     replace it (the rule in the `project` skill). Rewrite it if missing or too technical:
+     bullets, one change each. Each Done when check in it was met, or the outcome record
+     says why not.
    - Plans config: every Required section, in its exact format and heading level, unless
      the file carries the Silent marker. Tasks follow the Tasks line. Write or repair what
      is missing or malformed, and apply the Other rules.
@@ -30,7 +34,9 @@ Mark the project named in my message complete by moving it from `.caddis/project
 5. Move the file: `git mv` when `.caddis/` is tracked, plain `mv` when it is gitignored.
    The folder is the source of truth for completion.
 6. If caddis.md lists a Progress log, add a one-paragraph entry at its top.
-7. If the project has an Intent file and this project delivered all of it, set the intent's
+7. If the project's `**Signed off:**` is still pending, leave its intent as it is and say
+   so: the `review` skill finishes this step when the owner signs off. Otherwise, if the
+   project has an Intent file and this project delivered all of it, set the intent's
    `**Status:** Done (project-<name>)` and move it from the Intents folder's `active/` to
    `completed/`, the same way as step 5. If the Intent is a ticket and caddis.md's Sign-off
    is `tracker comment`, post a short comment there: what shipped, in Summary language, and

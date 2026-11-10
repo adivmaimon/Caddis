@@ -3,9 +3,13 @@ name: build
 description: Build every reviewed project end to end without stopping - run the experiment, execute phase by phase in build order, decide and record instead of asking, commit at every gate, and stop only for the hard stops in caddis.md.
 ---
 
-Build the reviewed projects in `.caddis/projects/active/`, in build order, or the ones named in my
-message. **Do not stop to ask for permission or confirmation.** The projects were reviewed so
+Build the projects named in my message, in build order. With none named, take the reviewed
+projects in `.caddis/projects/active/` that this branch added or changed since it left the
+default branch; on the default branch, or if there are none, all reviewed ones. **Do not stop to ask for permission or confirmation.** The projects were reviewed so
 this can run unattended.
+
+**Team rules.** If `.caddis/extend/build.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
 
 ## Run it in the background
 
@@ -32,12 +36,14 @@ SendMessage, along with any decision I'd want to hear about before the end.
 
 ## Before starting
 
-- Read `.caddis/caddis.md`, in particular Hard stops and Machine limits.
-- Every project in scope has a `**Reviewed:**` line. If one doesn't, review it as the `review`
-  skill does, but take each open question's default instead of asking. Record each as
-  `(default, YYYY-MM-DD)` and mark it `**Reviewed:** YYYY-MM-DD (defaults, no owner input)`.
-- A project marked `**Signed off:** pending` still builds, unless caddis.md's Wait for
-  sign-off is yes: then skip it and any project that depends on it. Either way, list it as
+- Read `.caddis/caddis.md`, in particular Workflow, Hard stops and Machine limits.
+- Every project in scope has a `**Reviewed:**` line. If one doesn't and Workflow's
+  Unreviewed projects is `skip`, leave it out and say so. Otherwise review it as the
+  `review` skill does, but take each open question's default instead of asking. Record each
+  as `(default, YYYY-MM-DD)` and mark it `**Reviewed:** YYYY-MM-DD (defaults, no owner input)`.
+- A project marked `**Signed off:** pending` waits, unless Workflow's Wait for sign-off is
+  no. First check the ticket or PR for an approval and record it as the `review` skill
+  does. Skip a project still waiting and any project that depends on it, and list them as
   waiting for product sign-off. Never sign off for the product owner.
 - Run the `learn` skill if it hasn't run this session.
 
@@ -49,9 +55,10 @@ For each project, in order:
    with the benchmark command, one heavy job at a time, and write the results table into the
    project. Implement only the winner. If nothing beats the baseline, record that and complete
    the project as not adopted.
-2. For each phase: run the `execute` skill on it, pass the gate (lint, typecheck, tests, the
-   phase's own checks), then `commit`.
-3. When the project is done: `complete`, `commit`, next project.
+2. Run the `execute` skill on the project. It gates and commits each phase and completes
+   the project. If it pauses (Workflow's Pause after each phase), stop and report: the
+   phase done, what's next. Running `/caddis:build` again carries on.
+3. Next project.
 
 Keep going until every project in scope is complete. `/caddis:build` never writes a new project:
 when the reviewed projects are done, name the next one worth writing and stop.
@@ -72,7 +79,8 @@ when the reviewed projects are done, name the next one worth writing and stop.
 
 ## The only reasons to stop and wait
 
-The Hard stops in `.caddis/caddis.md`. Everything else is decided and recorded.
+The Hard stops in `.caddis/caddis.md`, and any pause the Workflow section or
+`.caddis/extend/build.md` asks for. Everything else is decided and recorded.
 
 ## Output
 

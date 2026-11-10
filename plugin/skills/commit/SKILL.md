@@ -6,18 +6,21 @@ description: Commit the working tree at the end of a logical chunk of work - a p
 Commit this chunk's changes with a clear message, following the Commits section of
 `.caddis/caddis.md`.
 
+**Team rules.** If `.caddis/extend/commit.md` exists, read it before anything else and
+follow it. It adds to or overrides this skill; it can add hard stops but never remove one.
+
 ## Steps
 
 1. **Confirm it is a real checkpoint:** a phase gate passed, a fix verified, a refactor
-   wrapped, a task done, a project added (its own `docs:` commit, unless `.caddis/` is
-   gitignored) or completed. Not mid-task,
-   not after a read-only turn, never several chunks in one commit. Checks green first.
+   wrapped, a task done, an intent accepted, a project added (its own `docs:` commit, unless
+   `.caddis/` is gitignored) or completed. Not mid-task, not after a read-only turn, never
+   several chunks in one commit. Checks green first.
 2. **Survey:** `git status` and `git diff --stat`.
 3. **Stage only this chunk's paths** with targeted `git add <paths>`. Never `git add -A`.
    **If `.caddis/` is gitignored** (caddis.md says `.caddis/ in git: no`, or
    `git check-ignore -q .caddis/caddis.md` succeeds), the repo keeps its projects private:
    never stage, force-add (`git add -f`) or mention them in commits, and leave the
-   `Caddis-Plan:` and `Caddis-Task:` trailers out. A plan-only change then has nothing to
+   `Caddis-Plan:` and `Caddis-Task:` trailers out. A project-only change then has nothing to
    commit.
    If unrelated edits share a file, write only your hunks to a patch and
    `git apply --cached <patch>`; mention the rest in the report.
