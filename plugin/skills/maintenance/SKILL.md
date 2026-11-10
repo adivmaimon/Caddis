@@ -4,7 +4,7 @@ description: Run the periodic (monthly) maintenance pass over the whole codebase
 ---
 
 Run across the whole codebase, not just recent changes. Report and fix small things in
-the pass; anything bigger becomes a plan via the `project` skill.
+the pass; anything bigger becomes a project via the `project` skill.
 
 **Before starting:** read `.caddis/maintenance-log.md` (create it from the template below if
 missing). It holds carry-over from the last pass. Don't re-report what it has settled.
@@ -13,7 +13,7 @@ Skip any step whose subject doesn't exist yet and say so.
 **Sweeps go to the `auditor` agent.** Steps marked *(auditor)* below are read-only sweeps:
 hand each to the auditor with its focus, any scope, and the log's settled items for that
 focus. Keep its findings, not the files. Fix `in-pass` findings yourself, then rerun the
-checks; group `plan` findings into plans with the `project` skill. Run auditors in parallel
+checks; group `project` findings into projects with the `project` skill. Run auditors in parallel
 only when caddis.md's Machine limits allow it, otherwise one at a time. On a large repo,
 give each auditor one area of the map at a time. Steps that run commands (benchmark, lint
 and build, dependencies) stay with you.
@@ -27,7 +27,7 @@ finish before the log, and record each one's result, or why it didn't run.
 
 ## 1. Benchmark
 If caddis.md has Experiments: run the benchmark (report only), compare to the last
-baseline. Any regression becomes a plan.
+baseline. Any regression becomes a project.
 
 ## 2. Invariant audit *(auditor: invariants)*
 Every path that matters for each numbered Invariant in caddis.md is enforced and labelled.
@@ -56,7 +56,7 @@ Every command in caddis.md's Commands, one heavy job at a time. Zero warnings.
 
 ## 8. Dependencies
 Outdated or vulnerable packages in every manifest (`npm audit`, `pip-audit`,
-`cargo audit` or the equivalent). Log upgrades for a scoped plan; don't upgrade mid-pass.
+`cargo audit` or the equivalent). Log upgrades for a scoped project; don't upgrade mid-pass.
 
 ## 9. Security and privacy *(auditor: security)*
 Secrets, user data in logs, unvalidated input, data leaving where it shouldn't.

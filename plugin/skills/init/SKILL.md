@@ -1,6 +1,6 @@
 ---
 name: init
-description: Set up Caddis in a repo - scan the codebase, build the map, write .caddis/caddis.md with this repo's commands, invariants, risks and conventions, add repo-specific skills where needed, wire settings and CLAUDE.md, and migrate any existing .claude/projects plans. Safe to re-run to refresh the config.
+description: Set up Caddis in a repo - scan the codebase, build the map, write .caddis/caddis.md with this repo's commands, invariants, risks and conventions, add repo-specific skills where needed, wire settings and CLAUDE.md, and migrate any existing .claude/projects files. Safe to re-run to refresh the config.
 ---
 
 Set up Caddis in the current repo so every Caddis skill knows how this codebase works.
@@ -16,8 +16,8 @@ This skill's `templates/` folder holds `caddis.md` and `claude-md-block.md`. The
 - If `.caddis/caddis.md` exists, this is a **re-init**: do every step, but propose changes
   to the existing config as a diff and keep everything the owner wrote.
 - Note what's already there: `CLAUDE.md`, `AGENTS.md`, `.claude/skills/`, `.claude/agents/`,
-  `.claude/settings.json`, and any older plan folders (`.claude/projects/`, `plans/`,
-  `docs/plans/`).
+  `.claude/settings.json`, and any older project folders (`.claude/projects/`, `projects/`,
+  `docs/projects/`).
 - Check the working tree is clean. If not, list what's uncommitted and leave it alone.
 
 ## 2. Scan
@@ -36,7 +36,7 @@ Gather evidence. Prefer what the repo does over what its docs say.
 - **Commits:** `git log --format='%s%n%b' -100`. Infer the style, the types and scopes in
   use, and the trailer policy.
 - **Risk surface:** migrations folders, auth, payments, secrets handling, public APIs,
-  deploy scripts, anything that sends data off the machine. Note any script that reads plan
+  deploy scripts, anything that sends data off the machine. Note any script that reads project
   files and which headings or marker lines it looks for.
 - **Docs:** an architecture or decisions doc, a progress log or changelog, brand or copy
   rules, plain-language or writing rules.
@@ -62,9 +62,9 @@ item came from when it isn't obvious. Rules:
   Tracker from the evidence; Writing points at existing writing rules rather than copying
   them.
 - **Experiments:** fill only if a benchmark or eval harness exists.
-- **Plans:** fill only if something reads plan files: a deploy, notify or changelog script
-  that parses plan headings or skips files on a marker line, or required sections stated in
-  CLAUDE.md or an older plan skill. Copy the headings, formats and marker exactly.
+- **Plans:** fill only if something reads project files: a deploy, notify or changelog script
+  that parses project headings or skips files on a marker line, or required sections stated in
+  CLAUDE.md or an older project skill. Copy the headings, formats and marker exactly.
 - **Commits:** set Subject length only if the history or a hook enforces another limit.
 - **Local skills:** mark `Maintenance:` the ones an older maintenance or audit skill
   called, with any ordering or duration it gave.
@@ -73,8 +73,8 @@ item came from when it isn't obvious. Rules:
 
 ### Private or shared
 
-Decide whether `.caddis/` goes in git. Shared (the default) keeps plans and the map with the
-code for everyone. Private suits a public repo whose owner keeps plans to themselves: if
+Decide whether `.caddis/` goes in git. Shared (the default) keeps projects and the map with the
+code for everyone. Private suits a public repo whose owner keeps projects to themselves: if
 `.claude/` or `CLAUDE.md` is already gitignored, recommend private. For private, add
 `/.caddis/` to `.gitignore` and record `.caddis/ in git: no` under Commits.
 
@@ -108,7 +108,7 @@ and `Skill(...)` entries in `.claude/settings.json`. If the repo already has ski
 duplicates a Caddis one (an older `commit`, `project`, `execute`...), move anything
 repo-specific from it into caddis.md and ask before removing it.
 
-## 7. Migrate existing plans
+## 7. Migrate existing projects
 
 If `.claude/projects/active` and `completed` (or similar) exist, offer to move them:
 `active/*` to `.caddis/projects/active/`, `completed/*` to `.caddis/projects/completed/`, other buckets
@@ -137,7 +137,7 @@ agrees.
 
 Commit everything as `chore(caddis): set up Caddis` with the `commit` skill. Then report in
 a few lines: the areas found, the commands, the invariants (and which are defaults), local
-skills created, plans migrated, and what to run next (usually `/caddis:learn`, then
+skills created, projects migrated, and what to run next (usually `/caddis:learn`, then
 `/caddis:task` or `/caddis:project`).
 
 ## Rules

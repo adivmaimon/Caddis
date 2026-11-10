@@ -1,6 +1,6 @@
 ---
 name: learn
-description: Load context at the start of a session - recent commits, active plans and tasks, what just shipped, codebase map freshness and project health - then fix instructions that have gone stale. Run first in every working session.
+description: Load context at the start of a session - recent commits, active projects and tasks, what just shipped, codebase map freshness and project health - then fix instructions that have gone stale. Run first in every working session.
 ---
 
 Build context before doing anything else. Keep it quick: skim, don't read everything.
@@ -12,8 +12,8 @@ Build context before doing anything else. Keep it quick: skim, don't read everyt
 List `.caddis/projects/active/`. For each file note its Type (project, master plan, task), Status
 line, Reviewed line, Signed off line and which phases are marked DONE. Read the ones
 relevant to what the user is likely to work on. If caddis.md has a Product section, list
-intents in its Intents folder's `active/` marked Accepted (ready to plan) and plans whose sign-off is
-pending.
+intents in its Intents folder's `active/` marked Accepted (ready for a project) and
+projects whose sign-off is pending.
 
 ## 3. Recently shipped
 Read the three most recently modified files in `.caddis/projects/completed/` to see what shipped
@@ -34,12 +34,12 @@ refresh mode now, or tell the user it is stale if they want to skip that.
 ## 6. Instructions check
 Scan `CLAUDE.md`, `.caddis/caddis.md` and any repo-local skills in `.claude/skills/`. Fix
 clear rot now: file paths, script and command names, table names, decisions a completed
-plan has since settled. Verify against the tree rather than assuming. Keep each file under
+project has since settled. Verify against the tree rather than assuming. Keep each file under
 about 250 lines.
 
 ## Output
 
-- **Recently shipped:** the one or two latest completed plans or tasks
+- **Recently shipped:** the one or two latest completed projects or tasks
 - **In progress:** active work and the phase each is on
 - **Health:** map, logs, benchmark
 - **Fixed:** any instructions corrected

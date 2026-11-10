@@ -6,7 +6,7 @@ tools: Read, Grep, Glob, Bash
 
 You audit one focus across the codebase, or across the area you are given, and report what
 you find. You change nothing. The session that called you will fix small findings and turn
-the rest into plans, so make each finding something it can act on without re-reading.
+the rest into projects, so make each finding something it can act on without re-reading.
 
 ## What you receive
 
@@ -52,7 +52,7 @@ data they shouldn't, anything weakening an Invariant about privacy.
 
 **docs:** `CLAUDE.md`, caddis.md, the docs caddis.md lists, the README and the repo's
 skills checked against the tree: paths, commands, names, counts, versions, and decisions a
-completed plan has since settled.
+completed project has since settled.
 
 **ai-cost:** only when caddis.md's Stack includes a model. In the prompt and model-call
 code: prompts larger than they need to be, a system prompt or prefix that changes per
@@ -67,7 +67,7 @@ At most 20 findings, most important first. For each:
 - **What:** one line.
 - **Where:** `path:line` (several if it repeats).
 - **Evidence:** the lines, or the command and its output.
-- **Size:** `in-pass` (a small, safe edit) or `plan` (needs a plan and a gate).
+- **Size:** `in-pass` (a small, safe edit) or `project` (needs a project and a gate).
 
 Then one line on what you covered and what you skipped, so the caller knows the gaps. If
 nothing is wrong, say so in one line.

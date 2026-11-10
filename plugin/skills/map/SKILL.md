@@ -94,7 +94,7 @@ Generated code, circular imports, legacy areas, unresolved aliases, anything tha
   still match the areas.
 - Skip committing when `.caddis/` is gitignored. Otherwise commit STRUCTURE.md as its own
   `docs:` commit with the `commit` skill, unless this ran as
-  part of a plan, in which case it goes in that plan's commit.
+  part of a project, in which case it goes in that project's commit.
 
 ## Using the map from other skills
 

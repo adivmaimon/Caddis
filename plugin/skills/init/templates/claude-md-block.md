@@ -16,7 +16,7 @@
 | Is this a good idea? | `/caddis:evaluate` |
 | Small, low-risk change | `/caddis:task` |
 | Anything bigger | `/caddis:project <intent or ticket>`, then `/caddis:review`, then `/caddis:build` |
-| Build one plan | `/caddis:execute` |
+| Build one project | `/caddis:execute` |
 | Tests for a change | `/caddis:tests` |
 | Commit a finished chunk | `/caddis:commit` |
 | Map stale or missing | `/caddis:map` |

@@ -1,9 +1,9 @@
 ---
 name: complete
-description: Mark a plan or task done - append an outcome record, set its status, move it from .caddis/projects/active/ to .caddis/projects/completed/ and update the progress log.
+description: Mark a project or task done - append an outcome record, set its status, move it from .caddis/projects/active/ to .caddis/projects/completed/ and update the progress log.
 ---
 
-Mark the plan named in my message complete by moving it from `.caddis/projects/active/` to
+Mark the project named in my message complete by moving it from `.caddis/projects/active/` to
 `.caddis/projects/completed/`.
 
 ## Steps
@@ -16,10 +16,10 @@ Mark the plan named in my message complete by moving it from `.caddis/projects/a
    - Plans config: every Required section, in its exact format and heading level, unless
      the file carries the Silent marker. Tasks follow the Tasks line. Write or repair what
      is missing or malformed, and apply the Other rules.
-3. Append an outcome record. Never strip the original plan.
+3. Append an outcome record. Never strip the original project.
    - **`## What Was Built`** - factual and concrete, no marketing language.
    - **`## Key Files`** - paths from the repo root.
-   - **`## Benchmark Delta`** - if the plan had an Experiment or touched anything the
+   - **`## Benchmark Delta`** - if the project had an Experiment or touched anything the
      benchmark measures: baseline run, new run, what moved.
    - **`## Decisions Recorded`** - if it settled an open or proposed decision: what was
      decided, the evidence, and confirmation the Architecture doc and caddis.md were updated
@@ -30,7 +30,7 @@ Mark the plan named in my message complete by moving it from `.caddis/projects/a
 5. Move the file: `git mv` when `.caddis/` is tracked, plain `mv` when it is gitignored.
    The folder is the source of truth for completion.
 6. If caddis.md lists a Progress log, add a one-paragraph entry at its top.
-7. If the plan has an Intent file and this plan delivered all of it, set the intent's
+7. If the project has an Intent file and this project delivered all of it, set the intent's
    `**Status:** Done (project-<name>)` and move it from the Intents folder's `active/` to
    `completed/`, the same way as step 5. If the Intent is a ticket and caddis.md's Sign-off
    is `tracker comment`, post a short comment there: what shipped, in Summary language, and

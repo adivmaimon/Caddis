@@ -15,7 +15,7 @@ is for developing Caddis, not for repos that use it.
 - `plugin/skills/map/scripts/map.py` - the map script. Init copies it to `.caddis/bin/map.py` in
   each repo; bump `VERSION` in it on every change so repos pick up the new copy.
 - `plugin/skills/build/scripts/progress.sh` - the build status reporter, run under Monitor.
-  It reads plan files and git only, so builders need do nothing to be reported on.
+  It reads project files and git only, so builders need do nothing to be reported on.
 - `plugin/agents/` - read-only reviewers the skills hand work to. They get a path, not the
   author's context, and must never edit, run heavy jobs or touch a hard stop.
 - `plugin/hooks/` - plain bash scripts, run by literal `${CLAUDE_PLUGIN_ROOT}` paths (the
@@ -33,7 +33,7 @@ is for developing Caddis, not for repos that use it.
    live in the config, never hardcoded in a skill.
 3. **map.py stays standard library only**, Python 3.8+, and never invents an edge. An
    import it can't resolve is counted as unresolved.
-4. **Plan format is a contract.** `**Status:**`, `**Type:**`, `**Reviewed:**` lines and
+4. **Project format is a contract.** `**Status:**`, `**Type:**`, `**Reviewed:**` lines and
    `### Phase N - <name>` headings with ` - DONE (YYYY-MM-DD)` markers. Other tools (Monty)
    parse them. Don't change them without a major version bump.
 5. Keep each SKILL.md under about 150 lines. Plain, direct language. No em dashes.

@@ -1,6 +1,6 @@
 # Caddis
 
-Plans, tasks and a codebase map for Claude Code, set up from your own repo.
+Projects, tasks and a codebase map for Claude Code, set up from your own repo.
 
 A caddisfly larva builds its case from whatever is nearby: sand, twigs, bits of shell.
 `/caddis:init` does the same with a repo. It reads the code, CI, docs and git history and
@@ -8,21 +8,21 @@ writes `.caddis/caddis.md`: the commands, the rules that must never break, what 
 risky, the commit style. Every Caddis skill reads that file, so the skills stay generic and
 the repo-specific facts live in one place you can edit.
 
-- **Projects.** Evaluate an idea, write a plan, review all open plans in one pass, then build
-  them unattended. The build records its decisions instead of asking, and stops only for
-  publishing, spending money, secrets, or deleting outside the repo.
+- **Projects.** Evaluate an idea, write it up as a project, review all open projects in one
+  pass, then build them unattended. The build records its decisions instead of asking, and
+  stops only for publishing, spending money, secrets, or deleting outside the repo.
 - **Intents.** Product owners say what they want and how they'll know it works, in product
   terms only. `/caddis:intent` writes it as a short file in the repo, or tidies up an
-  existing ticket. Claude writes the plan from it; the owner reads and signs off one plain
+  existing ticket. Claude writes the project from it; the owner reads and signs off one plain
   Summary, and is never asked a technical question.
-- **Tasks.** Small changes skip the plan. `/caddis:task` writes a short task file, makes the
+- **Tasks.** Small changes skip the project. `/caddis:task` writes a short task file, makes the
   change, runs the checks and commits. Typos and bumps skip Caddis entirely. If the work
   turns out risky, it becomes a project.
 - **The map.** A script builds the import graph from the imports in your code. Claude writes
   `STRUCTURE.md` on top of it: areas, entry points, the most-imported files, the main flows,
   where new code goes. A hook at session start says when it is out of date.
 
-Finished plans and tasks stay in `.caddis/projects/completed/` with what was built and why.
+Finished projects and tasks stay in `.caddis/projects/completed/` with what was built and why.
 
 ## Install
 
@@ -48,21 +48,21 @@ Needs Claude Code with plugin support, git, and Python 3.8+ for the map script.
 
 | When | Skill |
 | --- | --- |
-| Start of a session | `/caddis:learn`: recent commits, open plans, map and log health |
+| Start of a session | `/caddis:learn`: recent commits, open projects, map and log health |
 | A product owner's request | `/caddis:intent`: problem, outcome, done when, in a file or a ticket |
 | Is this worth doing? | `/caddis:evaluate`: verdict, impact per layer, risk, alternatives |
 | A small change | `/caddis:task` |
-| Anything bigger | `/caddis:project`: a plan in `.caddis/projects/active/`, from an intent or ticket if there is one |
-| Before building | `/caddis:review`: checks every plan, asks you everything at once, sends the Summary to the product owner |
-| Build | `/caddis:build`: runs every reviewed plan, unattended |
-| Build one plan | `/caddis:execute` |
+| Anything bigger | `/caddis:project`: a project in `.caddis/projects/active/`, from an intent or ticket if there is one |
+| Before building | `/caddis:review`: checks every project, asks you everything at once, sends the Summary to the product owner |
+| Build | `/caddis:build`: runs every reviewed project, unattended |
+| Build one project | `/caddis:execute` |
 | Tests | `/caddis:tests` |
 | Commit | `/caddis:commit`: stages only this chunk of work |
 | Done | `/caddis:complete`: adds the outcome and moves it to `completed/` |
 | Map | `/caddis:map` |
 | Monthly | `/caddis:maintenance`: full audit, with a log carried between runs |
 
-You can also ask in plain words ("create a task to...", "write a plan for..."). Naming the
+You can also ask in plain words ("create a task to...", "create a project for..."). Naming the
 skill is more reliable.
 
 A change is a task only if all of these hold, otherwise it is a project:
@@ -72,6 +72,6 @@ A change is a task only if all of these hold, otherwise it is a project:
 - no experiment needed to pick the approach
 - one commit can revert it
 
-Full docs, the map commands and the plan format: https://github.com/adivmaimon/caddis
+Full docs, the map commands and the project format: https://github.com/adivmaimon/caddis
 
 [MIT](LICENSE). Made by [Adiv Maimon](https://adivmaimon.com).

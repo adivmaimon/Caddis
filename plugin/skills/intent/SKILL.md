@@ -5,7 +5,7 @@ description: Capture what a product owner wants built, in product terms only - w
 
 Capture the intent described in my message: the problem, the outcome and how we'll know it
 works. No solution, no code. This is the product owner's only writing step; Claude writes
-the plan from it later with the `project` skill.
+the project from it later with the `project` skill.
 
 ## 0. Setup
 
@@ -32,13 +32,13 @@ technical point, keep it as a constraint or an open question for engineering, in
 words. If they describe a solution, ask what it is for and record the need; keep the
 solution only if they say it is required.
 
-Read the code or existing plans only to avoid duplicating work already planned or shipped.
+Read the code or existing projects only to avoid duplicating work already planned or shipped.
 Don't put what you find there into the intent, beyond a one-line "Related:" pointer.
 
 ## 2a. Write it here
 
 File: `active/` in the Intents folder from caddis.md (default `.caddis/intents/active/`),
-named `intent-<kebab-name>.md`. It moves to `completed/` when a plan delivers it. 15 to
+named `intent-<kebab-name>.md`. It moves to `completed/` when a project delivers it. 15 to
 40 lines:
 
 ```markdown
@@ -95,6 +95,6 @@ engineering: `/caddis:project <path or key>`.
 
 ## Rules
 
-- Product terms only. If a section needs technical words, it belongs in the plan.
+- Product terms only. If a section needs technical words, it belongs in the project.
 - One intent per outcome. Split if the owner describes two.
 - Never invent answers. An unanswered question stays under Open questions.

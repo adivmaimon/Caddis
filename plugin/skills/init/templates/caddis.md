@@ -11,21 +11,21 @@
 
 ## Owner
 
-<!-- Who makes the calls. Decisions in plans are tagged (owner, YYYY-MM-DD). -->
+<!-- Who makes the calls. Decisions in projects are tagged (owner, YYYY-MM-DD). -->
 
 ## Product
 
 <!-- Leave empty when no product owner takes part. When set, product owners write intents
-with /caddis:intent and sign off each plan's Summary; plans built from an intent quote it. -->
+with /caddis:intent and sign off each project's Summary; projects built from an intent quote it. -->
 
 - Product owners: <!-- names. Product decisions are tagged (product, YYYY-MM-DD) -->
 - Intents: `.caddis/intents/` <!-- intent files live in its active/ until delivered, then
   completed/ -->
 - Tracker: <!-- e.g. "Jira, projects ABC and XYZ, via the Atlassian connector", or none.
   Tickets can be the intent instead of a file -->
-- Sign-off: <!-- where the owner approves a plan's Summary: "tracker comment" or "PR".
+- Sign-off: <!-- where the owner approves a project's Summary: "tracker comment" or "PR".
   Default: PR. "none" turns sign-off off -->
-- Wait for sign-off: <!-- "yes" holds a plan out of the build until the owner approves.
+- Wait for sign-off: <!-- "yes" holds a project out of the build until the owner approves.
   Default: no, the build runs and the owner signs off before the PR merges -->
 - Writing: <!-- path to plain-language rules for intents and Summaries, e.g. "CLAUDE.md,
   Communication". Default: short sentences, plain words, no jargon -->
@@ -56,9 +56,9 @@ with /caddis:intent and sign off each plan's Summary; plans built from an intent
 
 ## Invariants
 
-<!-- Rules that hold on every code path, no exceptions. Plans must say which they touch and
+<!-- Rules that hold on every code path, no exceptions. Projects must say which they touch and
 how each is preserved. Example: "Nothing leaves the device without consent." Number them so
-plans can cite them. -->
+projects can cite them. -->
 
 ## Risk
 
@@ -84,8 +84,8 @@ Medium or higher, whatever the size:
 
 ## Plans
 
-<!-- Leave empty to keep the default: every plan and task has a `## Summary`. Fill it when
-something reads plan files (a deploy script, a changelog tool) and needs set headings. -->
+<!-- Leave empty to keep the default: every project and task has a `## Summary`. Fill it when
+something reads project files (a deploy script, a changelog tool) and needs set headings. -->
 
 - Required sections: <!-- each heading and its format, e.g. "`## Release notes`: bullets
   `- <b>Headline</b>. Description.`". These replace `## Summary` unless the next line says
@@ -93,8 +93,8 @@ something reads plan files (a deploy script, a changelog tool) and needs set hea
 - Keep Summary: <!-- "yes" to write `## Summary` as well; default no -->
 - Silent marker: <!-- a line that tells the tool to skip a file, and where it goes, e.g.
   "`**Silent:** true` above the Status line". Silent files carry no required sections. -->
-- Tasks: <!-- "sections" (same as plans) or "silent" (the marker instead); default sections -->
-- Other rules: <!-- line limits, what a cancelled plan needs, anything else -->
+- Tasks: <!-- "sections" (same as projects) or "silent" (the marker instead); default sections -->
+- Other rules: <!-- line limits, what a cancelled project needs, anything else -->
 
 ## Commits
 
@@ -103,9 +103,9 @@ something reads plan files (a deploy script, a changelog tool) and needs set hea
 - Scopes: <!-- from the map's areas -->
 - Subject length: <!-- default 72 characters -->
 - Trailers: <!-- e.g. "none", or "Co-Authored-By allowed". Caddis always adds its own
-  `Caddis-Plan:` or `Caddis-Task:` trailer to commits for a plan or task, unless
+  `Caddis-Plan:` or `Caddis-Task:` trailer to commits for a project or task, unless
   .caddis/ is gitignored -->
-- `.caddis/` in git: yes <!-- "no" when .caddis/ is gitignored to keep plans private: plan
+- `.caddis/` in git: yes <!-- "no" when .caddis/ is gitignored to keep projects private: project
   files are then moved with mv, never staged or force-added, and never named in commits -->
 
 ## Tests
@@ -115,7 +115,7 @@ never break. Patterns to follow (mocks, fixtures). -->
 
 ## Experiments
 
-<!-- Leave empty to turn experiment phases off. When set, plans that change behaviour run
+<!-- Leave empty to turn experiment phases off. When set, projects that change behaviour run
 variants against a baseline before building. -->
 
 - Benchmark command:
