@@ -113,7 +113,12 @@ activity_json() {
   [ -z "$dir" ] && [ -z "$wts" ] && dir=$top
   [ -n "$dir" ] && [ -d "$dir" ] || { echo null; return; }
   while IFS= read -r -d '' file; do
-    case "$file" in .caddis/*) ;; *) changed=$(( changed + 1 )) ;; esac
+    case "$file" in
+      # A nested repo or worktree (the agents' own under .claude/worktrees/) is not an edit.
+      */) continue ;;
+      .caddis/*) ;;
+      *) changed=$(( changed + 1 )) ;;
+    esac
     stamp=$(stat -c %Y "$dir/$file" 2>/dev/null || stat -f %m "$dir/$file" 2>/dev/null)
     [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
   done < <({ git -C "$dir" diff --name-only -z HEAD 2>/dev/null || git -C "$dir" ls-files -m -z

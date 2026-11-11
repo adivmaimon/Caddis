@@ -214,6 +214,17 @@ class StatusFileTest(ScriptTest):
         self.run_for(5, 20)
         self.assertEqual(self.status()["projects"][0]["activity"]["changed"], 2)
 
+    def test_agent_worktrees_inside_the_checkout_are_not_edits(self):
+        self.write_plan()
+        env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
+                   GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+        subprocess.run(["git", "commit", "-q", "--allow-empty", "-m", "base"], cwd=self.repo,
+                       env=env, check=True)
+        subprocess.run(["git", "worktree", "add", "-q", "-b", "worktree-agent-x",
+                        ".claude/worktrees/agent-x"], cwd=self.repo, check=True)
+        self.run_for(5, 20)
+        self.assertEqual(self.status()["projects"][0]["activity"]["changed"], 0)
+
     def test_complete_project_has_no_activity(self):
         self.write_plan()
         shutil.move(self.repo / PLAN, self.repo / ".caddis/projects/completed/project-demo.md")

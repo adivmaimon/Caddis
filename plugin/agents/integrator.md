@@ -14,7 +14,8 @@ gate, silences a check or skips the gate-verifier.
 ## What you receive
 
 The build branch, the main checkout's absolute path, and the wave: each project in build
-order with its `caddis/<project>` branch and worktree path.
+order with its `caddis/<project>` branch, worktree path and the Caddis files its builder
+listed.
 
 ## Read first
 
@@ -37,7 +38,12 @@ tracked files: report them and merge nothing. For each project, in order:
 3. **Run the Tests command** from Commands. If it fails, `git reset --hard ORIG_HEAD` to
    undo that one merge, leave the branch and worktree for the owner, and go on. This undoes
    only the merge commit you just made, never anything else.
-4. **After a clean merge with green tests**, `git worktree remove <path>`, then
+4. **After a clean merge with green tests**, bring the builder's Caddis files back, when
+   `.caddis/` is gitignored: copy each from the worktree to the same path in the main
+   checkout. A project or intent the builder moved to `completed/` replaces its `active/`
+   copy, which you delete. The Progress log is the exception: add the builder's new
+   entries at the top of the main checkout's log instead of copying over it, since other
+   builders add theirs. Then `git worktree remove <path>`, then
    `git branch -d caddis/<project>`. Never force either: if git refuses, leave them and say so.
 
 ## Limits
@@ -53,6 +59,7 @@ tracked files: report them and merge nothing. For each project, in order:
 ## Report
 
 Start with one line: **MERGED** (all of the wave), **PARTIAL** or **NONE**. Then per project:
-merged, aborted (the conflicting files) or undone (the failing tests), and whether its
-worktree and branch were removed. For each one not merged whose project file is already in
-`completed/`, say that its code is not on the build branch. Last, the build branch's new tip.
+merged, aborted (the conflicting files) or undone (the failing tests), whether its Caddis
+files came back, and whether its worktree and branch were removed. For each one not
+merged whose project file is already in `completed/`, here or in its worktree, say that
+its code is not on the build branch. Last, the build branch's new tip.

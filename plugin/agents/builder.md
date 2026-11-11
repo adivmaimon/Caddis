@@ -17,11 +17,16 @@ said. Projects already reviewed and in build order.
 
 ## Start
 
-1. **Where `.caddis/` lives.** If `.caddis/` is gitignored (`git check-ignore -q
-   .caddis/caddis.md` succeeds, or caddis.md says `.caddis/ in git: no`), a worktree has
-   none: read and write everything under it (config, team rules, map, `bin/map.py`,
-   projects) at the main checkout's absolute path. If it is tracked, use your worktree's
-   own copy, so your commits carry the project's changes and the main checkout stays clean.
+1. **Where `.caddis/` lives.** If it is tracked, use your worktree's own copy, so your
+   commits carry the project's changes and the main checkout stays clean. If it is
+   gitignored (`git check-ignore -q .caddis/caddis.md` succeeds, or caddis.md says
+   `.caddis/ in git: no`) and you are in a worktree, it has none, and you can't write to the
+   main checkout. Read everything under `.caddis/` (config, team rules, map, `bin/map.py`)
+   at the main checkout's absolute path. Before writing a `.caddis/` file (your project,
+   the Progress log, an intent), copy it from the main checkout to the same path in your
+   worktree, then write only that copy, completing your project there too. List every
+   such file under Caddis files in your report: the integrator copies them back. In the
+   main checkout itself, read and write `.caddis/` as usual.
 2. **In a worktree** (your working directory is not the main checkout): first create and
    switch to branch `caddis/<project name>`, from the commit you started on. All your
    commits go there.
@@ -56,6 +61,8 @@ before the end. Nothing else mid-build.
 When done, or when only hard stops remain, in this shape and nothing more:
 
 - **Branch:** the branch your commits are on, and the worktree path if any
+- **Caddis files:** the gitignored `.caddis/` files you wrote in your worktree, with any
+  moved from `active/` to `completed/`, or "none"
 - **Projects:** each one completed, paused or blocked
 - **Commits:** hash and subject, one per line
 - **Decisions:** one line each, as recorded under Decisions During Build

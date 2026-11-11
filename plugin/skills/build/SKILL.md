@@ -39,7 +39,7 @@ If you are the background builder, skip this section. Otherwise, in the main ses
      absolute path and anything else from my message. Its standing brief holds the rules.
    - When every builder in a parallel wave is done, start the `caddis:integrator` agent
      with the build branch, this checkout's path and the wave's projects in build order,
-     each with its branch and worktree. Wait for it before the next wave. A project it
+     each with its branch, worktree and the Caddis files from its builder's report. Wait for it before the next wave. A project it
      couldn't merge stays on its branch: skip any later project that depends on it, and
      tell me which ones are marked complete but not merged.
 6. Pass each status line to me as it arrives, in one line. On `Possibly stuck`, say so and
