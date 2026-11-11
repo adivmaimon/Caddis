@@ -27,21 +27,36 @@ class ScriptTest(unittest.TestCase):
     def write_plan(self, text=TWO_PHASES):
         (self.repo / PLAN).write_text(text)
 
-    def run_for(self, minutes_ago, estimate, seconds=1.5, start=None):
-        """Run the script for a moment and return what it printed, and its exit code or None."""
+    def run_for(self, minutes_ago, estimate, start=None):
+        """Run the script until it exits or has written the status file twice, so its first
+        tick, report included, is over however loaded the machine is. Returns what it
+        printed, and its exit code or None. Each write replaces the file, so a new inode and
+        mtime mark it."""
         start = start or int(time.time()) - minutes_ago * 60
         env = dict(os.environ, CADDIS_PROGRESS_TICK="1")
+        status = self.repo / ".git/caddis-build.json"
+        mark = lambda st: (st.st_ino, st.st_mtime_ns)
+        before = mark(status.stat()) if status.exists() else None
         proc = subprocess.Popen(
             ["bash", str(SCRIPT), str(start), str(estimate), PLAN],
             cwd=self.repo, env=env, stdout=subprocess.PIPE, text=True,
         )
-        try:
-            out, _ = proc.communicate(timeout=seconds)
-            return out, proc.returncode
-        except subprocess.TimeoutExpired:
+        writes = set()
+        deadline = time.time() + 30
+        while proc.poll() is None and len(writes) < 2 and time.time() < deadline:
+            try:
+                seen = mark(status.stat())
+                if seen != before:
+                    writes.add(seen)
+            except FileNotFoundError:
+                pass
+            time.sleep(0.05)
+        if proc.poll() is None:
             proc.kill()
             out, _ = proc.communicate()
             return out, None
+        out, _ = proc.communicate()
+        return out, proc.returncode
 
 
 class ProgressTest(ScriptTest):

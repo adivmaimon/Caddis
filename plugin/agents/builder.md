@@ -27,8 +27,9 @@ said. Projects already reviewed and in build order.
    worktree, then write only that copy, completing your project there too. List every
    such file under Caddis files in your report: the integrator copies them back. In the
    main checkout itself, read and write `.caddis/` as usual.
-2. **In a worktree** (your working directory is not the main checkout): first create and
-   switch to branch `caddis/<project name>`, from the commit you started on. All your
+2. **In a worktree** (your working directory is not the main checkout): first rename the
+   branch the worktree started on to `caddis/<project name>` with `git branch -m`, so no
+   branch is left behind, or create it with `git switch -c` when HEAD is detached. All your
    commits go there.
 3. Hand the gate-verifier your working directory as the repo to verify, with the project
    path, so it checks your diff and not the main checkout's.
