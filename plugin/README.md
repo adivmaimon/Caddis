@@ -47,7 +47,8 @@ Projects that share no files build side by side, each in its own copy of the cod
 merged one at a time with the tests run after each merge. A project that depends on another
 waits for it.
 
-While a build runs, a Caddis build panel beside the chat shows each phase as it finishes.
+While a build runs, a Caddis build panel beside the chat shows each phase as it finishes,
+and the files changed in the phase in progress.
 Where a panel can't be drawn, or with `Build panel: off`, the status line shows it instead.
 
 ![The Caddis build panel beside the chat](https://raw.githubusercontent.com/adivmaimon/caddis/main/docs/build-panel.png)

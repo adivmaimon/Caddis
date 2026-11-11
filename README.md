@@ -321,9 +321,11 @@ or file changes for 20 minutes is flagged as possibly stuck.
 ![The Caddis build panel beside the chat: two projects building side by side, 2 of 5 phases done](docs/build-panel.png)
 
 In Claude Code versions with mods, a **Caddis build** panel also opens beside the chat when a
-build starts: each project's phases, the one in progress, a progress bar, time against the
-estimate and a warning when the build goes quiet. A phase counts as soon as its builder
-finishes it, before its branch is merged. The panel stays open showing done. `/caddis-panel` opens it again. Where a panel can't be placed, or with
+build starts: each project's phases, one to a line, a progress bar, time against the
+estimate and a warning when the build goes quiet. Under the phase in progress, the files its
+builder has changed since its last commit and how long ago it last edited, so a long phase
+still shows work happening. A phase counts as soon as its builder finishes it, before its
+branch is merged. The panel stays open showing done. `/caddis-panel` opens it again. Where a panel can't be placed, or with
 `Build panel: off` in the Workflow section, the same progress shows on the status line under
 the prompt. The text reports above stay the same everywhere, so surfaces without mods lose
 nothing.

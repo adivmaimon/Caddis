@@ -96,8 +96,36 @@ json_str() {
   printf '"%s"' "$s"
 }
 
+# The worktree on a project's builder branch, caddis/<name> with or without its project- prefix.
+worktree_for() {
+  git worktree list --porcelain 2>/dev/null | awk -v a="refs/heads/caddis/$1" \
+    -v b="refs/heads/caddis/${1#project-}" '
+    /^worktree /{wt = substr($0, 10)}
+    $0 == "branch " a || $0 == "branch " b {print wt; exit}'
+}
+
+# What a project's builder has done since its last commit, read from its worktree, or from
+# this checkout when no builder has a worktree: files changed outside .caddis/ and the newest
+# edit or commit there since the build started. null for a project with nowhere to look yet.
+activity_json() {
+  local name=$1 dir changed=0 newest=0 stamp file
+  dir=$(worktree_for "$name")
+  [ -z "$dir" ] && [ -z "$wts" ] && dir=$top
+  [ -n "$dir" ] && [ -d "$dir" ] || { echo null; return; }
+  while IFS= read -r -d '' file; do
+    case "$file" in .caddis/*) ;; *) changed=$(( changed + 1 )) ;; esac
+    stamp=$(stat -c %Y "$dir/$file" 2>/dev/null || stat -f %m "$dir/$file" 2>/dev/null)
+    [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
+  done < <({ git -C "$dir" diff --name-only -z HEAD 2>/dev/null || git -C "$dir" ls-files -m -z
+             git -C "$dir" ls-files -o --exclude-standard -z; } 2>/dev/null | sort -zu)
+  stamp=$(git -C "$dir" log -1 --format=%ct 2>/dev/null)
+  [ "${stamp:-0}" -gt "$newest" ] && newest=$stamp
+  [ "$newest" -gt "$start" ] || newest=null
+  printf '{"changed":%s,"last_edit":%s}' "$changed" "$newest"
+}
+
 # One project as a JSON object: its phases with done flags, the current phase and how many
-# bullets sit under its Decisions During Build heading.
+# bullets sit under its Decisions During Build heading, and its builder's activity while open.
 project_json() {
   local plan=$1 name file complete=false phases="" current="" line title isdone decisions=0 sep=""
   name=$(basename "$plan")
@@ -115,9 +143,10 @@ project_json() {
     done < <(grep '^### Phase [0-9]' "$file")
     decisions=$(awk '/^## /{on = ($0 ~ /^## Decisions During Build/)} on && /^[-*] /{n++} END{print n+0}' "$file")
   fi
-  printf '{"name":%s,"complete":%s,"phases":[%s],"current":%s,"decisions":%s}' \
+  printf '{"name":%s,"complete":%s,"phases":[%s],"current":%s,"decisions":%s,"activity":%s}' \
     "$(json_str "${name%.md}")" "$complete" "$phases" \
-    "$( [ -n "$current" ] && json_str "$current" || echo null )" "$decisions"
+    "$( [ -n "$current" ] && json_str "$current" || echo null )" "$decisions" \
+    "$( [ "$complete" = true ] && echo null || activity_json "${name%.md}" )"
 }
 
 # Writes the status file atomically (a temp file, then mv), so the panel never reads half.

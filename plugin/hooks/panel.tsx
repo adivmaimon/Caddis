@@ -6,7 +6,7 @@
 import { atom, read, update } from 'claude-code'
 import type { Register } from 'claude-code'
 
-import type { BuildStatus, ProjectStatus } from '../types/panel-state'
+import type { Activity, BuildStatus, ProjectStatus } from '../types/panel-state'
 
 const PANE = 'caddis-build'
 const TITLE = 'Caddis build'
@@ -22,7 +22,7 @@ function statusLine(s: BuildStatus): string {
 }
 
 // Change a shape tag when its fields change: it declines what an older version stored.
-const build = atom({ plugin: 'caddis', key: 'build' } as const, null, { shape: 'build-1' })
+const build = atom({ plugin: 'caddis', key: 'build' } as const, null, { shape: 'build-2' })
 const watch = atom({ plugin: 'caddis', key: 'watch' } as const, { start: 0, status: false }, {
   shape: 'watch-1',
 })
@@ -44,6 +44,18 @@ function fmt(seconds: number): string {
   if (m < 1) return '<1m'
   if (m < 60) return `${m}m`
   return `${Math.floor(m / 60)}h${m % 60}m`
+}
+
+function ago(seconds: number): string {
+  return seconds < 60 ? `${Math.max(0, Math.floor(seconds))}s ago` : `${fmt(seconds)} ago`
+}
+
+// The line under the phase in progress, so a long phase still shows its builder working.
+function activityLine(a: Activity, now: number): string {
+  const edit = a.last_edit === null ? null : `last edit ${ago(now - a.last_edit)}`
+  if (a.changed === 0) return edit ?? 'no edits yet'
+  const files = `${a.changed} file${a.changed === 1 ? '' : 's'} changed`
+  return edit ? `${files}, ${edit}` : files
 }
 
 export const register: Register = on => {
@@ -132,22 +144,25 @@ export const register: Register = on => {
           <Text weight="bold">{p.name}</Text>
           {p.complete && <Text color="success">  complete</Text>}
         </Box>
-        <Box flexDirection="row" flexWrap="wrap">
-          {p.phases.length === 0 && <Text dimColor>no phases</Text>}
-          {p.phases.map(ph =>
-            ph.done ? (
+        {p.phases.length === 0 && <Text dimColor>no phases</Text>}
+        {p.phases.map(ph =>
+          ph.done ? (
+            <Text>
+              <Text color="success">✓</Text> {ph.name}
+            </Text>
+          ) : ph.name === p.current ? (
+            <Box flexDirection="column">
               <Text>
-                <Text color="success">✓</Text> {ph.name}{'  '}
+                <Text color="suggestion">●</Text> <Text weight="bold">{ph.name}</Text>
               </Text>
-            ) : ph.name === p.current ? (
-              <Text>
-                <Text color="suggestion">●</Text> <Text weight="bold">{ph.name}</Text>{'  '}
-              </Text>
-            ) : (
-              <Text dimColor>○ {ph.name}{'  '}</Text>
-            ),
-          )}
-        </Box>
+              {p.activity && !s.done && (
+                <Text dimColor>  {activityLine(p.activity, s.start + s.elapsed)}</Text>
+              )}
+            </Box>
+          ) : (
+            <Text dimColor>○ {ph.name}</Text>
+          ),
+        )}
       </Box>
     )
 

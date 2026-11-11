@@ -3,12 +3,17 @@
 
 export type PhaseStatus = { name: string; done: boolean }
 
+// A builder's work since its last commit: files changed and the newest edit or commit (epoch
+// seconds, null before any). null when the project is complete or no builder has started it.
+export type Activity = { changed: number; last_edit: number | null }
+
 export type ProjectStatus = {
   name: string
   complete: boolean
   phases: PhaseStatus[]
   current: string | null
   decisions: number
+  activity?: Activity | null
 }
 
 export type BuildStatus = {

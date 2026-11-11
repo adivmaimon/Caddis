@@ -49,6 +49,7 @@ function status(over: Record<string, unknown> = {}) {
         ],
         current: 'Phase 3 - Query',
         decisions: 2,
+        activity: { changed: 3, last_edit: 2760 },
       },
       {
         name: 'project-upload',
@@ -133,6 +134,31 @@ test('a new build opens the panel, drawn mid-build on every surface', async ($, 
     expect(await ui.find({ type: 'Text', text: /no commits or edits/ })).toBe(undefined)
     await ui.unmount()
   }
+})
+
+test('each phase has its own line, the one in progress with its activity', async ($, on) => {
+  world(on, {})
+  await start($, mock.clock(on))
+  for (const surface of SURFACES) {
+    const ui = await $.ui.mount({ ...PANE, surface })
+    expect(await ui.find({ type: 'Text', text: /Schema.*Indexer/ })).toBe(undefined)
+    expect((await ui.find({ type: 'Text', text: /files changed/ }))?.text).toBe(
+      '  3 files changed, last edit 40s ago',
+    )
+    await ui.unmount()
+  }
+})
+
+test('activity reads no edits yet, and minutes once a minute has passed', async ($, on) => {
+  const projects = (status().projects as Record<string, unknown>[]).map((p, i) =>
+    i === 0 ? { ...p, activity: { changed: 0, last_edit: null } } : { ...p, activity: { changed: 1, last_edit: 2500 } },
+  )
+  world(on, { file: status({ projects, current: 'project-search Phase 3 - Query' }) })
+  await start($, mock.clock(on))
+  const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect((await ui.find({ type: 'Text', text: /no edits yet/ }))?.text).toBe('  no edits yet')
+  expect((await ui.find({ type: 'Text', text: /1 file changed/ }))?.text).toBe('  1 file changed, last edit 5m ago')
+  await ui.unmount()
 })
 
 test('the bar fits a narrow pane', async ($, on) => {

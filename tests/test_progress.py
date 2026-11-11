@@ -181,5 +181,45 @@ class StatusFileTest(ScriptTest):
         self.assertEqual(p["current"], 'Phase 1 - Say "hi"\\nowthen')
 
 
+    def test_activity_counts_changes_outside_caddis_in_this_checkout(self):
+        self.write_plan()
+        (self.repo / "app.py").write_text("x = 1\n")
+        (self.repo / "lib.py").write_text("y = 2\n")
+        self.run_for(5, 20)
+        a = self.status()["projects"][0]["activity"]
+        self.assertEqual(a["changed"], 2)
+        self.assertGreaterEqual(a["last_edit"], int(time.time()) - 10)
+
+    def test_activity_before_any_edit_has_no_last_edit(self):
+        self.write_plan()
+        old = time.time() - 30 * 60
+        os.utime(self.repo / PLAN, (old, old))
+        self.run_for(5, 20)
+        self.assertEqual(self.status()["projects"][0]["activity"], {"changed": 0, "last_edit": None})
+
+    def test_activity_reads_the_builders_worktree(self):
+        self.write_plan()
+        env = dict(os.environ, GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@t",
+                   GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@t")
+        (self.repo / "app.py").write_text("x = 1\n")
+        subprocess.run(["git", "add", "-A"], cwd=self.repo, check=True)
+        subprocess.run(["git", "commit", "-qm", "base"], cwd=self.repo, env=env, check=True)
+        wt = Path(tempfile.mkdtemp()) / "wt"
+        self.addCleanup(shutil.rmtree, wt.parent)
+        subprocess.run(["git", "worktree", "add", "-q", "-b", "caddis/demo", str(wt)],
+                       cwd=self.repo, check=True)
+        (wt / "app.py").write_text("x = 2\n")
+        (wt / "new.py").write_text("z = 3\n")
+        (self.repo / "other.py").write_text("not the builder's\n")
+        self.run_for(5, 20)
+        self.assertEqual(self.status()["projects"][0]["activity"]["changed"], 2)
+
+    def test_complete_project_has_no_activity(self):
+        self.write_plan()
+        shutil.move(self.repo / PLAN, self.repo / ".caddis/projects/completed/project-demo.md")
+        self.run_for(1, 20)
+        self.assertIsNone(self.status()["projects"][0]["activity"])
+
+
 if __name__ == "__main__":
     unittest.main()
