@@ -11,7 +11,8 @@ risky, the commit style. Every Caddis skill reads that file, so the skills stay 
 the repo-specific facts live in one place you can edit.
 
 - **Projects.** Write up a piece of work, review it once, then let Claude build it
-  unattended. The build records its decisions instead of asking.
+  unattended. The build records its decisions instead of asking, and a live panel beside
+  the chat shows each phase as it lands.
 - **Tasks.** Small changes skip the ceremony: a short task file, the change, the checks, a
   commit. Typos and version bumps skip Caddis entirely.
 - **Intents.** Product owners say what they want in product terms, then sign off one plain
@@ -316,6 +317,8 @@ and report status based on the estimated build length:
 
 The estimate is replaced by the measured pace once a phase finishes. A build with no commits
 or file changes for 20 minutes is flagged as possibly stuck.
+
+![The Caddis build panel beside the chat: two projects building side by side, 2 of 5 phases done](docs/build-panel.png)
 
 In Claude Code versions with mods, a **Caddis build** panel also opens beside the chat when a
 build starts: each project's phases, the one in progress, a progress bar, time against the

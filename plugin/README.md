@@ -50,6 +50,8 @@ waits for it.
 While a build runs, a Caddis build panel beside the chat shows each phase as it finishes.
 Where a panel can't be drawn, or with `Build panel: off`, the status line shows it instead.
 
+![The Caddis build panel beside the chat](https://raw.githubusercontent.com/adivmaimon/caddis/main/docs/build-panel.png)
+
 A change is a task only if all of these hold, otherwise it is a project:
 - about 3 files or fewer, in one layer
 - nothing on the Risk list in `caddis.md`
