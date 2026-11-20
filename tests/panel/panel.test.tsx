@@ -6,6 +6,8 @@ import { expect, mock, test } from 'claude-code/testing'
 import type { Engine, MockClock } from 'claude-code/testing'
 import type { On } from 'claude-code'
 
+import { parseProject } from '../hooks/panel'
+
 const ROOT = '/repo'
 const STATUS_FILE = `${ROOT}/.git/caddis-build.json`
 const SURFACES = ['terminal', 'desktop', 'vscode', 'mobile'] as const
@@ -73,15 +75,28 @@ type World = {
   // A `.git` file naming a git dir relative to the root, as a submodule has, and where the
   // status file then is (the engine folds `..` before a path reaches these hooks).
   gitdir?: { line: string; file: string }
+  // How long before the session the status file was last written.
+  age?: number
+  // Files in .caddis/projects/active/, name to text.
+  active?: Record<string, string>
 }
 
 // The engine beneath the mod: a repo at ROOT, its caddis.md and status file, and the panes.
 function world(on: On, w: World) {
+  const clock = mock.clock(on)
   const seen = { opens: [] as string[], statuses: [] as (string | undefined)[], stats: [] as string[] }
   const config = w.config === undefined ? '## Workflow\n\n- Pause after each phase: no\n' : w.config
   let file = w.file === undefined ? status() : w.file
   const statusFile = w.gitdir ? w.gitdir.file : STATUS_FILE
-  let mtime = 1
+  let mtime = clock.now() - (w.age ?? 0)
+  const active = { ...(w.active ?? {}) }
+  const ACTIVE = `${ROOT}/.caddis/projects/active`
+  on('fs.list', (_, e) => {
+    if (e.path !== ACTIVE) return { deny: 'no such dir' }
+    return {
+      value: Object.keys(active).map(name => ({ name, kind: 'file', size: active[name].length, mtimeMs: 1 })),
+    }
+  })
   on('session.start', (_, e) => ({ cwd: e.cwd }))
   on('session.repo', () => ({ value: { root: ROOT, remote: null, internal: false, name: null } }))
   on('command.register', () => ({ value: { command: 'caddis-panel' } }))
@@ -98,6 +113,8 @@ function world(on: On, w: World) {
     if (e.path === statusFile && file) return { value: JSON.stringify(file) }
     if (e.path === `${ROOT}/.git` && w.gitdir) return { value: `gitdir: ${w.gitdir.line}\n` }
     if (e.path === `${ROOT}/.caddis/caddis.md` && config !== null) return { value: config }
+    const name = e.path.slice(ACTIVE.length + 1)
+    if (e.path.startsWith(`${ACTIVE}/`) && name in active) return { value: active[name] }
     return { deny: 'no such file' }
   })
   on('ui.open', (_, e) => {
@@ -110,9 +127,9 @@ function world(on: On, w: World) {
   })
   const write = (next: Record<string, unknown>) => {
     file = next
-    mtime += 1
+    mtime = clock.now()
   }
-  return { seen, write }
+  return { seen, write, clock }
 }
 
 async function start($: Engine, clock: MockClock) {
@@ -121,8 +138,8 @@ async function start($: Engine, clock: MockClock) {
 }
 
 test('a new build opens the panel, drawn mid-build on every surface', async ($, on) => {
-  const { seen } = world(on, {})
-  await start($, mock.clock(on))
+  const { seen, clock } = world(on, {})
+  await start($, clock)
   expect(seen.opens).toEqual(['caddis-build'])
   for (const surface of SURFACES) {
     const ui = await $.ui.mount({ ...PANE, surface })
@@ -137,8 +154,8 @@ test('a new build opens the panel, drawn mid-build on every surface', async ($, 
 })
 
 test('each phase has its own line, the one in progress with its activity', async ($, on) => {
-  world(on, {})
-  await start($, mock.clock(on))
+  const { clock } = world(on, {})
+  await start($, clock)
   for (const surface of SURFACES) {
     const ui = await $.ui.mount({ ...PANE, surface })
     expect(await ui.find({ type: 'Text', text: /Schema.*Indexer/ })).toBe(undefined)
@@ -153,8 +170,8 @@ test('activity reads no edits yet, and minutes once a minute has passed', async 
   const projects = (status().projects as Record<string, unknown>[]).map((p, i) =>
     i === 0 ? { ...p, activity: { changed: 0, last_edit: null } } : { ...p, activity: { changed: 1, last_edit: 2500 } },
   )
-  world(on, { file: status({ projects, current: 'project-search Phase 3 - Query' }) })
-  await start($, mock.clock(on))
+  const { clock } = world(on, { file: status({ projects, current: 'project-search Phase 3 - Query' }) })
+  await start($, clock)
   const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
   expect((await ui.find({ type: 'Text', text: /no edits yet/ }))?.text).toBe('  no edits yet')
   expect((await ui.find({ type: 'Text', text: /1 file changed/ }))?.text).toBe('  1 file changed, last edit 5m ago')
@@ -162,8 +179,8 @@ test('activity reads no edits yet, and minutes once a minute has passed', async 
 })
 
 test('the bar fits a narrow pane', async ($, on) => {
-  world(on, {})
-  await start($, mock.clock(on))
+  const { clock } = world(on, {})
+  await start($, clock)
   for (const [cols, width] of [[20, 13], [48, 30]] as const) {
     const ui = await $.ui.mount({ ...PANE, surface: 'terminal', props: { ...PANE.props, bodyColumns: cols } })
     const filled = (await ui.find({ type: 'Text', text: /^▓+$/ }))?.text ?? ''
@@ -175,16 +192,15 @@ test('the bar fits a narrow pane', async ($, on) => {
 
 test('a .git file leads to the git dir it names', async ($, on) => {
   const file = '/.git/modules/repo/caddis-build.json'
-  const { seen } = world(on, { gitdir: { line: '../.git/modules/repo', file } })
-  await start($, mock.clock(on))
+  const { seen, clock } = world(on, { gitdir: { line: '../.git/modules/repo', file } })
+  await start($, clock)
   expect(seen.stats).toContain(file)
   expect(seen.opens).toEqual(['caddis-build'])
 })
 
 test('with Build panel off, no pane opens and the status line shows progress', async ($, on) => {
   const config = '## Workflow\n\n- Pause after each phase: no\n- Build panel: off\n\n## Commands\n'
-  const { seen, write } = world(on, { config })
-  const clock = mock.clock(on)
+  const { seen, write, clock } = world(on, { config })
   await start($, clock)
   expect(seen.opens).toEqual([])
   expect(seen.statuses).toEqual([
@@ -196,8 +212,8 @@ test('with Build panel off, no pane opens and the status line shows progress', a
 })
 
 test('a pane the surface cannot place falls back to the status line', async ($, on) => {
-  const { seen } = world(on, { placed: false, file: status({ quiet: true, idle: 25 * 60 }) })
-  await start($, mock.clock(on))
+  const { seen, clock } = world(on, { placed: false, file: status({ quiet: true, idle: 25 * 60 }) })
+  await start($, clock)
   expect(seen.opens).toEqual(['caddis-build'])
   expect(seen.statuses).toEqual([
     'Caddis build: 2/5 phases, project-search Phase 3 - Query, 30m of ~55m, quiet for 25m',
@@ -205,20 +221,20 @@ test('a pane the surface cannot place falls back to the status line', async ($, 
 })
 
 test('a placed pane leaves the status line alone', async ($, on) => {
-  const { seen } = world(on, {})
-  await start($, mock.clock(on))
+  const { seen, clock } = world(on, {})
+  await start($, clock)
   expect(seen.statuses).toEqual([])
 })
 
 test('a Build panel line outside Workflow does not turn the pane off', async ($, on) => {
-  const { seen } = world(on, { config: '## Workflow\n\n## Notes\n- Build panel: off\n' })
-  await start($, mock.clock(on))
+  const { seen, clock } = world(on, { config: '## Workflow\n\n## Notes\n- Build panel: off\n' })
+  await start($, clock)
   expect(seen.opens).toEqual(['caddis-build'])
 })
 
 test('a quiet build shows the warning on every surface', async ($, on) => {
-  world(on, { file: status({ quiet: true, idle: 25 * 60 }) })
-  await start($, mock.clock(on))
+  const { clock } = world(on, { file: status({ quiet: true, idle: 25 * 60 }) })
+  await start($, clock)
   for (const surface of SURFACES) {
     const ui = await $.ui.mount({ ...PANE, surface })
     expect((await ui.find({ type: 'Text', text: /no commits or edits/ }))?.text).toBe(
@@ -229,8 +245,7 @@ test('a quiet build shows the warning on every surface', async ($, on) => {
 })
 
 test('the panel moves on as phases finish and says done at the end', async ($, on) => {
-  const { seen, write } = world(on, {})
-  const clock = mock.clock(on)
+  const { seen, write, clock } = world(on, {})
   await start($, clock)
   write(status({ phases_done: 5, done: true, elapsed: 50 * 60, left: 0 }))
   await clock.advance(2000)
@@ -244,8 +259,7 @@ test('the panel moves on as phases finish and says done at the end', async ($, o
 })
 
 test('a finished file from an earlier build opens nothing', async ($, on) => {
-  const { seen } = world(on, { file: status({ done: true }) })
-  const clock = mock.clock(on)
+  const { seen, clock } = world(on, { file: status({ done: true }) })
   await start($, clock)
   await clock.advance(10000)
   expect(seen.opens).toEqual([])
@@ -253,10 +267,53 @@ test('a finished file from an earlier build opens nothing', async ($, on) => {
 })
 
 test('a repo without .caddis/caddis.md arms no timer', async ($, on) => {
-  const { seen } = world(on, { config: null })
-  const clock = mock.clock(on)
+  const { seen, clock } = world(on, { config: null })
   await start($, clock)
   await clock.advance(10000)
   expect(seen.stats).toEqual([])
   expect(seen.opens).toEqual([])
+})
+
+const PROJECT = `**Status:** Active
+
+### Phase 1 - Schema - DONE (2026-11-20)
+### Phase 2 - Query
+### Phase 3 - UI
+
+## Decisions During Build
+
+- Kept the old index (build, 2026-11-20)
+`
+
+test('a build whose reporter stopped gives way to the active projects', async ($, on) => {
+  const { seen, clock } = world(on, { config: '## Workflow\n\n- Build panel: off\n', active: { 'project-search.md': PROJECT } })
+  await start($, clock)
+  expect(seen.statuses[seen.statuses.length - 1]).toMatch(/^Caddis build: 2\/5/)
+  await clock.advance(130_000)
+  expect(seen.statuses[seen.statuses.length - 1]).toBe(undefined)
+  const ui = await $.ui.mount({ ...PANE, surface: 'terminal' })
+  expect((await ui.find({ type: 'Text', text: /No build running/ })) != null).toBe(true)
+  expect(await ui.find({ type: 'Text', text: /project-upload/ })).toBe(undefined)
+  expect((await ui.find({ type: 'Text', text: /project-search/ }))?.text).toBe('project-search')
+  expect((await ui.find({ type: 'Text', text: /Phase 2 - Query/ })) != null).toBe(true)
+  await ui.unmount()
+})
+
+test('an old unfinished file opens nothing and shows the projects as they are', async ($, on) => {
+  const { seen, clock } = world(on, { age: 6 * 3600_000, active: {} })
+  await start($, clock)
+  expect(seen.opens).toEqual([])
+  const ui = await $.ui.mount({ ...PANE, surface: 'desktop' })
+  expect((await ui.find({ type: 'Text', text: /No active projects/ })) != null).toBe(true)
+  expect(await ui.find({ type: 'Text', text: /30m \/ ~55m/ })).toBe(undefined)
+  await ui.unmount()
+})
+
+test('parseProject reads phases, the current one and decisions', async () => {
+  const p = parseProject('project-search.md', PROJECT)
+  expect(p.name).toBe('project-search')
+  expect(p.phases.map(x => x.done)).toEqual([true, false, false])
+  expect(p.phases[0].name).toBe('Phase 1 - Schema')
+  expect(p.current).toBe('Phase 2 - Query')
+  expect(p.decisions).toBe(1)
 })

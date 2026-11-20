@@ -32,12 +32,13 @@ export type BuildStatus = {
   projects: ProjectStatus[]
 }
 
+// active: the projects in .caddis/projects/active/ as their files stand, shown with no live build.
 // The build the panel last opened for, so a reload or an old finished file never reopens it,
 // and whether that build reports on the status line instead of the pane.
 export type Watch = { start: number; status: boolean }
 
 declare module 'claude-code' {
   interface PluginState {
-    caddis: { build: Shaped<BuildStatus | null>; watch: Shaped<Watch> }
+    caddis: { build: Shaped<BuildStatus | null>; active: Shaped<ProjectStatus[]>; watch: Shaped<Watch> }
   }
 }
