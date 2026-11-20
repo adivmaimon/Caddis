@@ -99,6 +99,7 @@ A change is a task only if all of these hold, otherwise it is a project:
 | --- | --- |
 | `/caddis:init` | Sets up Caddis in a repo, or refreshes it: config, map, CLAUDE.md |
 | `/caddis:config` | Changes settings and team rules from plain words |
+| `/caddis:rulebook` | Builds the rulebook from memory and docs, and adds, changes or retires a rule the moment you state one |
 | `/caddis:learn` | Start of a session: recent commits, open projects, map and log health |
 | `/caddis:intent` | A product owner's request: problem, outcome, done when, in a file or a ticket |
 | `/caddis:evaluate` | Is this worth doing? Verdict, impact per layer, risk, alternatives |
@@ -123,7 +124,7 @@ The same skills fit all three. Init asks which one you are.
 
 | | Solo | Engineering team | Team with product owners |
 | --- | --- | --- | --- |
-| `.caddis/` | Committed, or gitignored to keep projects private | Committed: `caddis.md` is the team's rulebook | Committed |
+| `.caddis/` | Committed, or gitignored to keep projects private | Committed: `caddis.md` and `rulebook.md` are shared | Committed |
 | Product section in `caddis.md` | Empty | Empty | Owners, tracker, sign-off route |
 | Who answers review | You | The engineer running it | Engineer: technical. Product owner: the Summary |
 | Where projects are read | Locally | In the branch's PR | In the PR, with sign-off on the ticket or PR |
@@ -217,6 +218,8 @@ replaced on re-init. Put your own CLAUDE.md rules outside the markers.
 .caddis/
   caddis.md              commands, stack, rules, risk, product, workflow, docs, commits,
                          tests, hard stops
+  rulebook.md            working rules agreed with the owner, loaded into every session
+                         and agent (via /caddis:rulebook)
   extend/                team rules, one file per skill (optional, via /caddis:config)
   intents/active/        product intents not yet delivered (when Product is on)
   intents/completed/     delivered intents

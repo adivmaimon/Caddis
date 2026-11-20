@@ -35,7 +35,8 @@ If caddis.md has Experiments: run the benchmark (report only), compare to the la
 baseline. Any regression becomes a project.
 
 ## 2. Invariant audit *(auditor: invariants)*
-Every path that matters for each numbered Invariant in caddis.md is enforced and labelled.
+Every path that matters for each numbered Invariant in caddis.md is enforced and labelled,
+and the code keeps `.caddis/rulebook.md`. Then run the `rulebook` skill's Check.
 
 ## 3. Reuse *(auditor: reuse)*
 Repeated logic, near-duplicates, raw values that should be tokens, dead files.

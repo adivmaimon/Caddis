@@ -36,8 +36,8 @@ application code, and never invent invariants, owners or policies.
 - **Tests:** test folders per layer, frameworks, config, shared helpers and fixtures. Run
   the test command once if it is fast and safe, to confirm it works.
 - **Rules:** `CLAUDE.md`, `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `docs/`, and any
-  existing skills. Collect stated rules, constraints and "never do X" lines. These are
-  candidate Invariants.
+  existing skills. Collect stated rules, constraints and "never do X" lines. System rules
+  are candidate Invariants; working rules (style, layout, copy) go to the rulebook in step 4.
 - **Commits:** `git log --format='%s%n%b' -100`. Infer the style, the types and scopes in
   use, and the trailer policy.
 - **Risk surface:** migrations folders, auth, payments, secrets handling, public APIs,
@@ -81,6 +81,12 @@ item came from when it isn't obvious. Rules:
 - Mark anything uncertain `(guess - confirm)`.
 - Delete sections that clearly don't apply. Keep it under about 200 lines.
 
+### Rulebook
+
+Run the `rulebook` skill's Build: it reads this repo's Claude Code memory, CLAUDE.md, docs
+and other `.md` files and writes `.caddis/rulebook.md`, which Caddis loads into every session
+and agent. On re-init, only its Check runs unless the owner asks for a rebuild.
+
 ### Private or shared
 
 Decide whether `.caddis/` goes in git. Shared (the default) keeps projects and the map with the
@@ -92,7 +98,7 @@ recommend shared: product owners can't read a gitignored `.caddis/`. For private
 ## 5. Ask once
 
 Collect everything that needs the owner and ask in **one batch**, each with your
-recommended answer: the Invariants, anything marked `(guess - confirm)`, extra hard stops,
+recommended answer: the Invariants, the rulebook's unsure rules and conflicts, anything marked `(guess - confirm)`, extra hard stops,
 whether to turn on Experiments, whether product owners write intents (and the tracker and
 sign-off route), any Workflow switch to change, the commit trailer policy, any migration
 choices from step 7, and private or shared. Use the question tool if there is one. If
@@ -145,5 +151,5 @@ agrees.
 ## 9. Commit and report
 
 Commit everything as `chore(caddis): set up Caddis` with the `commit` skill. Report in a few
-lines: areas, commands, invariants (and which are defaults), local skills, projects
+lines: areas, commands, invariants (and which are defaults), rulebook rules, local skills, projects
 migrated, and what to run next (usually `/caddis:learn`, then `/caddis:task` or `/caddis:project`).

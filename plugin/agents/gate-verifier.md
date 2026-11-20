@@ -19,7 +19,8 @@ yourself.
 
 ## Read first
 
-1. `.caddis/caddis.md`: Commands, Invariants, Risk, Machine limits, Hard stops.
+1. `.caddis/caddis.md`: Commands, Invariants, Risk, Machine limits, Hard stops. And
+   `.caddis/rulebook.md` if it exists (the hook may have loaded it already).
 2. The project, in full, and the phase you are verifying.
 3. The work: `git status`, `git diff` (and `git diff --cached`), plus any commits since the
    project's previous phase was marked DONE.
@@ -30,6 +31,9 @@ yourself.
   outside the project. Name extra or missing files.
 - **Invariants:** for each numbered rule in caddis.md the diff could affect, find where it
   is enforced and confirm the change keeps it. Quote the lines.
+- **Rulebook:** every numbered rule the diff could break holds in the added lines. Run
+  each item under its Before calling work done that applies (the greps, the checks). A
+  broken rule is a FAIL, cited by number.
 - **Gate:** rerun the phase's gate yourself with the exact commands in caddis.md's Commands:
   typecheck, lint in check mode, the tests the phase names, any measurement with its
   threshold. Read the output; don't trust an exit code alone when the gate is a number.

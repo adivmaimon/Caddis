@@ -27,12 +27,14 @@ is for developing Caddis, not for repos that use it.
   repo: they never push, run heavy jobs outside the shared lock, or touch a hard stop.
 - `plugin/hooks/` - plain bash scripts, run by literal `${CLAUDE_PLUGIN_ROOT}` paths (the
   directory refuses computed paths). `session-start.sh` reports a config older than the plugin and a stale map, `announce.sh`
-  shows the skill badge. Both must stay silent and exit 0 when there's nothing to say.
+  shows the skill badge, `rulebook.sh` prints `.caddis/rulebook.md` (less its Retired
+  section) and caddis.md's Invariants into every session and, as JSON, every subagent. All
+  three must stay silent and exit 0 when there's nothing to say.
   `hooks.json` also names one TypeScript hooks module, `panel.tsx`, the live build panel. Its
   state contract is `plugin/types/panel-state.d.ts`. It only reads files and draws, arms
   nothing outside Caddis repos and never throws out of a hook. Check it with
   `claude plugin validate plugin`.
-- `tests/` - map.py, waves.py, progress.sh and session-start.sh tests, stdlib unittest. The panel's
+- `tests/` - map.py, waves.py, progress.sh, session-start.sh and rulebook.sh tests, stdlib unittest. The panel's
   render tests are in `tests/panel/`; `test_panel.py` runs them with `claude plugin test` on a
   temp copy of `plugin/`, skipped without the `claude` CLI.
 

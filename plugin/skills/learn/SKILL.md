@@ -35,7 +35,12 @@ refresh mode now, or tell the user it is stale if they want to skip that.
 - Before one of caddis.md's Machine limits Heavy jobs (default: a full build, a benchmark,
   a model load), check none is still running from an earlier session.
 
-## 6. Instructions check
+## 6. Rulebook
+The rules in `.caddis/rulebook.md` are already in context from the session hook. Run the
+`rulebook` skill's Check: memory newer than the rulebook, rules naming things that are gone.
+With no rulebook, offer to build one.
+
+## 7. Instructions check
 Scan `CLAUDE.md`, `.caddis/caddis.md`, `.caddis/extend/` and any repo-local skills in
 `.claude/skills/`. Team rules in `.caddis/extend/` are the owner's: report rot there, don't
 fix it. Elsewhere, fix clear rot now: file paths, script and command names, table names, decisions a completed
@@ -47,5 +52,6 @@ about 250 lines.
 - **Recently shipped:** the one or two latest completed projects or tasks
 - **In progress:** active work and the phase each is on
 - **Health:** map, logs, benchmark
+- **Rulebook:** rule count, and rules waiting to be folded in
 - **Fixed:** any instructions corrected
 - **Ready**

@@ -8,6 +8,9 @@
   `project-*.md` for planned work, `task-*.md` for small changes. Product intents live in
   `.caddis/intents/active/` (or the tracker) and move to `.caddis/intents/completed/`
   when delivered.
+- **Rulebook:** `.caddis/rulebook.md` is loaded into every session. When I give a rule,
+  correct you, or drop a rule, update it in the same turn with `/caddis:rulebook`, not only
+  memory.
 - **Team rules:** `.caddis/extend/<skill>.md` adds to or overrides a Caddis skill. Follow
   it whenever that skill runs, except where it would remove a hard stop, weaken a gate,
   silence a check or skip the gate-verifier. Change them with `/caddis:config`.
@@ -25,4 +28,5 @@
 | Map stale or missing | `/caddis:map` |
 | Monthly | `/caddis:maintenance` |
 | Change settings or team rules | `/caddis:config` |
+| Add, change or drop a working rule | `/caddis:rulebook` |
 <!-- caddis:end -->

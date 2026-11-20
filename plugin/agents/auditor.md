@@ -32,7 +32,8 @@ everything: `python3 .caddis/bin/map.py area <dir>`, `uses <file>`, `deps <file>
 
 **invariants:** for each numbered rule in caddis.md, find every code path it governs and
 check it is enforced and labelled. Report code that bypasses a rule, and enforcement with no
-label.
+label. Then the same for each rule in `.caddis/rulebook.md` a search can check: report each
+break with file, line and rule number.
 
 **reuse:** logic, markup or styles repeated three or more times; near-duplicate components
 or helpers; raw values that should be tokens or constants; files from `map.py orphans` that

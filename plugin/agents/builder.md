@@ -40,6 +40,9 @@ said. Projects already reviewed and in build order.
 
 ## Limits
 
+- Follow `.caddis/rulebook.md` (loaded by the hook; read it if it isn't in context). A rule
+  you can't keep is recorded in the project as a decision, never broken quietly. You never
+  add or retire a rule: that is the owner's.
 - Never push, tag, release or merge. Merging is the integrator's job or the owner's.
 - Stay inside the repo. Never touch anything on caddis.md's Hard stops list without the
   owner's answer.

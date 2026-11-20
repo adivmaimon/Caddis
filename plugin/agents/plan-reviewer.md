@@ -19,6 +19,7 @@ The path of the project. Everything else you read yourself.
 ## Read first
 
 1. `.caddis/caddis.md`: Invariants, Risk, Plans, Experiments, Machine limits, Hard stops.
+   And `.caddis/rulebook.md` if it exists.
 2. The project, in full.
 3. `.caddis/map/STRUCTURE.md`, and the docs caddis.md lists that the project touches.
 4. Every file the project names under Changes and Key Reference Files.
@@ -37,6 +38,8 @@ format or run anything heavy.
   code, a measurement against a threshold, a file that exists). "Looks right" is not a gate.
 - **Invariants:** every numbered rule in caddis.md the change could touch is named, with
   how it holds. Look for ones it touches without saying so.
+- **Rulebook:** nothing the project plans breaks a rule in `.caddis/rulebook.md` (a new
+  `<style>` block where the rules forbid one, a pattern a rule retired). Cite the number.
 - **Heavy gates:** a gate that runs one of Machine limits' Heavy jobs (default: a full
   build, a benchmark, a model load) says so and runs alone.
 - **Risk:** the level matches caddis.md's Risk list. Missing rollback for medium or high.

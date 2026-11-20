@@ -35,6 +35,8 @@ Then ask what to change, in one question with suggestions.
   a Product owner): edit that line in caddis.md. A switch always beats a team rule.
 - **A fact about the repo** (an invariant, a risk, a new hard stop): add it to its section in
   caddis.md. Invariants are numbered; add the next number, never renumber.
+- **A working rule for code, copy or replies** ("no CSS in Vue files"): not config. It goes in
+  `.caddis/rulebook.md` with the `rulebook` skill.
 - **Anything else about how a skill or agent behaves:** a team rule in
   `.caddis/extend/<name>.md`. Pick the skill where it happens: a rule about commit messages
   goes in `commit`, a rule about every phase in `execute`, a rule about questions at
